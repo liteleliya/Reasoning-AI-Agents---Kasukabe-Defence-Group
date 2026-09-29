@@ -80,13 +80,49 @@ trial to disk so Colab disconnects are resumable.
 
 ## How to run
 
-Requires [uv](https://docs.astral.sh/uv/) (it fetches Python 3.11 automatically).
+Requires [uv](https://docs.astral.sh/uv/) (it fetches Python 3.11 itself) and Node 24 for the UI.
 
 ```bash
-uv sync                 # create .venv with runtime + dev dependencies
-uv run pytest           # run tests
-uv run ruff check .     # lint
-uv run ruff format .    # format
+uv sync                                  # Python env with runtime + dev dependencies
+uv run pytest                            # tests
+uv run ruff check . && uv run ruff format --check .
+```
+
+| What | Command |
+|---|---|
+| Mock agents on the board (M1 demo, terminal) | `uv run python -m scheduler.demo` |
+| Server + live demo sessions | `uv run python -m server --demo` then open http://127.0.0.1:8000 |
+| Build the UI the server serves | `cd ui && npm install && npm run build` |
+| UI with hot reload (proxies to :8000) | `cd ui && npm run dev` then open http://localhost:5173 |
+| Sample MSCoRe instances | `uv run python -m bench.mscore --n 5 --domains law finance` |
+| Figures from a metrics CSV | `uv run python -m bench.plots results/metrics.csv --out results/figures` |
+
+### Code map (what exists)
+
+| Module | Main entry points |
+|---|---|
+| `protocol` | `EventDraft`, `Event`, `Tag`, `check`/`validate`, `classify`, `choose_tag` |
+| `blackboard` | `EventStore` (`append`, `state`, `snapshot`, `fork`, `subscribe`), `BoardState` |
+| `scheduler` | `Scheduler`, `SchedulerConfig`, `Agent` protocol, mock agents |
+| `server` | `create_app` (REST + `/ws`), `--demo` streamer |
+| `bench` | `mscore` ingestor, `metrics` (`trial_row`, `MetricsWriter`), `plots` |
+| `ui/` | graph view, history scrubber, counterfactual split panel |
+
+### MSCoRe notes
+
+The HF repo now holds 166,276 instances in 8 domains, in Chinese. Open-ended QA (automotive,
+automotive energy, e-commerce, pharmaceutical) is scored against a reference answer; law and
+finance are single/multiple choice and construction is true/false, so consensus and correctness
+are exact there. See `bench/mscore.py`.
+
+### Troubleshooting
+
+**macOS: `No module named 'scheduler'` (or `bench`, `server`) from `uv run python -m ...`.**
+Something on the machine marked the files in `.venv` as hidden, and Python skips hidden `.pth`
+files, so the editable install is ignored (pytest is unaffected). Fix:
+
+```bash
+chflags -R nohidden .venv
 ```
 
 ## Working agreement
