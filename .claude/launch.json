@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "board-demo",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": ["run", "python", "-m", "server", "--db", "results/demo.sqlite", "--demo", "--delay", "0.6"],
+      "port": 8000
+    }
+  ]
+}
