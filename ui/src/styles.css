@@ -90,3 +90,21 @@ header h2 { font-size: 15px; margin: 0; }
 .intel.ultra_strong, .intel.strong { color: #009e73; font-weight: 600; }
 .intel.failed { color: #d55e00; font-weight: 600; }
 @media (max-width: 1000px) { .body { grid-template-columns: 1fr; } .state { padding: 12px 20px; } }
+
+.left { min-width: 0; }
+.cf { padding: 0 20px 20px; display: grid; gap: 12px; }
+.cf h3 { font-size: 13px; margin: 0; }
+.cf-card { border: 1px solid #cc79a7; border-radius: 8px; background: var(--panel); padding: 10px 12px; font-size: 13px; }
+.cf-card header { display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; padding: 0; border: 0; }
+.cf-meta { margin-left: auto; display: flex; gap: 10px; }
+.delta { font-weight: 600; }
+.delta.good { color: #009e73; }
+.cf-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+.cf-split > div + div { border-left: 1px dashed #cc79a7; padding-left: 16px; }
+.cf-split h4 { font-size: 12px; margin: 0 0 6px; color: var(--muted); font-weight: 600; }
+.cf-split ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.step { display: grid; grid-template-columns: auto auto 1fr; gap: 2px 8px; align-items: baseline; }
+.step.faded { opacity: 0.75; }
+.step .why { grid-column: 3; color: var(--muted); font-size: 12px; }
+.chip { color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; }
+.who { font-weight: 600; }

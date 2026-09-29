@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { layout, upTo } from "./layout";
+import { layout, rollbacks, upTo } from "./layout";
 import type { EventRecord } from "./types";
 
 let seq = 0;
@@ -37,5 +37,42 @@ describe("layout", () => {
 
   it("filters to a point in the log", () => {
     expect(upTo(events, 2).map((e) => e.seq)).toEqual([0, 1, 2]);
+  });
+});
+
+describe("rollbacks", () => {
+  it("pairs replayed steps with the real continuation and reads the credit delta", () => {
+    seq = 0;
+    const events = [
+      ev("a", "INIT"),
+      ev("b", "INIT"),
+      ev("a", "REFUTE", 1),
+      ev("b", "REFUTE", 2),
+      ev("a", null, 2, { kind: "rollback_start", counterfactual: true }),
+      ev("a", "REVISE", 1, { kind: "rollback_step", counterfactual: true,
+        tokens: { in: 10, out: 2 } }),
+      ev("b", "RATIFY", null, { kind: "rollback_step", counterfactual: true,
+        tokens: { in: 5, out: 1 } }),
+      ev("a", null, null, { kind: "rollback_end", counterfactual: true,
+        meta: { credit_delta: -0.5 } }),
+      ev("a", "REFUTE", 3),
+    ];
+    const [rb] = rollbacks(events);
+    expect(rb.target?.seq).toBe(2);
+    expect(rb.steps.map((e) => e.tag)).toEqual(["REVISE", "RATIFY"]);
+    expect(rb.real.map((e) => e.seq)).toEqual([2, 3]);
+    expect(rb.creditDelta).toBe(-0.5);
+    expect(rb.tokens).toBe(18);
+  });
+
+  it("leaves an unfinished rollback open", () => {
+    seq = 0;
+    const events = [
+      ev("a", "INIT"),
+      ev("a", null, 0, { kind: "rollback_start", counterfactual: true }),
+    ];
+    const [rb] = rollbacks(events);
+    expect(rb.end).toBeUndefined();
+    expect(rb.real.map((e) => e.seq)).toEqual([0]);
   });
 });
