@@ -70,3 +70,23 @@ header h2 { font-size: 15px; margin: 0; }
   background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-size: 12px;
   box-shadow: 0 4px 16px #0002; display: grid; gap: 4px; pointer-events: none;
 }
+
+.scrubber { display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-bottom: 1px solid var(--line); font-size: 13px; }
+.scrubber button { padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); cursor: pointer; }
+.scrubber button:disabled { opacity: 0.5; cursor: default; }
+.scrubber input[type="range"] { flex: 1; accent-color: var(--accent); }
+.scrubber .seq { min-width: 180px; font-variant-numeric: tabular-nums; }
+.follow { display: flex; align-items: center; gap: 4px; color: var(--muted); }
+
+.body { display: grid; grid-template-columns: minmax(0, 1fr) 320px; align-items: start; }
+.state { padding: 12px 20px 12px 0; font-size: 13px; display: grid; gap: 12px; }
+.state h3 { font-size: 13px; margin: 0; }
+.state table { width: 100%; border-collapse: collapse; }
+.state th, .state td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line); }
+.state th { font-weight: 600; color: var(--muted); font-size: 12px; }
+.state dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; }
+.state dt { color: var(--muted); }
+.state dd { margin: 0; }
+.intel.ultra_strong, .intel.strong { color: #009e73; font-weight: 600; }
+.intel.failed { color: #d55e00; font-weight: 600; }
+@media (max-width: 1000px) { .body { grid-template-columns: 1fr; } .state { padding: 12px 20px; } }

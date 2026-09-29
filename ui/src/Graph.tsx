@@ -28,6 +28,8 @@ export function Graph({ events, highlightSeq, onSelect }: Props) {
     const zoom = d3
       .zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.3, 3])
+      .clickDistance(4) // small jitter between mousedown and mouseup is still a click
+      .filter((ev) => !ev.button && !ev.ctrlKey && !(ev.target as Element).closest(".node"))
       .on("zoom", (ev) => setTransform(ev.transform));
     d3.select(svgRef.current).call(zoom);
     return () => {
