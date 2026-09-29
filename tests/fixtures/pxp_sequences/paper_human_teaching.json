@@ -1,0 +1,37 @@
+{
+ "name": "paper_human_teaching",
+ "source": "paper 3.4.1: <INIT_m, REFUTE_h, REVISE_m, RATIFY_h, TERM_h>, Two-Way Intelligible",
+ "events": [
+  {
+   "author": "m",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "h",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "h",
+   "tag": "REFUTE",
+   "reply_to": 0
+  },
+  {
+   "author": "m",
+   "tag": "REVISE",
+   "reply_to": 2
+  },
+  {
+   "author": "h",
+   "tag": "RATIFY",
+   "reply_to": 3
+  },
+  {
+   "author": "system",
+   "tag": "TERM",
+   "reply_to": null
+  }
+ ],
+ "expected": "ultra_strong"
+}

@@ -1,0 +1,47 @@
+{
+ "name": "three_agents_all_intelligible",
+ "source": "spec 3: refutes resolved by revisions; every ordered pair has a RATIFY or REVISE",
+ "events": [
+  {
+   "author": "a",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "b",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "c",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "b",
+   "tag": "REFUTE",
+   "reply_to": 0
+  },
+  {
+   "author": "a",
+   "tag": "REVISE",
+   "reply_to": 3
+  },
+  {
+   "author": "b",
+   "tag": "RATIFY",
+   "reply_to": 4
+  },
+  {
+   "author": "c",
+   "tag": "REVISE",
+   "reply_to": 4
+  },
+  {
+   "author": "a",
+   "tag": "RATIFY",
+   "reply_to": 6
+  }
+ ],
+ "expected": "ultra_strong"
+}

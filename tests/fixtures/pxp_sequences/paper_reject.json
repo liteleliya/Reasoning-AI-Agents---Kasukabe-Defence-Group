@@ -1,0 +1,27 @@
+{
+ "name": "paper_reject",
+ "source": "paper 3.4.1: <INIT_m, REJECT_h, TERM_h>, neither side",
+ "events": [
+  {
+   "author": "m",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "h",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "h",
+   "tag": "REJECT",
+   "reply_to": 0
+  },
+  {
+   "author": "system",
+   "tag": "TERM",
+   "reply_to": null
+  }
+ ],
+ "expected": "failed"
+}

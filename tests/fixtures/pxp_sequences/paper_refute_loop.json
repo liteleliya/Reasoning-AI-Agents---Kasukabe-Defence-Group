@@ -1,0 +1,42 @@
+{
+ "name": "paper_refute_loop",
+ "source": "paper 3.4.1: <INIT_m, REFUTE_h, REFUTE_m, REFUTE_h, ..., TERM_h>, neither side",
+ "events": [
+  {
+   "author": "m",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "h",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "h",
+   "tag": "REFUTE",
+   "reply_to": 0
+  },
+  {
+   "author": "m",
+   "tag": "REFUTE",
+   "reply_to": 2
+  },
+  {
+   "author": "h",
+   "tag": "REFUTE",
+   "reply_to": 3
+  },
+  {
+   "author": "m",
+   "tag": "REFUTE",
+   "reply_to": 4
+  },
+  {
+   "author": "system",
+   "tag": "TERM",
+   "reply_to": null
+  }
+ ],
+ "expected": "failed"
+}

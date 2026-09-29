@@ -1,0 +1,27 @@
+{
+ "name": "paper_lucky_machine",
+ "source": "paper 3.4.1: <INIT_m, REFUTE_h, TERM_h>, not intelligible for either side",
+ "events": [
+  {
+   "author": "m",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "h",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "h",
+   "tag": "REFUTE",
+   "reply_to": 0
+  },
+  {
+   "author": "system",
+   "tag": "TERM",
+   "reply_to": null
+  }
+ ],
+ "expected": "failed"
+}

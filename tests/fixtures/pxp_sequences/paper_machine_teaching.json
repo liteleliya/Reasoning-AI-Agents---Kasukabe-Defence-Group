@@ -1,0 +1,32 @@
+{
+ "name": "paper_machine_teaching",
+ "source": "paper 3.4.1: <INIT_m, REVISE_h, RATIFY_m, TERM_h>, Two-Way Intelligible",
+ "events": [
+  {
+   "author": "m",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "h",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "h",
+   "tag": "REVISE",
+   "reply_to": 0
+  },
+  {
+   "author": "m",
+   "tag": "RATIFY",
+   "reply_to": 2
+  },
+  {
+   "author": "system",
+   "tag": "TERM",
+   "reply_to": null
+  }
+ ],
+ "expected": "ultra_strong"
+}

@@ -1,0 +1,32 @@
+{
+ "name": "ratify_both_ways",
+ "source": "spec 3: every interacting pair ratifies, no REVISE",
+ "events": [
+  {
+   "author": "a",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "b",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "a",
+   "tag": "RATIFY",
+   "reply_to": 1
+  },
+  {
+   "author": "b",
+   "tag": "RATIFY",
+   "reply_to": 0
+  },
+  {
+   "author": "system",
+   "tag": "TERM",
+   "reply_to": null
+  }
+ ],
+ "expected": "strong"
+}

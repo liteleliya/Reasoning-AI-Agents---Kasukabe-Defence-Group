@@ -1,0 +1,22 @@
+{
+ "name": "one_sided_ratify",
+ "source": "spec 3: only b replies, with RATIFY; the only interacting pair is intelligible",
+ "events": [
+  {
+   "author": "a",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "b",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "b",
+   "tag": "RATIFY",
+   "reply_to": 0
+  }
+ ],
+ "expected": "strong"
+}

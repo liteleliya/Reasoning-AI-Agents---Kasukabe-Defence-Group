@@ -9,6 +9,7 @@ from typing import Any
 from pydantic import ValidationError
 
 from protocol.schema import REPLY_TAGS, SYSTEM, Event, EventDraft, Kind, Tag
+from protocol.state_machine import is_compatible
 
 
 class ProtocolError(ValueError):
@@ -24,14 +25,6 @@ class Verdict:
     ok: bool
     reason: str = ""
     warnings: tuple[str, ...] = field(default_factory=tuple)
-
-
-# Replies a compatible agent could send to each tag (paper Prop. 5). Counted, not enforced.
-_COMPATIBLE_REPLIES = {
-    Tag.RATIFY: {Tag.RATIFY},
-    Tag.REVISE: {Tag.RATIFY},
-    Tag.REJECT: {Tag.REJECT},
-}
 
 
 def parse_event(record: Mapping[str, Any]) -> EventDraft:
@@ -114,8 +107,7 @@ def _check_message(draft: EventDraft, history: Sequence[Event]) -> list[str]:
     if target.counterfactual and not draft.counterfactual:
         raise ProtocolError("cannot reply to a counterfactual message from the real board")
 
-    allowed = _COMPATIBLE_REPLIES.get(target.tag)  # type: ignore[arg-type]
-    if allowed is not None and draft.tag not in allowed:
+    if not is_compatible(target.tag, draft.tag):  # type: ignore[arg-type]
         return [f"incompatible transition: {draft.tag} in reply to {target.tag}"]
     return []
 

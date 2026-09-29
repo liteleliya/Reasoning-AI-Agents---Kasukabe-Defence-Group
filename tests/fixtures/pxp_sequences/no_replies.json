@@ -1,0 +1,22 @@
+{
+ "name": "no_replies",
+ "source": "spec 3: INITs only, no interaction at all",
+ "events": [
+  {
+   "author": "a",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "b",
+   "tag": "INIT",
+   "reply_to": null
+  },
+  {
+   "author": "system",
+   "tag": "TERM",
+   "reply_to": null
+  }
+ ],
+ "expected": "failed"
+}
