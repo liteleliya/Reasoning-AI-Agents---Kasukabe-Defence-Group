@@ -15,6 +15,7 @@ from scheduler import (
     Scheduler,
     SchedulerConfig,
     StubbornAgent,
+    exact_distance,
 )
 
 
@@ -46,13 +47,26 @@ def test_impasse_between_two_stubborn_agents() -> None:
     assert {e.tag for e in store.events("s")[2:-1]} == {Tag.REFUTE}
 
 
-def test_follower_oscillating_between_stubborn_agents_hits_the_cap() -> None:
-    # REVISE counts as progress, so this oscillation is not an impasse under spec section 4.
+def test_follower_oscillating_between_stubborn_agents_is_an_impasse() -> None:
+    # REVISEs keep coming, but consensus distance never improves: the stall rule stops it.
     agents = [StubbornAgent("a", "x"), StubbornAgent("b", "y"), FollowerAgent("c", "z")]
     result, store = run(agents)
-    assert result.stop_reason == CAP
+    assert result.stop_reason == IMPASSE
+    assert len(store.events("s")) < 12
     c_predictions = [e.prediction for e in store.events("s") if e.author == "c"][1:]
     assert set(c_predictions) == {"x", "y"}
+
+
+def test_without_the_stall_rule_oscillation_runs_to_the_cap() -> None:
+    agents = [StubbornAgent("a", "x"), StubbornAgent("b", "y"), FollowerAgent("c", "z")]
+    result, _ = run(agents, SchedulerConfig(stall_rule=False))
+    assert result.stop_reason == CAP
+
+
+def test_exact_distance() -> None:
+    assert exact_distance({"a": "X.", "b": "x", "c": "y"}) == pytest.approx(1 / 3)
+    assert exact_distance({"a": "x", "b": "x"}) == 0
+    assert exact_distance({}) == 1
 
 
 def test_impasse_when_agents_only_reject() -> None:
