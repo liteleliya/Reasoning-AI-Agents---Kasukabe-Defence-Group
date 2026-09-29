@@ -48,3 +48,45 @@ export function layout(events: EventRecord[]): Layout {
 
 /** Events up to and including `seq` (the scrubber's view of the log). */
 export const upTo = (events: EventRecord[], seq: number) => events.filter((e) => e.seq <= seq);
+
+export interface Rollback {
+  start: EventRecord;
+  target: EventRecord | undefined; // the real message being replayed differently
+  steps: EventRecord[]; // replayed messages (the altered one first)
+  end: EventRecord | undefined; // missing while the replay is still running
+  real: EventRecord[]; // what really followed the target, same length as steps
+  creditDelta: number | null;
+  tokens: number;
+}
+
+/** Group rollback_start/step/end events and pair them with the real continuation (C3). */
+export function rollbacks(events: EventRecord[]): Rollback[] {
+  const out: Rollback[] = [];
+  let current: Rollback | null = null;
+  const bySeq = new Map(events.map((e) => [e.seq, e]));
+  for (const e of events) {
+    if (e.kind === "rollback_start") {
+      const target = e.reply_to === null ? undefined : bySeq.get(e.reply_to);
+      current = { start: e, target, steps: [], end: undefined, real: [], creditDelta: null,
+        tokens: 0 };
+      out.push(current);
+    } else if (current && e.kind === "rollback_step") {
+      current.steps.push(e);
+      current.tokens += e.tokens.in + e.tokens.out;
+    } else if (current && e.kind === "rollback_end") {
+      current.end = e;
+      const delta = e.meta.credit_delta;
+      current.creditDelta = typeof delta === "number" ? delta : null;
+      current = null;
+    }
+  }
+  for (const rb of out) {
+    if (!rb.target) continue;
+    const from = rb.target.seq;
+    rb.real = [rb.target, ...events.filter((e) => isRealMessage(e) && e.seq > from)].slice(
+      0,
+      Math.max(rb.steps.length, 1),
+    );
+  }
+  return out;
+}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEventStream, useSessions, useSnapshot } from "./api";
+import { CounterfactualPanel } from "./CounterfactualPanel";
 import { Graph } from "./Graph";
 import { upTo } from "./layout";
 import { Legend } from "./Legend";
@@ -67,7 +68,10 @@ export function App() {
         </header>
         <Scrubber events={events} cursor={cursor} live={live} onChange={scrub} />
         <div className="body">
-          <Graph events={visible} highlightSeq={cursor} onSelect={(e) => scrub(e.seq, false)} />
+          <div className="left">
+            <Graph events={visible} highlightSeq={cursor} onSelect={(e) => scrub(e.seq, false)} />
+            <CounterfactualPanel events={visible} />
+          </div>
           <StatePanel snap={snap} />
         </div>
       </main>
