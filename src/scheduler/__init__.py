@@ -12,6 +12,7 @@ from scheduler.core import (
     SchedulerConfig,
     SessionResult,
     exact_consensus,
+    exact_distance,
     normalise,
 )
 from scheduler.mock_agents import ConfusedAgent, FollowerAgent, StubbornAgent
@@ -28,5 +29,6 @@ __all__ = [
     "SessionResult",
     "StubbornAgent",
     "exact_consensus",
+    "exact_distance",
     "normalise",
 ]

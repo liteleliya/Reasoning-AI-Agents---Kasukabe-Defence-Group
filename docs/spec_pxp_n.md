@@ -109,8 +109,11 @@ The scheduler checks, after every appended message:
 
 1. **Consensus:** every agent has sent at least one reply (not only INIT), and the consensus
    distance over each agent's latest prediction is 0 (all predictions in one equivalence group).
-2. **Impasse:** no agent's prediction has changed and no RATIFY or REVISE has been posted in the last
-   *W* messages (default W = 2N).
+2. **Impasse:** either (a) no agent's prediction has changed and no RATIFY or REVISE has been posted
+   in the last *W* replies (default W = 2N), or (b) *stall*: none of the last *W* replies brought the
+   consensus distance below its best value before that window (decision 12). (b) catches an agent
+   flipping between two camps, which keeps posting REVISEs without the board getting closer to
+   agreement. Every agent passing on the same board is also an impasse.
 3. **Cap:** the session reached `max_messages` non-system messages (default 10N).
 
 On the first condition met, the scheduler writes TERM with that reason. H1 counts `consensus` as
@@ -160,3 +163,4 @@ Defaults in brackets. Each is tracked as a GitHub issue with the `decision` labe
 | 9 | 2026-09-30 | Compatible-agent transitions | Not enforced, counted as warnings | Enforcing would forbid a third agent refuting a ratified message |
 | 10 | 2026-09-30 | PXP(k) self-loop bound | Replaced by impasse window W and message cap | Same purpose (bounded sessions), and simpler to reason about for N agents |
 | 11 | 2026-09-30 | Extra `meta` field on events | Added | Room for rollback ids and warnings without schema changes |
+| 12 | 2026-09-30 | Oscillation counts as impasse | Stall rule 4.2(b), *proposed* | Found with mock agents: a follower flip-flopping between two stubborn agents otherwise runs to the cap, which would count a clear deadlock as "cap" and inflate H3 tokens |

@@ -30,12 +30,24 @@ def exact_consensus(predictions: Mapping[str, str]) -> bool:
     return len({normalise(p) for p in predictions.values()}) == 1
 
 
+def exact_distance(predictions: Mapping[str, str]) -> float:
+    """Consensus distance: 1 - share of agents holding the most common normalised prediction."""
+    if not predictions:
+        return 1.0
+    counts: dict[str, int] = {}
+    for p in predictions.values():
+        counts[normalise(p)] = counts.get(normalise(p), 0) + 1
+    return 1 - max(counts.values()) / len(predictions)
+
+
 @dataclass(frozen=True)
 class SchedulerConfig:
     max_messages: int | None = None  # default 10 * N (spec section 4)
     impasse_window: int | None = None  # default 2 * N
     concurrency: int = 1  # agents allowed to think at once
     consensus: Callable[[Mapping[str, str]], bool] = exact_consensus
+    distance: Callable[[Mapping[str, str]], float] = exact_distance
+    stall_rule: bool = True  # impasse when a window brings no new best consensus distance
 
 
 @dataclass
@@ -158,9 +170,32 @@ class Scheduler:
         if len(msgs) >= self.max_messages:
             return CAP
         replies = [e for e in msgs if e.tag is not Tag.INIT]
-        if len(replies) >= self.window and not _progress(msgs, replies[-self.window :]):
-            return IMPASSE
+        if len(replies) >= self.window:
+            recent = replies[-self.window :]
+            if not _progress(msgs, recent):
+                return IMPASSE
+            if self.config.stall_rule and _stalled(msgs, recent, self.config.distance):
+                return IMPASSE
         return None
+
+
+def _stalled(all_msgs: Sequence, recent: Sequence, distance) -> bool:
+    """True if no message in `recent` reached a lower consensus distance than ever before.
+
+    Catches oscillation (an agent flipping between two camps), where REVISEs keep coming but the
+    board never gets closer to agreement (spec section 4, decision 12).
+    """
+    first = recent[0].seq
+    latest: dict[str, str] = {}
+    best_before = best_in = float("inf")
+    for e in all_msgs:
+        latest[e.author] = e.prediction
+        d = distance(latest)
+        if e.seq < first:
+            best_before = min(best_before, d)
+        else:
+            best_in = min(best_in, d)
+    return best_in >= best_before
 
 
 def _progress(all_msgs: Sequence, recent: Sequence) -> bool:
