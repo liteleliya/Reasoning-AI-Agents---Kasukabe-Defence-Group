@@ -1,0 +1,72 @@
+:root {
+  --bg: #fafafa;
+  --panel: #ffffff;
+  --text: #1d1d1f;
+  --muted: #6e6e73;
+  --line: #e3e3e6;
+  --edge: #8e8e93;
+  --accent: #0072b2;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161618;
+    --panel: #1f1f22;
+    --text: #ececef;
+    --muted: #9a9aa1;
+    --line: #34343a;
+    --edge: #8e8e93;
+    --accent: #56b4e9;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); }
+button { font: inherit; color: inherit; }
+.muted { color: var(--muted); }
+.empty { padding: 32px; color: var(--muted); }
+
+.app { display: grid; grid-template-columns: 260px 1fr; height: 100vh; }
+aside { border-right: 1px solid var(--line); background: var(--panel); overflow-y: auto; padding: 16px; }
+aside h1 { font-size: 16px; margin: 0 0 12px; }
+.sessions { list-style: none; margin: 0; padding: 0; }
+.sessions button {
+  width: 100%; display: flex; justify-content: space-between; gap: 8px; align-items: center;
+  padding: 8px 10px; border: 0; border-radius: 8px; background: none; cursor: pointer; text-align: left;
+  font-size: 13px;
+}
+.sessions button:hover { background: var(--line); }
+.sessions button.active { background: color-mix(in srgb, var(--accent) 15%, transparent); }
+.badge { font-size: 11px; padding: 2px 6px; border-radius: 999px; background: var(--line); }
+.badge.consensus { background: #009e7333; }
+.badge.impasse, .badge.cap { background: #d55e0033; }
+.badge.live { background: #0072b233; }
+
+main { display: flex; flex-direction: column; min-width: 0; overflow: auto; }
+header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+header h2 { font-size: 15px; margin: 0; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.dot.on { background: #009e73; }
+
+.legend { display: flex; gap: 12px; list-style: none; margin: 0 0 0 auto; padding: 0; font-size: 12px; }
+.legend li { display: flex; align-items: center; gap: 4px; cursor: help; }
+.swatch { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+.graph { position: relative; padding: 12px 20px; }
+.graph svg { width: 100%; min-height: 220px; cursor: grab; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+.lane { stroke: var(--line); }
+.lane-label { font-size: 13px; font-weight: 600; fill: var(--text); }
+.edge { fill: none; stroke-width: 1.5; opacity: 0.8; }
+.node { cursor: pointer; }
+.node circle { stroke: var(--panel); stroke-width: 2; }
+.node.selected circle { stroke: var(--text); stroke-width: 3; }
+.node-seq { font-size: 10px; fill: var(--muted); }
+.node-tag { font-size: 9px; font-weight: 700; fill: #fff; pointer-events: none; }
+.rollback-marker line { stroke: #cc79a7; stroke-dasharray: 4 4; }
+.rollback-marker text { font-size: 10px; fill: #cc79a7; }
+.tooltip {
+  position: absolute; top: 20px; right: 28px; max-width: 360px; padding: 10px 12px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-size: 12px;
+  box-shadow: 0 4px 16px #0002; display: grid; gap: 4px; pointer-events: none;
+}
