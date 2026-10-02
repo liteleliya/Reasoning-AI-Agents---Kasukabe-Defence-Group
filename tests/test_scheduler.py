@@ -5,7 +5,7 @@ import asyncio
 import pytest
 
 from blackboard import BoardState, EventStore
-from protocol import EventDraft, Tag
+from protocol import Event, EventDraft, Tag
 from scheduler import (
     CAP,
     CONSENSUS,
@@ -17,6 +17,7 @@ from scheduler import (
     StubbornAgent,
     exact_distance,
 )
+from scheduler.core import _stalled
 
 
 def run(agents, config: SchedulerConfig | None = None, session: str = "s"):
@@ -52,7 +53,7 @@ def test_follower_oscillating_between_stubborn_agents_is_an_impasse() -> None:
     agents = [StubbornAgent("a", "x"), StubbornAgent("b", "y"), FollowerAgent("c", "z")]
     result, store = run(agents)
     assert result.stop_reason == IMPASSE
-    assert len(store.events("s")) < 12
+    assert len(store.events("s")) < 15  # well under the 30-message cap
     c_predictions = [e.prediction for e in store.events("s") if e.author == "c"][1:]
     assert set(c_predictions) == {"x", "y"}
 
@@ -177,3 +178,59 @@ def test_rejects_bad_setup() -> None:
         Scheduler(EventStore(), [StubbornAgent("a", "x"), StubbornAgent("a", "y")])
     with pytest.raises(ValueError):
         Scheduler(EventStore(), [StubbornAgent("system", "x")])
+
+
+def test_two_agents_refuting_each_other_do_not_starve_a_third() -> None:
+    store = EventStore()
+    agents = [StubbornAgent("a", "x"), StubbornAgent("b", "y"), StubbornAgent("c", "z")]
+    sched = Scheduler(store, agents)
+
+    def put(author, tag, reply_to=None, pred="p"):
+        store.append_sync(
+            EventDraft(
+                session_id="s",
+                author=author,
+                tag=tag,
+                reply_to=reply_to,
+                prediction=pred,
+                explanation="e",
+            )
+        )
+
+    put("a", Tag.INIT)
+    put("b", Tag.INIT)
+    put("c", Tag.INIT)
+    put("a", Tag.RATIFY, 1)  # seq 3: a speaks, then goes quiet
+    for i in range(4):  # b and c refute each other, seqs 4-7
+        put("b" if i % 2 == 0 else "c", Tag.REFUTE, 3 + i if i else 2)
+    assert sched.priority(store.state("s"))[0].name == "a"
+
+
+def test_stall_ignores_agreement_among_inits() -> None:
+    # Everyone opens with the same answer, then the discussion moves; that is not a stall.
+    msgs = []
+    for seq, (author, tag, pred) in enumerate(
+        [
+            ("a", Tag.INIT, "B"),
+            ("b", Tag.INIT, "B"),
+            ("c", Tag.INIT, "B"),
+            ("a", Tag.RATIFY, "B"),
+            ("b", Tag.REFUTE, "B"),
+            ("c", Tag.REFUTE, "C"),
+            ("b", Tag.REVISE, "C"),
+            ("c", Tag.REFUTE, "C"),
+        ]
+    ):
+        msgs.append(
+            Event(
+                seq=seq,
+                session_id="s",
+                author=author,
+                tag=tag,
+                prediction=pred,
+                explanation="e",
+                reply_to=None if tag is Tag.INIT else 0,
+            )
+        )
+    replies = [m for m in msgs if m.tag is not Tag.INIT]
+    assert not _stalled(msgs, replies[-3:], exact_distance)

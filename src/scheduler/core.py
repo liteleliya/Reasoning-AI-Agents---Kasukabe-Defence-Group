@@ -111,7 +111,12 @@ class Scheduler:
     # --- arbitration ----------------------------------------------------------------------
 
     def priority(self, board: BoardState) -> list[Agent]:
-        """Order agents: no INIT yet, then challenged since they last spoke, then longest silent."""
+        """Order agents: no INIT yet first, then longest silent.
+
+        Being challenged (a REFUTE or REJECT of your message since you last spoke) moves an agent
+        N places up, but never ahead of someone silent for more than N messages longer, so two
+        agents refuting each other cannot starve a third.
+        """
         by_seq = {e.seq: e for e in board.messages}
         last_spoke: dict[str, int] = {}
         for e in board.messages:
@@ -129,7 +134,7 @@ class Scheduler:
                 and by_seq[e.reply_to].author == agent.name
             ]
             challenged = any(e.tag in (Tag.REFUTE, Tag.REJECT) for e in replies)
-            return (1 if challenged else 2, spoke, agent.name)
+            return (1, spoke - (len(self.agents) if challenged else 0), agent.name)
 
         return sorted(self.agents, key=key)
 
@@ -183,19 +188,27 @@ def _stalled(all_msgs: Sequence, recent: Sequence, distance) -> bool:
     """True if no message in `recent` reached a lower consensus distance than ever before.
 
     Catches oscillation (an agent flipping between two camps), where REVISEs keep coming but the
-    board never gets closer to agreement (spec section 4, decision 12).
+    board never gets closer to agreement (spec section 4, decision 12). Distances only count
+    once every agent has replied at least once, so agreement among the opening INITs is not a
+    "best" the discussion has to beat.
     """
     first = recent[0].seq
+    agents = {e.author for e in all_msgs}
+    repliers: set[str] = set()
     latest: dict[str, str] = {}
     best_before = best_in = float("inf")
     for e in all_msgs:
         latest[e.author] = e.prediction
+        if e.tag is not Tag.INIT:
+            repliers.add(e.author)
+        if repliers != agents:
+            continue  # discussion has not started for everyone yet
         d = distance(latest)
         if e.seq < first:
             best_before = min(best_before, d)
         else:
             best_in = min(best_in, d)
-    return best_in >= best_before
+    return best_before != float("inf") and best_in >= best_before
 
 
 def _progress(all_msgs: Sequence, recent: Sequence) -> bool:
