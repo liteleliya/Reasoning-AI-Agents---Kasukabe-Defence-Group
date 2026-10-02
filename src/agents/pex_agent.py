@@ -43,6 +43,7 @@ class PEXAgent:
         self.n_agents = n_agents
         self.failures = 0  # replies that stayed unparseable after the retry
         self.unposted = TokenUsage()  # tokens spent on those replies (still count for H3)
+        self.notes: list[str] = []  # lessons carried into the next prompts (credit assignment)
 
     async def act(self, question: str, board: BoardState) -> EventDraft | None:
         if self.name not in board.latest:
@@ -59,6 +60,7 @@ class PEXAgent:
             target,
             board.latest[self.name].prediction,
             self.n_agents,
+            notes=self.notes,
         )
         return await self._ask(board, msgs, None, target, ("RATIFY", "REVISE", "REFUTE", "REJECT"))
 

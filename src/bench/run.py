@@ -30,6 +30,7 @@ from agents.prompts import answer_instructions, persona_for
 from bench.metrics import MetricsWriter, TrialMeta, read_metrics, trial_row
 from bench.mscore import Instance, sample
 from blackboard import EventStore
+from counterfactual import CounterfactualAgent
 from scheduler import Scheduler, SchedulerConfig
 
 REPO = Path(__file__).resolve().parents[2]
@@ -164,13 +165,13 @@ def question_text(inst: Instance) -> str:
     return f"{inst.prompt_text()}\n\n{answer_instructions(inst.format)}"
 
 
-AgentFactory = Callable[[Trial, BaseLLMClient, JobConfig], list]
+AgentFactory = Callable[[Trial, BaseLLMClient, JobConfig, EventStore], list]
 
 
-def default_agents(trial: Trial, client: BaseLLMClient, job: JobConfig) -> list[PEXAgent]:
-    """3 agents with fixed personas; the first n_counterfactual of them are counterfactual."""
+def default_agents(trial: Trial, client: BaseLLMClient, job: JobConfig, store: EventStore) -> list:
+    """n agents with fixed personas; the first n_counterfactual of them are counterfactual."""
     n, cf = trial.meta.n_agents, trial.meta.n_counterfactual
-    return [
+    plain = [
         PEXAgent(
             f"agent_{chr(ord('a') + i)}",
             persona_for(i),
@@ -183,6 +184,17 @@ def default_agents(trial: Trial, client: BaseLLMClient, job: JobConfig) -> list[
         )
         for i in range(n)
     ]
+    agents: list = list(plain)
+    distance = scheduler_config(trial.instance.format, job).distance
+    for i in range(cf):
+        agents[i] = CounterfactualAgent(
+            plain[i],
+            store,
+            lambda: agents,
+            max_rollbacks=job.counterfactual.get("max_rollbacks", 1),
+            distance=distance,
+        )
+    return agents
 
 
 def fresh_session_id(store: EventStore, key: str) -> str:
@@ -202,7 +214,7 @@ async def run_trial(
 ) -> dict:
     start = time.perf_counter()
     fmt = trial.instance.format
-    agents = make_agents(trial, client, job)
+    agents = make_agents(trial, client, job, store)
     sid = fresh_session_id(store, trial.meta.key)
     result = await Scheduler(store, agents, scheduler_config(fmt, job)).run(
         sid, question_text(trial.instance)
@@ -373,6 +385,17 @@ def mock_client() -> MockClient:
                     "tag": "INIT",
                     "prediction": "ABCD"[h[0] % 4],
                     "explanation": "first reading of the options",
+                }
+            )
+        if "Write a different version of that message" in user:  # counterfactual prompt
+            to = user.split("replying to message ", 1)[1].split(".", 1)[0]
+            line = next((x for x in user.splitlines() if x.startswith(f"[{to}] ")), "")
+            theirs = line.split(": ", 1)[1].split(" |")[0] if ": " in line else "A"
+            return json.dumps(
+                {
+                    "tag": "REVISE",
+                    "prediction": theirs,
+                    "explanation": "on reflection your reading is right",
                 }
             )
         shown = user.split("Reply to message [", 1)[1].split(": ", 1)[1].split(" |")[0]

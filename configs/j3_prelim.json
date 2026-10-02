@@ -1,0 +1,17 @@
+{
+  "name": "j3_prelim",
+  "sample": {
+    "n_per_group": 15,
+    "seed": 1,
+    "domains": ["law", "finance"],
+    "formats": ["single_choice"],
+    "difficulties": ["complex"]
+  },
+  "seeds": [0],
+  "n_agents": 3,
+  "n_counterfactual": [0, 1, 2, 3],
+  "temperature": 0.7,
+  "max_tokens": 400,
+  "scheduler": {},
+  "counterfactual": {"max_rollbacks": 1}
+}
