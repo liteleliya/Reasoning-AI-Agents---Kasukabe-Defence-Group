@@ -119,13 +119,15 @@ def reply_messages(
     own_prediction: str,
     n_agents: int | None = None,
     max_events: int = 12,
+    notes: Sequence[str] = (),
 ):
+    lessons = "".join(f"\nNote to yourself: {n}" for n in notes)
     return [
         {"role": "system", "content": system_prompt(persona, agent_id, n_agents)},
         {
             "role": "user",
             "content": f"Question:\n{question}\n\nBoard so far:\n{render_board(board, max_events)}"
-            f"\n\nYour current prediction: {own_prediction}\n"
+            f"\n\nYour current prediction: {own_prediction}{lessons}\n"
             f"Reply to message [{target.seq}] by {target.author}:\n{render_event(target)}\n\n"
             f"Use tag RATIFY, REVISE, REFUTE or REJECT, and reply_to {target.seq}.",
         },

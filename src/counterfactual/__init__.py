@@ -1,4 +1,17 @@
-"""Counterfactual sandbox.
+"""Counterfactual sandbox and credit assignment.
 
-Replays an altered log slice in isolation and returns a credit delta (B4, B6).
+Replays an altered past message in isolation and returns a credit delta (B4); counterfactual
+agents use it to decide how to act next (B6).
 """
+
+from counterfactual.credit import CounterfactualAgent, CreditLog, replay_target
+from counterfactual.sandbox import Alternative, ReplayResult, replay
+
+__all__ = [
+    "Alternative",
+    "CounterfactualAgent",
+    "CreditLog",
+    "ReplayResult",
+    "replay",
+    "replay_target",
+]
