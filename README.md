@@ -96,6 +96,12 @@ uv run ruff check . && uv run ruff format --check .
 | UI with hot reload (proxies to :8000) | `cd ui && npm run dev` then open http://localhost:5173 |
 | Sample MSCoRe instances | `uv run python -m bench.mscore --n 5 --domains law finance` |
 | Figures from a metrics CSV | `uv run python -m bench.plots results/metrics.csv --out results/figures` |
+| One prompt to the configured model | `uv run python -m agents.llm_client "Say hi"` |
+| Run (or resume) an experiment job | `uv run python -m bench.run configs/<job>.json --shard 1/1 --parallel 8` (`--mock` needs no model) |
+| Prompt parse check (J1) | `uv run python -m bench.parse_check --n 50` |
+
+The model is chosen by environment variables: `LLM_BACKEND=openai`, `LLM_BASE_URL` (Ollama
+`http://127.0.0.1:11434/v1`, vLLM `http://127.0.0.1:8001/v1`) and `LLM_MODEL`.
 
 ### Code map (what exists)
 
@@ -104,8 +110,11 @@ uv run ruff check . && uv run ruff format --check .
 | `protocol` | `EventDraft`, `Event`, `Tag`, `check`/`validate`, `classify`, `choose_tag` |
 | `blackboard` | `EventStore` (`append`, `state`, `snapshot`, `fork`, `subscribe`), `BoardState` |
 | `scheduler` | `Scheduler`, `SchedulerConfig`, `Agent` protocol, mock agents |
+| `agents` | `make_client` (mock / OpenAI-compatible, token counts), `PEXAgent`, prompts, `parse_pxp` |
+| `counterfactual` | `replay` (sandbox, credit delta), `CounterfactualAgent` (credit assignment) |
 | `server` | `create_app` (REST + `/ws`), `--demo` streamer |
-| `bench` | `mscore` ingestor, `metrics` (`trial_row`, `MetricsWriter`), `plots` |
+| `bench` | `mscore` ingestor, `run` (resumable runner), `parse_check`, `metrics`, `plots` |
+| `configs/` | Job configs: `j2_baseline.json`, `j3_prelim.json` |
 | `ui/` | graph view, history scrubber, counterfactual split panel |
 
 ### MSCoRe notes
