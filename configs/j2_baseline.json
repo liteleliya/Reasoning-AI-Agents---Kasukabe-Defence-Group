@@ -1,0 +1,16 @@
+{
+  "name": "j2_baseline",
+  "sample": {
+    "n_per_group": 25,
+    "seed": 0,
+    "domains": ["law", "finance"],
+    "formats": ["single_choice"],
+    "difficulties": ["simple", "complex"]
+  },
+  "seeds": [0],
+  "n_agents": 3,
+  "n_counterfactual": [0],
+  "temperature": 0.7,
+  "max_tokens": 400,
+  "scheduler": {}
+}

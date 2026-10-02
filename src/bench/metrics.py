@@ -26,6 +26,7 @@ COLUMNS = (
     "session_id",
     "stop_reason",
     "converged",
+    "answer",
     "correct",
     "messages",
     "cycles",
@@ -35,11 +36,14 @@ COLUMNS = (
     "reject",
     "rollbacks",
     "incompatible",
+    "rejected",
+    "failed_replies",
     "intelligibility",
     "tokens_in",
     "tokens_out",
     "rollback_tokens_in",
     "rollback_tokens_out",
+    "unposted_tokens",
     "total_tokens",
     "wall_time_s",
 )
@@ -67,10 +71,19 @@ def trial_row(
     state: BoardState,
     meta: TrialMeta,
     *,
+    answer: str = "",
     correct: bool | None = None,
     wall_time_s: float | None = None,
+    rejected: int = 0,
+    failed_replies: int = 0,
+    unposted_tokens: int = 0,
 ) -> dict[str, Any]:
-    """One CSV row for a finished session. `correct` comes from the benchmark's judge (D2)."""
+    """One CSV row for a finished session.
+
+    `answer` is the session's final answer and `correct` the benchmark judge's verdict on it.
+    `unposted_tokens` are tokens spent on replies that never reached the board (unparseable
+    after the retry); they still count towards `total_tokens` (H3).
+    """
     msgs = [e for e in state.messages if e.author != "system"]
     counts = {t: sum(1 for e in msgs if e.tag is t) for t in Tag}
     replies = sum(1 for e in msgs if e.tag is not Tag.INIT)
@@ -88,6 +101,7 @@ def trial_row(
         "session_id": state.session_id,
         "stop_reason": state.stop_reason or "",
         "converged": state.stop_reason == "consensus",
+        "answer": answer,
         "correct": "" if correct is None else correct,
         "messages": len(msgs),
         "cycles": round(replies / meta.n_agents, 4),
@@ -97,12 +111,15 @@ def trial_row(
         "reject": counts[Tag.REJECT],
         "rollbacks": sum(1 for e in state.events if e.kind is Kind.ROLLBACK_START),
         "incompatible": sum(1 for e in msgs if e.meta.get("warnings")),
+        "rejected": rejected,
+        "failed_replies": failed_replies,
         "intelligibility": classify(state.events).label.value,
         "tokens_in": state.tokens_in,
         "tokens_out": state.tokens_out,
         "rollback_tokens_in": state.rollback_tokens_in,
         "rollback_tokens_out": state.rollback_tokens_out,
-        "total_tokens": state.total_tokens,
+        "unposted_tokens": unposted_tokens,
+        "total_tokens": state.total_tokens + unposted_tokens,
         "wall_time_s": "" if wall_time_s is None else round(wall_time_s, 3),
     }
     assert tuple(row) == COLUMNS
