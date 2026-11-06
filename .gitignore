@@ -18,10 +18,6 @@ htmlcov/
 *.sqlite
 *.sqlite3
 *.db
-data/
-results/*
-!results/.gitkeep
-!results/README.md
 
 # Node / UI
 node_modules/
