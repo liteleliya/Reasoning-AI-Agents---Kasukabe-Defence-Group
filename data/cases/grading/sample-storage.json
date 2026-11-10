@@ -1,0 +1,45 @@
+{
+  "id": "sample-storage",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "recollect"
+  ],
+  "conditions": [
+    {
+      "id": "temperature",
+      "description": "applies the 4–10 °C rule because the log shows 8 °C",
+      "patterns": [
+        "\\b8\\b",
+        "4.{0,12}10"
+      ]
+    },
+    {
+      "id": "limit",
+      "description": "compares four hours with the two-hour limit",
+      "patterns": [
+        "\\b2\\b|\\btwo\\b",
+        "\\b4\\b|\\bfour\\b"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "analyse",
+      "description": "analysing a sample past its limit invalidates the result",
+      "when": {
+        "decision": "analyse"
+      }
+    },
+    {
+      "id": "flagged",
+      "description": "a flag does not repair an expired sample",
+      "when": {
+        "decision": "analyse_flagged"
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2"
+  ]
+}

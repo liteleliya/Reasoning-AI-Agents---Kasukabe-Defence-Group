@@ -1,0 +1,41 @@
+{
+  "id": "event-capacity",
+  "split": "heldout",
+  "version": 1,
+  "domain": "operations",
+  "question": "How should capacity be prepared for the event?",
+  "context": "Each instance serves 1,000 requests per second. The account quota is four instances; raising it takes 24 hours.",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "The event starts in 30 minutes and traffic is forecast to peak at 2,800 requests per second."
+    },
+    {
+      "id": "E2",
+      "text": "Two instances run now. Starting a new instance takes eight minutes."
+    }
+  ],
+  "response": {
+    "decisions": [
+      "scale_now",
+      "wait"
+    ],
+    "fields": [
+      {
+        "name": "instances",
+        "kind": "number",
+        "unit": "instances",
+        "decisive": true,
+        "description": "instances running at the peak"
+      },
+      {
+        "name": "lead_time",
+        "kind": "duration",
+        "unit": "s",
+        "decisive": true,
+        "description": "time until the new instances serve traffic"
+      }
+    ],
+    "cite_evidence": true
+  }
+}

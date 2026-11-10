@@ -1,0 +1,45 @@
+{
+  "id": "refund-window",
+  "split": "dev",
+  "version": 1,
+  "domain": "finance",
+  "question": "May the customer be refunded in full?",
+  "context": "Policy P4 allows a full refund within 30 days of purchase if the item is unused; used items get a 50% credit instead.",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "The item was bought 22 days ago."
+    },
+    {
+      "id": "E2",
+      "text": "The return inspection found the seal broken and light wear."
+    }
+  ],
+  "response": {
+    "decisions": [
+      "refund",
+      "credit",
+      "deny"
+    ],
+    "fields": [
+      {
+        "name": "amount_pct",
+        "kind": "number",
+        "unit": "%",
+        "decisive": true,
+        "description": "percentage of the price returned"
+      },
+      {
+        "name": "form",
+        "kind": "enum",
+        "values": [
+          "cash",
+          "credit"
+        ],
+        "decisive": true,
+        "description": "refund or store credit"
+      }
+    ],
+    "cite_evidence": true
+  }
+}

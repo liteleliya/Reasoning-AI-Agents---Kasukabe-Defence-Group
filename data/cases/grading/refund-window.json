@@ -1,0 +1,45 @@
+{
+  "id": "refund-window",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "credit"
+  ],
+  "conditions": [
+    {
+      "id": "window",
+      "description": "notes 22 days is inside the 30-day window",
+      "patterns": [
+        "\\b22\\b",
+        "inside|within"
+      ]
+    },
+    {
+      "id": "used",
+      "description": "notes the item is used so only half applies",
+      "patterns": [
+        "\\bused\\b|\\bwear\\b|\\bseal\\b",
+        "\\b50\\s*%|\\bhalf\\b"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "full_refund",
+      "description": "a full refund ignores the used-item rule",
+      "when": {
+        "decision": "refund"
+      }
+    },
+    {
+      "id": "denied",
+      "description": "denying wrongly ignores the credit entitlement",
+      "when": {
+        "decision": "deny"
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2"
+  ]
+}

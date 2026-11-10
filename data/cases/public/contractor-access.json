@@ -1,0 +1,45 @@
+{
+  "id": "contractor-access",
+  "split": "heldout",
+  "version": 1,
+  "domain": "security",
+  "question": "Should the contractor's access be extended?",
+  "context": "Policy P7 limits contractor access to 90 days in total. Any longer needs a written exception from the security director.",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "The contractor has had access for 75 days."
+    },
+    {
+      "id": "E2",
+      "text": "The project needs another 20 days. The contractor's manager has approved the extension."
+    }
+  ],
+  "response": {
+    "decisions": [
+      "extend",
+      "exception",
+      "revoke"
+    ],
+    "fields": [
+      {
+        "name": "total_days",
+        "kind": "number",
+        "unit": "days",
+        "decisive": true,
+        "description": "total days of access if the plan is followed"
+      },
+      {
+        "name": "exception_signed",
+        "kind": "enum",
+        "values": [
+          "yes",
+          "no"
+        ],
+        "decisive": true,
+        "description": "is a written exception obtained"
+      }
+    ],
+    "cite_evidence": true
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "payment-plan",
+  "split": "heldout",
+  "version": 1,
+  "domain": "finance",
+  "question": "How should the $15,000 bill be paid?",
+  "context": "House rule: keep savings of at least three months of expenses, which is $9,000. The loan rate is 6% and savings earn 3%.",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "Savings are $20,000."
+    },
+    {
+      "id": "E2",
+      "text": "Monthly expenses are $3,000."
+    }
+  ],
+  "response": {
+    "decisions": [
+      "lump_sum",
+      "finance_all",
+      "split"
+    ],
+    "fields": [
+      {
+        "name": "reserve_kept",
+        "kind": "enum",
+        "values": [
+          "yes",
+          "no"
+        ],
+        "decisive": true,
+        "description": "does the plan keep the $9,000 reserve"
+      },
+      {
+        "name": "financed",
+        "kind": "number",
+        "unit": "USD",
+        "decisive": false,
+        "description": "amount financed"
+      }
+    ],
+    "cite_evidence": true
+  }
+}

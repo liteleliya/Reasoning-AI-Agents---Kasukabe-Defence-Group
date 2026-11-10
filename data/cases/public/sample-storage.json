@@ -1,0 +1,45 @@
+{
+  "id": "sample-storage",
+  "split": "heldout",
+  "version": 1,
+  "domain": "science",
+  "question": "Can the stored sample still be analysed?",
+  "context": "Protocol L4: a sample may wait up to six hours at 4 °C or below, but only two hours between 4 °C and 10 °C.",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "The storage log shows the sample at 8 °C."
+    },
+    {
+      "id": "E2",
+      "text": "It has been stored for four hours."
+    }
+  ],
+  "response": {
+    "decisions": [
+      "analyse",
+      "analyse_flagged",
+      "recollect"
+    ],
+    "fields": [
+      {
+        "name": "limit",
+        "kind": "duration",
+        "unit": "s",
+        "decisive": true,
+        "description": "time limit that applies at the logged temperature"
+      },
+      {
+        "name": "flag",
+        "kind": "enum",
+        "values": [
+          "yes",
+          "no"
+        ],
+        "decisive": false,
+        "description": "is the result flagged"
+      }
+    ],
+    "cite_evidence": true
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "id": "shipping-route",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "air"
+  ],
+  "conditions": [
+    {
+      "id": "deadline",
+      "description": "notes sea freight misses the 10-day deadline",
+      "patterns": [
+        "\\b21\\b",
+        "\\b10\\b"
+      ]
+    },
+    {
+      "id": "budget",
+      "description": "notes air freight fits the $12,000 budget",
+      "patterns": [
+        "11[,.]?000",
+        "12[,.]?000"
+      ]
+    },
+    {
+      "id": "customs",
+      "description": "files the pre-clearance forms",
+      "patterns": [
+        "\\bpre-?clear"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "sea",
+      "description": "sea freight arrives after the deadline",
+      "when": {
+        "decision": "sea"
+      }
+    },
+    {
+      "id": "late_forms",
+      "description": "air without pre-clearance risks a customs delay",
+      "when": {
+        "decision": "air",
+        "preclear": "none"
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2"
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "id": "patch-window",
+  "split": "dev",
+  "version": 1,
+  "domain": "security",
+  "question": "Should the exploited vulnerability be patched now or in the scheduled window?",
+  "context": "Policy P2 requires critical vulnerabilities that are being exploited to be patched within 72 hours of disclosure. Emergency changes need approval from the change board.",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "The vulnerability was disclosed 30 hours ago and exploitation is confirmed."
+    },
+    {
+      "id": "E2",
+      "text": "The next scheduled maintenance window is in five days."
+    },
+    {
+      "id": "E3",
+      "text": "The change board can approve an emergency change within four hours."
+    }
+  ],
+  "response": {
+    "decisions": [
+      "emergency",
+      "scheduled"
+    ],
+    "fields": [
+      {
+        "name": "deadline_left",
+        "kind": "duration",
+        "unit": "s",
+        "decisive": true,
+        "description": "time left before the 72-hour limit"
+      },
+      {
+        "name": "approval",
+        "kind": "enum",
+        "values": [
+          "before",
+          "none"
+        ],
+        "decisive": true,
+        "description": "is board approval obtained before patching"
+      }
+    ],
+    "cite_evidence": true
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "id": "shipping-route",
+  "split": "heldout",
+  "version": 1,
+  "domain": "logistics",
+  "question": "Which shipping route should the order take?",
+  "context": "The order must arrive within 10 days. The budget is $12,000.",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "Sea freight takes 21 days and costs $3,000."
+    },
+    {
+      "id": "E2",
+      "text": "Air freight takes 3 days and costs $11,000. Customs adds one day unless pre-clearance forms are filed two days before dispatch."
+    }
+  ],
+  "response": {
+    "decisions": [
+      "sea",
+      "air"
+    ],
+    "fields": [
+      {
+        "name": "preclear",
+        "kind": "enum",
+        "values": [
+          "before",
+          "none"
+        ],
+        "decisive": true,
+        "description": "are the customs forms filed before dispatch"
+      },
+      {
+        "name": "cost",
+        "kind": "number",
+        "unit": "USD",
+        "decisive": false,
+        "description": "cost of the chosen route"
+      }
+    ],
+    "cite_evidence": true
+  }
+}

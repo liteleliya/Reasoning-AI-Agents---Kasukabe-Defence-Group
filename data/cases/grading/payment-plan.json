@@ -1,0 +1,45 @@
+{
+  "id": "payment-plan",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "split"
+  ],
+  "conditions": [
+    {
+      "id": "reserve",
+      "description": "notes paying all $15,000 leaves $5,000 which is below $9,000",
+      "patterns": [
+        "5[,.]?000",
+        "9[,.]?000"
+      ]
+    },
+    {
+      "id": "split",
+      "description": "pays at most $11,000 from savings and finances the rest",
+      "patterns": [
+        "11[,.]?000",
+        "4[,.]?000"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "lump_sum",
+      "description": "a lump sum leaves savings below the reserve",
+      "when": {
+        "decision": "lump_sum"
+      }
+    },
+    {
+      "id": "no_reserve",
+      "description": "any plan that drops the reserve breaks the house rule",
+      "when": {
+        "reserve_kept": "no"
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2"
+  ]
+}

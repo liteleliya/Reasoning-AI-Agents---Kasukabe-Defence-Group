@@ -1,0 +1,44 @@
+{
+  "id": "contractor-access",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "exception"
+  ],
+  "conditions": [
+    {
+      "id": "total",
+      "description": "adds 75 and 20 to reach 95 days, over the 90-day limit",
+      "patterns": [
+        "\\b95\\b"
+      ]
+    },
+    {
+      "id": "authority",
+      "description": "notes only the security director can grant the exception",
+      "patterns": [
+        "security director|exception"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "extend",
+      "description": "extending past 90 days breaks the policy without an exception",
+      "when": {
+        "decision": "extend"
+      }
+    },
+    {
+      "id": "unsigned",
+      "description": "an exception counts only once it is written and signed",
+      "when": {
+        "decision": "exception",
+        "exception_signed": "no"
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2"
+  ]
+}

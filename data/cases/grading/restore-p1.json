@@ -1,0 +1,52 @@
+{
+  "id": "restore-p1",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "B"
+  ],
+  "conditions": [
+    {
+      "id": "downtime",
+      "description": "compares two minutes with the four-minute limit",
+      "patterns": [
+        "(2|two)\\s*(min|minute)",
+        "\\b120\\s*s"
+      ]
+    },
+    {
+      "id": "data_loss",
+      "description": "compares 30 seconds with the 60-second limit",
+      "patterns": [
+        "\\b30\\s*(s|sec)",
+        "\\bhalf\\b"
+      ]
+    },
+    {
+      "id": "preflight",
+      "description": "checks replication lag before execution",
+      "patterns": [
+        "\\blag\\b"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "chose_a",
+      "description": "Plan A breaks the four-minute downtime limit",
+      "when": {
+        "decision": "A"
+      }
+    },
+    {
+      "id": "assumed_zero_loss",
+      "description": "assumes Plan B loses no data",
+      "when": {
+        "data_loss": 0
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2"
+  ]
+}

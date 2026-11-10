@@ -1,0 +1,48 @@
+{
+  "id": "rollback-release",
+  "split": "heldout",
+  "version": 1,
+  "domain": "operations",
+  "question": "The new release is failing. Roll back or ship a hotfix?",
+  "context": "Policy P5 requires an error rate above 2% to be mitigated within 15 minutes of detection.",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "Monitoring shows a 4% error rate since the release, detected just now."
+    },
+    {
+      "id": "E2",
+      "text": "Rolling back takes five minutes. Writes queued in the last three minutes are lost unless the queue is drained first, which takes one minute."
+    },
+    {
+      "id": "E3",
+      "text": "Engineers estimate a hotfix needs 40 minutes including review."
+    }
+  ],
+  "response": {
+    "decisions": [
+      "rollback",
+      "hotfix"
+    ],
+    "fields": [
+      {
+        "name": "time_to_fix",
+        "kind": "duration",
+        "unit": "s",
+        "decisive": true,
+        "description": "time until the error rate is back under 2%"
+      },
+      {
+        "name": "drain",
+        "kind": "enum",
+        "values": [
+          "before",
+          "none"
+        ],
+        "decisive": true,
+        "description": "is the write queue drained before rollback"
+      }
+    ],
+    "cite_evidence": true
+  }
+}

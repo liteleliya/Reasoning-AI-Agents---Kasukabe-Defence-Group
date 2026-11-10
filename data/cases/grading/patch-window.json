@@ -1,0 +1,46 @@
+{
+  "id": "patch-window",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "emergency"
+  ],
+  "conditions": [
+    {
+      "id": "deadline",
+      "description": "notes about 42 hours remain and the window is five days away",
+      "patterns": [
+        "\\b42\\b",
+        "(5|five)\\s*day"
+      ]
+    },
+    {
+      "id": "approval",
+      "description": "obtains change board approval first",
+      "patterns": [
+        "\\b(change board|approval)\\b"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "waits",
+      "description": "waiting five days exceeds the 72-hour limit",
+      "when": {
+        "decision": "scheduled"
+      }
+    },
+    {
+      "id": "skips_approval",
+      "description": "patches without board approval",
+      "when": {
+        "decision": "emergency",
+        "approval": "none"
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2",
+    "E3"
+  ]
+}

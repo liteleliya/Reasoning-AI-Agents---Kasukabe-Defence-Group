@@ -1,0 +1,51 @@
+{
+  "id": "deletion-request",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "delete_partial"
+  ],
+  "conditions": [
+    {
+      "id": "deadline",
+      "description": "notes ten days remain",
+      "patterns": [
+        "\\b10\\b|\\bten\\b"
+      ]
+    },
+    {
+      "id": "hold",
+      "description": "keeps the billing records under the legal hold",
+      "patterns": [
+        "\\bbilling\\b"
+      ]
+    },
+    {
+      "id": "scope",
+      "description": "deletes the profile and usage data",
+      "patterns": [
+        "\\bprofile\\b",
+        "\\busage\\b"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "delete_all",
+      "description": "deleting everything destroys records under a legal hold",
+      "when": {
+        "decision": "delete_all"
+      }
+    },
+    {
+      "id": "refuse",
+      "description": "refusing outright breaches the deletion duty for the data not held",
+      "when": {
+        "decision": "refuse"
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2"
+  ]
+}

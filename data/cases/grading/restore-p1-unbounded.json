@@ -1,0 +1,53 @@
+{
+  "id": "restore-p1-unbounded",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "B"
+  ],
+  "conditions": [
+    {
+      "id": "downtime",
+      "description": "compares two minutes with the four-minute limit",
+      "patterns": [
+        "(2|two)\\s*(min|minute)",
+        "\\b120\\s*s"
+      ]
+    },
+    {
+      "id": "unbounded",
+      "description": "says the data loss of Plan B is not known to fit the limit",
+      "patterns": [
+        "(no|without|unknown|not).{0,40}(bound|limit|upper|known)",
+        "\\bunbounded\\b"
+      ]
+    },
+    {
+      "id": "preflight",
+      "description": "makes the choice conditional on measuring replication lag",
+      "patterns": [
+        "\\blag\\b"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "chose_a",
+      "description": "Plan A breaks the four-minute downtime limit",
+      "when": {
+        "decision": "A"
+      }
+    },
+    {
+      "id": "unchecked_b",
+      "description": "recommends B without measuring replication lag",
+      "when": {
+        "decision": "B",
+        "lag_check": "none"
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2"
+  ]
+}

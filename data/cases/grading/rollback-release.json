@@ -1,0 +1,46 @@
+{
+  "id": "rollback-release",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "rollback"
+  ],
+  "conditions": [
+    {
+      "id": "deadline",
+      "description": "compares the fix time with the 15-minute limit",
+      "patterns": [
+        "\\b15\\b",
+        "(5|six|6)\\s*(min|minute)"
+      ]
+    },
+    {
+      "id": "loss",
+      "description": "avoids losing the queued writes",
+      "patterns": [
+        "\\b(drain|queue)\\b"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "hotfix_late",
+      "description": "forty minutes breaks the 15-minute limit",
+      "when": {
+        "decision": "hotfix"
+      }
+    },
+    {
+      "id": "data_loss",
+      "description": "rolls back without draining the queue",
+      "when": {
+        "decision": "rollback",
+        "drain": "none"
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2",
+    "E3"
+  ]
+}

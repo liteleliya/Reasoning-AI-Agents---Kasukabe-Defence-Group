@@ -1,0 +1,45 @@
+{
+  "id": "deletion-request",
+  "split": "heldout",
+  "version": 1,
+  "domain": "legal",
+  "question": "How should the data deletion request be handled?",
+  "context": "Policy P6 requires a deletion request to be completed within 30 days. Records under a legal hold must be kept until the hold is lifted.",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "The request arrived 20 days ago and covers all data held on the user."
+    },
+    {
+      "id": "E2",
+      "text": "A legal hold covers the user's billing records until the case closes. Profile and usage data are not under the hold."
+    }
+  ],
+  "response": {
+    "decisions": [
+      "delete_all",
+      "delete_partial",
+      "refuse"
+    ],
+    "fields": [
+      {
+        "name": "days_left",
+        "kind": "number",
+        "unit": "days",
+        "decisive": true,
+        "description": "days left to complete the request"
+      },
+      {
+        "name": "hold_kept",
+        "kind": "enum",
+        "values": [
+          "yes",
+          "no"
+        ],
+        "decisive": true,
+        "description": "are the held records kept"
+      }
+    ],
+    "cite_evidence": true
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "id": "event-capacity",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "scale_now"
+  ],
+  "conditions": [
+    {
+      "id": "need",
+      "description": "works out three instances are needed for 2,800 requests per second",
+      "patterns": [
+        "\\b3\\b|\\bthree\\b",
+        "2[,.]?800"
+      ]
+    },
+    {
+      "id": "quota",
+      "description": "stays within the four-instance quota",
+      "patterns": [
+        "\\bquota\\b|\\bfour\\b|\\b4\\b"
+      ]
+    },
+    {
+      "id": "lead",
+      "description": "notes eight minutes fits inside the 30 minutes",
+      "patterns": [
+        "\\b8\\b|\\beight\\b"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "waits",
+      "description": "waiting cannot add capacity before the event",
+      "when": {
+        "decision": "wait"
+      }
+    },
+    {
+      "id": "over_quota",
+      "description": "more than four instances exceeds the quota",
+      "when": {
+        "instances": {
+          "gt": 4
+        }
+      }
+    },
+    {
+      "id": "under",
+      "description": "fewer than three instances cannot serve the peak",
+      "when": {
+        "instances": {
+          "lt": 3
+        }
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "id": "restore-p1-unbounded",
+  "split": "dev",
+  "version": 1,
+  "domain": "operations",
+  "question": "How should service be restored under policy P1?",
+  "context": "Policy P1 allows up to four minutes of downtime and up to 60 seconds of data loss.",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "Plan A needs six minutes and loses no data."
+    },
+    {
+      "id": "E2",
+      "text": "Plan B needs two minutes and may lose data; the report gives no upper bound."
+    }
+  ],
+  "response": {
+    "decisions": [
+      "A",
+      "B"
+    ],
+    "fields": [
+      {
+        "name": "downtime",
+        "kind": "duration",
+        "unit": "s",
+        "decisive": true,
+        "description": "downtime of the chosen plan"
+      },
+      {
+        "name": "lag_check",
+        "kind": "enum",
+        "values": [
+          "before",
+          "none"
+        ],
+        "decisive": true,
+        "description": "is replication lag measured before execution"
+      }
+    ],
+    "cite_evidence": true
+  }
+}

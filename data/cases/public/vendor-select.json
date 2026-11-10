@@ -1,0 +1,48 @@
+{
+  "id": "vendor-select",
+  "split": "heldout",
+  "version": 1,
+  "domain": "procurement",
+  "question": "Which vendor should supply the equipment?",
+  "context": "Policy P3: purchases above $40,000 need at least a 12-month warranty and delivery within 45 days. The spending cap is $50,000.",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "Vendor X charges $46,000, delivers in 30 days and gives a 6-month warranty. Extending the warranty to 12 months costs $3,000 more."
+    },
+    {
+      "id": "E2",
+      "text": "Vendor Y charges $44,000, delivers in 60 days and gives a 12-month warranty."
+    }
+  ],
+  "response": {
+    "decisions": [
+      "X",
+      "Y"
+    ],
+    "fields": [
+      {
+        "name": "total_cost",
+        "kind": "number",
+        "unit": "USD",
+        "decisive": true,
+        "description": "total cost of the chosen offer"
+      },
+      {
+        "name": "warranty",
+        "kind": "number",
+        "unit": "months",
+        "decisive": true,
+        "description": "warranty length of the chosen offer"
+      },
+      {
+        "name": "delivery",
+        "kind": "number",
+        "unit": "days",
+        "decisive": false,
+        "description": "delivery time in days"
+      }
+    ],
+    "cite_evidence": true
+  }
+}

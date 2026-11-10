@@ -1,0 +1,55 @@
+{
+  "id": "vendor-select",
+  "rubric_version": 1,
+  "acceptable_decisions": [
+    "X"
+  ],
+  "conditions": [
+    {
+      "id": "cost",
+      "description": "adds the $3,000 extension to reach $49,000 under the $50,000 cap",
+      "patterns": [
+        "49[,.]?000",
+        "\\$49"
+      ]
+    },
+    {
+      "id": "warranty",
+      "description": "requires the 12-month warranty",
+      "patterns": [
+        "12[- ]month|\\b12\\b"
+      ]
+    },
+    {
+      "id": "delivery",
+      "description": "notes 30 days meets the 45-day limit and 60 days does not",
+      "patterns": [
+        "\\b45\\b",
+        "\\b60\\b"
+      ]
+    }
+  ],
+  "critical": [
+    {
+      "id": "chose_y",
+      "description": "Y delivers in 60 days, beyond the 45-day limit",
+      "when": {
+        "decision": "Y"
+      }
+    },
+    {
+      "id": "short_warranty",
+      "description": "X without the extension breaks the warranty rule",
+      "when": {
+        "decision": "X",
+        "warranty": {
+          "lt": 12
+        }
+      }
+    }
+  ],
+  "evidence_required": [
+    "E1",
+    "E2"
+  ]
+}
