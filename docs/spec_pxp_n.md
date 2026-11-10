@@ -144,7 +144,16 @@ is recorded as the skip reason rather than silently dropped.
 `failed_turns` means every agent passed on the same board and at least one of those turns ended in a
 parse failure or a model error, so it is not a debate stall. Skip reasons: `roster_incomplete`,
 `no_disagreement`, `no_full_window`, `no_challenged_reply`, `not_enabled`, `budget_exhausted`,
-`recovery_disabled`. Outcomes: `no_reply`, `reply_accepted`, `reply_rejected`.
+`recovery_disabled`. Outcomes: `reply_accepted` (the store took a real reply), `reply_rejected`
+(the store refused it), `no_reply` (the policy gave none), and, from the replay policy,
+`candidate_failed`, `incomplete` (a branch could not finish), `not_helpful` (the sandbox distance
+did not strictly drop), `stale_target` (no live message was left to answer) and `no_author`.
+
+The replay policy keeps three results apart: the sandbox reached agreement
+(`replay.simulated_agreement`), a real reply was adopted (`outcome = reply_accepted`) and the
+session ended in consensus (`stop_reason`). Whether that consensus is correct is judged offline.
+An adopted reply answers the challenger, or a newer message, on the board as it is when the
+replay finishes; it carries the `replay_id` and `adopted_counterfactual` in its metadata.
 
 ### 4.2 Turn diagnostics and the sidecar
 
