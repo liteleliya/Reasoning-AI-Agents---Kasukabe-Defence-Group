@@ -119,6 +119,47 @@ The scheduler checks, after every appended message:
 On the first condition met, the scheduler writes TERM with that reason. H1 counts `consensus` as
 success. Rollback events do not count towards W or the cap; their tokens count towards H3.
 
+### 4.1 Recovery checkpoint
+
+When the scheduler is about to write TERM `impasse`, it first diagnoses the committed board, once
+per session. Consensus and the message cap are never diagnosed, so an early consensus opens no
+recovery window and the cap stays a hard limit.
+
+The board is **eligible** when every agent has opened and replied, the group still disagrees, a
+full window of valid replies brought no better distance, and some reply was answered with REFUTE or
+REJECT by another agent. The target is the newest such reply by sequence number (a reply that
+already has a rollback is not available again); the challenger is the earliest REFUTE/REJECT of it.
+Detection runs first. Afterwards the capability (the target's author must be counterfactual-enabled),
+the budget (`recovery_budget`) and the presence of a recovery policy are checked, and a failed check
+is recorded as the skip reason rather than silently dropped.
+
+`TERM.explanation` keeps the stop reason (`consensus`, `impasse`, `cap`). `TERM.meta` adds:
+
+| Key | Meaning |
+|---|---|
+| `detail` | `consensus`, `message_cap`, `no_progress`, `debate_stall`, `all_passed` or `failed_turns` |
+| `decision_seq` | the last committed event when the stop was decided |
+| `recovery` | `{eligible, skip_reason, outcome}`, present when the board was diagnosed |
+
+`failed_turns` means every agent passed on the same board and at least one of those turns ended in a
+parse failure or a model error, so it is not a debate stall. Skip reasons: `roster_incomplete`,
+`no_disagreement`, `no_full_window`, `no_challenged_reply`, `not_enabled`, `budget_exhausted`,
+`recovery_disabled`. Outcomes: `no_reply`, `reply_accepted`, `reply_rejected`.
+
+### 4.2 Turn diagnostics and the sidecar
+
+An agent that offers `take_turn` returns a `TurnResult` naming why no message came out
+(`no_target`, `parse_failure`, `model_error`) and the ids of the model calls it made; plain agents
+that return a draft or `None` are adapted (`passed`). The scheduler keeps a note per passed turn,
+per draft the store refused (`invalid_draft`) and per RATIFY whose prediction differs from the
+message it ratifies (`tag_mismatch`, a diagnostic only). Notes and the opportunity record are not
+events, so they never count as real messages.
+
+When a `Sidecar` is given, each diagnosed session appends one JSON line (session id, `seq`, detail,
+roster, enabled agents, distance, target, challenger, policy, remaining budget, skip reason,
+outcome). `load_opportunities` reads them back by session id; archived sessions with no entry
+have limited diagnostics.
+
 ## 5. Counterfactual replay (rules the sandbox must follow)
 
 - Only a counterfactual-enabled agent may roll back, and only its **own** past message.
