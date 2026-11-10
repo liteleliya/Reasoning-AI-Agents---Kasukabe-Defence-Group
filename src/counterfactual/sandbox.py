@@ -40,7 +40,7 @@ class ReplayResult:
         return self.distance_replay - self.distance_real
 
 
-def _latest(events: Sequence[Event]) -> dict[str, str]:
+def latest_predictions(events: Sequence[Event]) -> dict[str, str]:
     latest: dict[str, str] = {}
     for e in events:
         if e.kind is Kind.MESSAGE and not e.counterfactual and e.author != SYSTEM and e.tag:
@@ -88,7 +88,7 @@ async def replay(
             continue  # an off-protocol reply simply does not happen in the replay
     fork.close()
 
-    distance_replay = distance(_latest([*real[:target_seq], *steps]))
+    distance_replay = distance(latest_predictions([*real[:target_seq], *steps]))
     # what really happened over the same number of messages from the target on
     following = [
         e
@@ -98,7 +98,7 @@ async def replay(
         and not e.counterfactual
         and e.author != SYSTEM
     ]
-    distance_real = distance(_latest([*real[:target_seq], *following[: len(steps)]]))
+    distance_real = distance(latest_predictions([*real[:target_seq], *following[: len(steps)]]))
     result = ReplayResult(
         target=target,
         steps=steps,
