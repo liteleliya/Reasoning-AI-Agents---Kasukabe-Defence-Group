@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import csv
 import os
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -12,6 +12,17 @@ from typing import Any
 from agents.ledger import CallRecord
 from blackboard import BoardState
 from protocol import Kind, Tag, classify
+
+PAIRED_COLUMNS = (
+    "arm",
+    "checkpoint",
+    "skip_reason",
+    "recovery_outcome",
+    "credit_delta",
+    "prefix_tokens",
+    "intervention_calls",
+    "intervention_tokens",
+)
 
 COLUMNS = (
     "trial_key",
@@ -56,6 +67,14 @@ COLUMNS = (
     "ledger_tokens_out",
     "ledger_unposted_tokens",
     "ledger_missing",
+    "arm",
+    "checkpoint",
+    "skip_reason",
+    "recovery_outcome",
+    "credit_delta",
+    "prefix_tokens",
+    "intervention_calls",
+    "intervention_tokens",
     "grading_tokens",
 )
 
@@ -93,6 +112,7 @@ def trial_row(
     decision_seq: int | None = None,
     agreement_basis: str = "",
     productive_revisions: int | None = None,
+    paired: Mapping[str, Any] | None = None,
     grading_tokens: int | None = None,
 ) -> dict[str, Any]:
     """One CSV row for a finished session.
@@ -104,7 +124,9 @@ def trial_row(
     With the trial's `ledger` rows, `total_tokens` is the sum over every model call, the board
     tokens are the subtotal of calls that events list in `meta["call_ids"]`, and calls no event
     lists are the ledger's unposted tokens. Calls with unknown usage are counted as missing and
-    add nothing. `agreement_basis` says how agreement was decided: exact match, a verified
+    add nothing. `paired` holds the columns of a three-arm trial (arm, whether the shared
+    checkpoint opened, the recovery outcome, and the prefix and intervention costs); other trials
+    leave them blank. `agreement_basis` says how agreement was decided: exact match, a verified
     key, or approximate lexical overlap. `grading_tokens` is the offline grading cost and never
     part of the trial total.
     """
@@ -150,6 +172,7 @@ def trial_row(
         "agreement_basis": agreement_basis,
         "productive_revisions": "" if productive_revisions is None else productive_revisions,
         **_ledger_columns(state, ledger),
+        **{k: (paired or {}).get(k, "") for k in PAIRED_COLUMNS},
         "grading_tokens": "" if grading_tokens is None else grading_tokens,
     }
     if ledger is not None:

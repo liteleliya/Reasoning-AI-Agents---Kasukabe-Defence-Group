@@ -180,3 +180,14 @@ def test_productive_revisions_are_a_separate_count_from_the_intelligibility_labe
     assert trial_row(state, META)["productive_revisions"] == ""
     row = trial_row(state, META, productive_revisions=2)
     assert row["productive_revisions"] == 2 and row["intelligibility"]
+
+
+def test_paired_columns_are_blank_unless_given() -> None:
+    state = consensus_state().state("s")
+    blank = trial_row(state, META)
+    assert blank["arm"] == "" and blank["prefix_tokens"] == ""
+    row = trial_row(
+        state, META, paired={"arm": "replay", "checkpoint": "opened", "credit_delta": -0.33}
+    )
+    assert row["arm"] == "replay" and row["credit_delta"] == -0.33
+    assert row["skip_reason"] == "" and tuple(row) == COLUMNS

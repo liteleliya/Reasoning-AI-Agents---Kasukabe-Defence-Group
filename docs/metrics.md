@@ -37,6 +37,13 @@ The file is append-only and fsynced per row; `trial_key` is unique and is what a
 | `ledger_missing` | Calls whose usage is unknown (they failed before a reply); they add no tokens |
 | `agreement_basis` | How agreement was decided: `exact` (letters, judgment), `key` (authored decision key) or `approximate` (open QA lexical overlap; not a verified key) |
 | `productive_revisions` | Replies that answer a challenge with a supported change and lower the group's distance within the next three real replies (or by a consensus stop). Separate from the Strong/Ultra-Strong `intelligibility` label |
+| `arm` | `standard`, `forward` or `replay` in a three-arm paired trial; blank otherwise |
+| `checkpoint` | `opened` if the shared prefix reached an eligible recovery checkpoint, else `none` (all arms then share the ordinary terminal outcome) |
+| `skip_reason` | Why the checkpoint did not open or the policy did not run |
+| `recovery_outcome` | What the arm's policy ended with (`reply_accepted`, `not_helpful`, `no_reply`, ...) |
+| `credit_delta` | Replay arm: replacement minus original distance on the matched forks (unrounded) |
+| `prefix_tokens` | Model tokens spent on the shared prefix; already inside `total_tokens` of every arm |
+| `intervention_calls`, `intervention_tokens` | Model calls and tokens spent after the shared trigger |
 | `grading_tokens` | Offline grading cost; never part of `total_tokens` |
 
 With a ledger, `total_tokens` is `ledger_tokens_in + ledger_tokens_out`: every call once. The board
