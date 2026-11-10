@@ -84,6 +84,7 @@ class Opportunity:
         None  # why the attempt ended; reply_accepted means a real reply was posted
     )
     replay: dict[str, Any] | None = None  # what the recovery policy found, if it ran a replay
+    intervention: dict[str, Any] | None = None  # what a control policy asked for and got
 
     def to_record(self) -> dict[str, Any]:
         return asdict(self)

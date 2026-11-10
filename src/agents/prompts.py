@@ -115,6 +115,12 @@ def init_messages(persona: Persona, agent_id: str, question: str, n_agents: int 
     ]
 
 
+RETHINK = (
+    "Your earlier reply was challenged and the discussion has stalled. Reconsider the challenge "
+    "on its merits: either defend your answer with a new argument or change your answer.\n"
+)
+
+
 def reply_messages(
     persona: Persona,
     agent_id: str,
@@ -125,6 +131,7 @@ def reply_messages(
     n_agents: int | None = None,
     max_events: int = 12,
     notes: Sequence[str] = (),
+    rethink: bool = False,
 ):
     lessons = "".join(f"\nNote to yourself: {n}" for n in notes)
     return [
@@ -134,6 +141,7 @@ def reply_messages(
             "content": f"Question:\n{question}\n\nBoard so far:\n{render_board(board, max_events)}"
             f"\n\nYour current prediction: {own_prediction}{lessons}\n"
             f"Reply to message [{target.seq}] by {target.author}:\n{render_event(target)}\n\n"
+            f"{RETHINK if rethink else ''}"
             f"Use tag RATIFY, REVISE, REFUTE or REJECT, and reply_to {target.seq}.",
         },
     ]

@@ -61,8 +61,13 @@ class PEXAgent:
             return TurnResult(None, TurnReason.NO_TARGET)
         return await self.reply_to_target(question, board, target)
 
-    async def reply_to_target(self, question: str, board: BoardState, target: Event) -> TurnResult:
-        """Answer `target` itself instead of the message the normal picker would choose."""
+    async def reply_to_target(
+        self, question: str, board: BoardState, target: Event, *, rethink: bool = False
+    ) -> TurnResult:
+        """Answer `target` itself instead of the message the normal picker would choose.
+
+        With `rethink`, the prompt says the agent's earlier reply was challenged (forward repair).
+        """
         msgs = reply_messages(
             self.persona,
             self.name,
@@ -72,6 +77,7 @@ class PEXAgent:
             board.latest[self.name].prediction,
             self.n_agents,
             notes=self.notes,
+            rethink=rethink,
         )
         return await self._ask(board, msgs, None, target, ("RATIFY", "REVISE", "REFUTE", "REJECT"))
 

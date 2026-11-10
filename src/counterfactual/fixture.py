@@ -124,7 +124,9 @@ class RotatingAgent:
             return self._draft(board, alt.tag, target.seq, alt.prediction or "", alt.explanation)
         return self._reply(board, target, sent)
 
-    async def reply_to_target(self, question: str, board: BoardState, target: Event) -> EventDraft:
+    async def reply_to_target(
+        self, question: str, board: BoardState, target: Event, *, rethink: bool = False
+    ) -> EventDraft:
         """Answer `target` whatever the turn order is; used by the sandbox branches."""
         sent = sum(1 for e in board.messages if e.author == self.name)
         return self._reply(board, target, sent)
