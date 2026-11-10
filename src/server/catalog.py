@@ -13,17 +13,10 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
+from bench.labels import case_label
+
 _TRIAL = re.compile(r"^(?P<config>[^|]+)\|[^|]+\|(?P<case>.+)\|(?P<seed>\d+)(?:~r\d+)?$")
 _ARM = re.compile(r"^(?P<case>.+)-(?P<arm>off|on)$")
-
-
-def case_label(case_id: str) -> str:
-    """A short readable name: `Data2/Law/Single-choice/complex#2534` becomes `Law complex #2534`."""
-    left, hash_, number = case_id.partition("#")
-    parts = left.split("/")
-    if not hash_ or len(parts) < 3:
-        return case_id
-    return f"{parts[1]} {parts[-1]} #{number}"
 
 
 def describe_session(

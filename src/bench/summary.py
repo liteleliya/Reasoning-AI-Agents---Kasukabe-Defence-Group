@@ -11,7 +11,7 @@ import statistics
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from server.catalog import case_label
+from bench.labels import case_label
 
 KINDS = ("historical", "controlled", "model")  # what the run is evidence of
 
