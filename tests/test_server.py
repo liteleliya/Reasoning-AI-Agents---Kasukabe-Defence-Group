@@ -50,6 +50,25 @@ def test_rest_endpoints() -> None:
     assert c.get("/api/sessions/nope/events").status_code == 404
 
 
+def test_query_routes_select_sessions_with_reserved_characters() -> None:
+    sid = "j3_prelim_hot-cf2|mscore|law/complex#2534|0"
+    store = EventStore()
+    store.append_sync(init(sid, "a"))
+    store.append_sync(init(sid, "b"))
+    store.append_sync(init("plain", "z"))
+    c = client_with(store)
+    assert sid in [s["session_id"] for s in c.get("/api/sessions").json()]
+    events = c.get("/api/events", params={"session_id": sid}).json()
+    assert [e["author"] for e in events] == ["a", "b"]
+    assert len(c.get("/api/events", params={"session_id": sid, "upto": 0}).json()) == 1
+    snap = c.get("/api/snapshot", params={"session_id": sid, "at": 0}).json()
+    assert snap["session_id"] == sid and snap["predictions"] == {"a": "a"}
+    assert c.get("/api/snapshot", params={"session_id": sid}).json()["seq"] == 1
+    assert c.get("/api/events", params={"session_id": "nope"}).status_code == 404
+    assert c.get("/api/snapshot", params={"session_id": "nope"}).status_code == 404
+    assert c.get("/api/events").status_code == 422  # session_id is required
+
+
 def test_websocket_sends_backlog_then_live_events() -> None:
     store = EventStore()
     store.append_sync(init("s", "a"))
