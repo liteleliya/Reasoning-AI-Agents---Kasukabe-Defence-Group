@@ -24,6 +24,7 @@ from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
+from agents.ledger import CallLedger, call_scope
 from agents.llm_client import BaseLLMClient, MockClient, make_client
 from agents.pex_agent import PEXAgent
 from agents.prompts import answer_instructions, persona_for
@@ -216,9 +217,10 @@ async def run_trial(
     fmt = trial.instance.format
     agents = make_agents(trial, client, job, store)
     sid = fresh_session_id(store, trial.meta.key)
-    result = await Scheduler(store, agents, scheduler_config(fmt, job)).run(
-        sid, question_text(trial.instance)
-    )
+    with call_scope(trial=trial.meta.key):
+        result = await Scheduler(store, agents, scheduler_config(fmt, job)).run(
+            sid, question_text(trial.instance)
+        )
     same, correct = judging(fmt)
     answer = final_answer(result.state.predictions, same)
     unposted = sum(
@@ -233,6 +235,9 @@ async def run_trial(
         rejected=len(result.rejected),
         failed_replies=sum(getattr(a, "failures", 0) for a in agents),
         unposted_tokens=unposted,
+        ledger=client.ledger.for_trial(trial.meta.key),
+        stop_detail=result.stop_detail,
+        decision_seq=result.decision_seq,
     )
 
 
@@ -300,6 +305,7 @@ async def run_job(
     """Run the job's unfinished trials for this shard; returns the rows written this time."""
     out.mkdir(parents=True, exist_ok=True)
     client = client or make_client()
+    client.ledger = CallLedger(out / "calls.jsonl")  # every model call of this run, for audits
     instances = instances if instances is not None else sample(**job.sample)
     trials = shard_of(build_trials(job, instances, getattr(client, "model", "")), shard)
     if limit is not None:

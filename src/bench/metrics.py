@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import csv
 import os
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from agents.ledger import CallRecord
 from blackboard import BoardState
 from protocol import Kind, Tag, classify
 
@@ -46,6 +47,14 @@ COLUMNS = (
     "unposted_tokens",
     "total_tokens",
     "wall_time_s",
+    "stop_detail",
+    "decision_seq",
+    "ledger_calls",
+    "ledger_tokens_in",
+    "ledger_tokens_out",
+    "ledger_unposted_tokens",
+    "ledger_missing",
+    "grading_tokens",
 )
 
 
@@ -77,12 +86,21 @@ def trial_row(
     rejected: int = 0,
     failed_replies: int = 0,
     unposted_tokens: int = 0,
+    ledger: Sequence[CallRecord] | None = None,
+    stop_detail: str = "",
+    decision_seq: int | None = None,
+    grading_tokens: int | None = None,
 ) -> dict[str, Any]:
     """One CSV row for a finished session.
 
     `answer` is the session's final answer and `correct` the benchmark judge's verdict on it.
     `unposted_tokens` are tokens spent on replies that never reached the board (unparseable
     after the retry); they still count towards `total_tokens` (H3).
+
+    With the trial's `ledger` rows, `total_tokens` is the sum over every model call, the board
+    tokens are the subtotal of calls that events list in `meta["call_ids"]`, and calls no event
+    lists are the ledger's unposted tokens. Calls with unknown usage are counted as missing and
+    add nothing. `grading_tokens` is the offline grading cost and never part of the trial total.
     """
     msgs = [e for e in state.messages if e.author != "system"]
     counts = {t: sum(1 for e in msgs if e.tag is t) for t in Tag}
@@ -121,9 +139,38 @@ def trial_row(
         "unposted_tokens": unposted_tokens,
         "total_tokens": state.total_tokens + unposted_tokens,
         "wall_time_s": "" if wall_time_s is None else round(wall_time_s, 3),
+        "stop_detail": stop_detail,
+        "decision_seq": "" if decision_seq is None else decision_seq,
+        **_ledger_columns(state, ledger),
+        "grading_tokens": "" if grading_tokens is None else grading_tokens,
     }
+    if ledger is not None:
+        row["total_tokens"] = row["ledger_tokens_in"] + row["ledger_tokens_out"]
     assert tuple(row) == COLUMNS
     return row
+
+
+def _ledger_columns(state: BoardState, ledger: Sequence[CallRecord] | None) -> dict[str, Any]:
+    if ledger is None:
+        return dict.fromkeys(
+            (
+                "ledger_calls",
+                "ledger_tokens_in",
+                "ledger_tokens_out",
+                "ledger_unposted_tokens",
+                "ledger_missing",
+            ),
+            "",
+        )
+    posted = {i for e in state.events for i in e.meta.get("call_ids", [])}
+    known = [r for r in ledger if r.usage != "missing"]
+    return {
+        "ledger_calls": len(ledger),
+        "ledger_tokens_in": sum(r.prompt_tokens or 0 for r in known),
+        "ledger_tokens_out": sum(r.completion_tokens or 0 for r in known),
+        "ledger_unposted_tokens": sum(r.tokens for r in known if r.call_id not in posted),
+        "ledger_missing": len(ledger) - len(known),
+    }
 
 
 class MetricsWriter:

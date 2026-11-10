@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from agents.ledger import load_ledger
 from bench.metrics import read_metrics
 from bench.mscore import Instance
 from bench.run import (
@@ -20,6 +21,7 @@ from bench.run import (
     shard_of,
 )
 from blackboard import EventStore
+from scheduler import FollowerAgent, StubbornAgent
 
 
 def inst(i: int, ref: str = "B") -> Instance:
@@ -115,3 +117,42 @@ def test_judging_and_final_answer() -> None:
     assert correct("选 B", "B")
     assert final_answer({"a": "B", "b": "C", "c": "答案 B"}, same) == "B"
     assert final_answer({}, same) == ""
+
+
+def test_run_writes_the_call_ledger_and_reconciled_token_columns(tmp_path: Path) -> None:
+    go(tmp_path, parallel=4)
+    ledger = load_ledger(tmp_path / "calls.jsonl")
+    saved = read_metrics(tmp_path / "metrics.csv")
+    assert len(ledger) == sum(int(r["ledger_calls"]) for r in saved) > 0
+    assert {r.trial for r in ledger} == {r["trial_key"] for r in saved}
+    for r in saved:
+        total = int(r["ledger_tokens_in"]) + int(r["ledger_tokens_out"])
+        assert int(r["total_tokens"]) == total
+        legacy = int(r["tokens_in"]) + int(r["tokens_out"]) + int(r["unposted_tokens"])
+        assert total >= legacy  # drafts the store refused are in the ledger but not the old sum
+        assert r["stop_detail"] and int(r["decision_seq"]) >= 0
+
+
+def test_a_wrong_consensus_keeps_both_the_agreement_and_the_verdict(tmp_path: Path) -> None:
+    def wrong_but_agreed(trial, client, job, store):
+        return [
+            StubbornAgent("agent_a", "A"),
+            FollowerAgent("agent_b", "C"),
+            FollowerAgent("agent_c", "D"),
+        ]
+
+    job = JobConfig(name="wrong", sample={}, n_counterfactual=(0,))
+    rows = asyncio.run(
+        run_job(
+            job,
+            tmp_path,
+            instances=[inst(0, ref="B")],
+            client=mock_client(),
+            make_agents=wrong_but_agreed,
+            log=lambda _: None,
+        )
+    )
+    (row,) = rows
+    assert row["stop_reason"] == "consensus" and row["converged"] is True
+    assert row["answer"] == "A" and row["correct"] is False
+    assert row["ledger_calls"] == 0  # these agents never called the model
