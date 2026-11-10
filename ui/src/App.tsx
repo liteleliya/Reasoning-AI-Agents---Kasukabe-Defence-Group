@@ -1,72 +1,74 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useEventStream, useSessions, useSnapshot } from "./api";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSessionEvents, useSessions, useSnapshot } from "./api";
 import { CounterfactualPanel } from "./CounterfactualPanel";
 import { Graph } from "./Graph";
 import { upTo } from "./layout";
-import { Legend } from "./Legend";
 import { Scrubber } from "./Scrubber";
+import { SessionHeader } from "./SessionHeader";
+import { SessionList } from "./SessionList";
+import { siblings } from "./sessions";
 import { StatePanel } from "./StatePanel";
+import { buildSearch, parseSearch } from "./urlState";
 
 export function App() {
-  const sessions = useSessions();
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const { events, connected } = useEventStream(sessionId);
-  const [cursor, setCursor] = useState(0);
-  const [live, setLive] = useState(true);
+  const { sessions, loaded, error: listError } = useSessions();
+  const [initial] = useState(() => parseSearch(location.search));
+  // the one place that owns which session is open, where the cursor is and whether it follows
+  const [sessionId, setSessionId] = useState<string | null>(initial.session);
+  const [cursor, setCursor] = useState(initial.seq ?? 0);
+  const [follow, setFollow] = useState(initial.seq === null);
+  const wantedSeq = useRef(initial.seq); // the address-bar position, applied once the events load
+
+  const { events, status, error } = useSessionEvents(sessionId);
 
   useEffect(() => {
     if (!sessionId && sessions.length) setSessionId(sessions[0].session_id);
   }, [sessions, sessionId]);
 
-  const last = events.length ? events[events.length - 1].seq : 0;
   useEffect(() => {
-    if (live) setCursor(last);
-  }, [live, last]);
+    if (!events.length) return;
+    const last = events[events.length - 1].seq;
+    if (wantedSeq.current !== null) {
+      setCursor(Math.min(wantedSeq.current, last));
+      setFollow(false);
+      wantedSeq.current = null;
+    } else if (follow) {
+      setCursor(last); // paused cursors are left where they are when new events arrive
+    }
+  }, [events, follow]);
 
-  const selectSession = (id: string) => {
+  useEffect(() => {
+    const search = buildSearch(sessionId, follow ? null : cursor);
+    if (search !== location.search) history.replaceState(null, "", `${location.pathname}${search}`);
+  }, [sessionId, cursor, follow]);
+
+  const selectSession = useCallback((id: string) => {
+    wantedSeq.current = null;
     setSessionId(id);
-    setLive(true);
-  };
-  const scrub = useCallback((seq: number, follow: boolean) => {
+    setCursor(0);
+    setFollow(true);
+  }, []);
+  const scrub = useCallback((seq: number, following: boolean) => {
     setCursor(seq);
-    setLive(follow);
+    setFollow(following);
   }, []);
 
   const visible = useMemo(() => upTo(events, cursor), [events, cursor]);
   const snap = useSnapshot(sessionId, events.length ? cursor : null);
   const term = events.find((e) => e.tag === "TERM");
+  const info = sessions.find((s) => s.session_id === sessionId);
 
-  return (
-    <div className="app">
-      <aside>
-        <h1>Blackboard</h1>
-        <ul className="sessions">
-          {sessions.map((s) => (
-            <li key={s.session_id}>
-              <button
-                className={s.session_id === sessionId ? "active" : ""}
-                onClick={() => selectSession(s.session_id)}
-              >
-                <span>{s.session_id}</span>
-                <span className={`badge ${s.stop_reason ?? "live"}`}>
-                  {s.stop_reason ?? "live"}
-                </span>
-              </button>
-            </li>
-          ))}
-          {!sessions.length && <li className="muted">No sessions. Start the server with --demo.</li>}
-        </ul>
-      </aside>
-      <main>
-        <header>
-          <h2>{sessionId ?? "—"}</h2>
-          <span className={connected ? "dot on" : "dot"} title={connected ? "live" : "offline"} />
-          <span className="muted">
-            {events.length} events{term ? ` · stopped on ${term.explanation}` : ""}
-          </span>
-          <Legend />
-        </header>
-        <Scrubber events={events} cursor={cursor} live={live} onChange={scrub} />
+  let body;
+  if (!sessionId) {
+    body = <p className="empty">{loaded ? "No session selected." : "Loading sessions…"}</p>;
+  } else if (status === "error") {
+    body = <p className="empty error" role="alert">Could not open this session: {error}</p>;
+  } else if (!events.length) {
+    body = <p className="empty">Loading session…</p>;
+  } else {
+    body = (
+      <>
+        <Scrubber events={events} cursor={cursor} live={follow} onChange={scrub} />
         <div className="body">
           <div className="left">
             <Graph events={visible} highlightSeq={cursor} onSelect={(e) => scrub(e.seq, false)} />
@@ -74,6 +76,35 @@ export function App() {
           </div>
           <StatePanel snap={snap} />
         </div>
+      </>
+    );
+  }
+
+  return (
+    <div className="app">
+      <aside>
+        <h1>Blackboard</h1>
+        <SessionList
+          sessions={sessions}
+          loaded={loaded}
+          error={listError}
+          selected={sessionId}
+          onSelect={selectSession}
+        />
+      </aside>
+      <main>
+        {sessionId && (
+          <SessionHeader
+            sessionId={sessionId}
+            info={info}
+            tabs={info ? siblings(sessions, info) : []}
+            status={status}
+            events={events.length}
+            stopDetail={term ? term.explanation : null}
+            onSelect={selectSession}
+          />
+        )}
+        {body}
       </main>
     </div>
   );
