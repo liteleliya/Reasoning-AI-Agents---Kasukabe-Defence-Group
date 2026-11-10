@@ -55,12 +55,15 @@ class JobConfig:
     scheduler: dict = field(default_factory=dict)  # max_messages, impasse_window, stall_rule
     counterfactual: dict = field(default_factory=dict)  # sandbox settings (jobs-v2)
     cases: dict = field(default_factory=dict)  # study_instances kwargs: split, kinds, ids
+    arms: tuple[str, ...] = ()  # non-empty: the three-arm paired experiment (bench.paired)
+    allowance_calls: int = 6  # model calls an arm may spend after the shared trigger
 
     @classmethod
     def load(cls, path: str | Path) -> JobConfig:
         raw = json.loads(Path(path).read_text())
         raw["seeds"] = tuple(raw.get("seeds", (0,)))
         raw["n_counterfactual"] = tuple(raw.get("n_counterfactual", (0,)))
+        raw["arms"] = tuple(raw.get("arms", ()))
         return cls(**raw)
 
 
@@ -493,16 +496,13 @@ def main(argv: Sequence[str] | None = None) -> None:
     out = Path(a.out) if a.out else REPO / "results" / "runs" / job.name / f"shard-{i}-of-{k}"
     if a.out:
         out = out / f"shard-{i}-of-{k}"
-    asyncio.run(
-        run_job(
-            job,
-            out,
-            shard=a.shard,
-            parallel=a.parallel,
-            limit=a.limit,
-            client=mock_client() if a.mock else None,
-        )
-    )
+    client = mock_client() if a.mock else None
+    if job.arms:
+        from bench.paired import run_paired
+
+        asyncio.run(run_paired(job, out, client=client, parallel=a.parallel, limit=a.limit))
+        return
+    asyncio.run(run_job(job, out, shard=a.shard, parallel=a.parallel, limit=a.limit, client=client))
 
 
 if __name__ == "__main__":
