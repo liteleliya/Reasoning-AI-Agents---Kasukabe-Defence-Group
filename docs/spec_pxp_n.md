@@ -171,6 +171,38 @@ have limited diagnostics.
 - **Credit delta** = consensus distance at the end of the replay minus the real consensus distance at
   the same point in the real log. Negative = the alternative would have helped.
 
+### 5.1 Matched branches (recovery checkpoint replays)
+
+A replay started by the checkpoint (section 4.1) compares two simulated continuations instead of
+one simulation against the recorded log:
+
+1. The target's author is asked once, plus at most one repair, for a replacement reply. It is shown
+   the board before the target, its original reply and the objection that challenged it. The
+   replacement always answers the same message as the original, must change the prediction or the
+   explanation, and must pass the validator on a fork taken just before the target.
+2. The board is forked twice before the target. One fork gets a copy of the original reply, the
+   other the replacement. Fresh peers built by the same factory, in the same order and under the
+   same limits, then each answer the **tested message** directly. The first version uses exactly
+   two peers.
+3. Disagreement is computed from each fork's latest predictions with the scheduler's comparator.
+   **Credit = replacement distance - original distance** (negative = the replacement helped).
+   The recorded main log is kept as a third, observational reference (`distance_recorded`).
+4. If a peer cannot reply, or a per-branch token budget is spent, the comparison is **incomplete**:
+   the delta is withheld (`credit_delta` is null) and the reason is recorded.
+
+The real log gets `rollback_start`, six `rollback_step` events (original branch, then replacement
+branch) and `rollback_end`. All have `counterfactual = true`, so the real board does not move.
+
+| Event | Metadata |
+|---|---|
+| `rollback_start` | `replay_id` (`<session>::replay-<n>`), `target_seq`, `challenger_seq`; `tokens` is the candidate's cost |
+| `rollback_step` | `replay_id`, `branch` (`original` or `replacement`), `fork_seq` and `fork_reply_to` (fork-local, never real sequence numbers), `tested` (the first step of a branch) |
+| `rollback_end` | `replay_id`, `status` (`completed`, `incomplete`, `candidate_failed`), `reason`, `distance_original`, `distance_replacement`, `distance_recorded`, `credit_delta` (all unrounded), `branch_tokens` |
+
+A candidate that cannot be obtained is still logged, as a `rollback_start` and `rollback_end` with
+`status = candidate_failed` and no steps; its tokens are counted. The target then counts as
+replayed. The single-branch `replay` of section 5 remains for the older opportunistic agents.
+
 ## 6. Open decisions
 
 Defaults in brackets. Each is tracked as a GitHub issue with the `decision` label.
