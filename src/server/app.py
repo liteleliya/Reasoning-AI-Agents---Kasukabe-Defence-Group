@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 
 from blackboard import BoardState, EventStore
 from protocol import Event, classify
+from server.catalog import describe_session
 
 UI_DIST = Path(__file__).resolve().parents[2] / "ui" / "dist"
 
@@ -48,7 +50,14 @@ def state_summary(state: BoardState) -> dict[str, Any]:
     }
 
 
-def create_app(store: EventStore, serve_ui: bool = True) -> FastAPI:
+def create_app(
+    store: EventStore,
+    serve_ui: bool = True,
+    *,
+    metrics: Mapping[str, Mapping[str, str]] | None = None,
+    source: str = "",
+) -> FastAPI:
+    """`metrics` maps session id to a row of the run's metrics.csv, and `source` labels the run."""
     app = FastAPI(title="Intelligible Blackboard")
     app.state.store = store
 
@@ -68,6 +77,7 @@ def create_app(store: EventStore, serve_ui: bool = True) -> FastAPI:
                     "agents": s.agents,
                     "terminated": s.terminated,
                     "stop_reason": s.stop_reason,
+                    **describe_session(sid, (metrics or {}).get(sid), source),
                 }
             )
         return out

@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 from blackboard import EventStore
 from protocol import EventDraft, Tag
 from server import create_app
+from server.catalog import describe_session
 from server.demo import run_demo
 
 
@@ -30,15 +31,16 @@ def test_rest_endpoints() -> None:
         )
     )
     c = client_with(store)
-    assert c.get("/api/sessions").json() == [
-        {
-            "session_id": "s",
-            "seq": 2,
-            "agents": ["a", "b"],
-            "terminated": False,
-            "stop_reason": None,
-        }
-    ]
+    (summary,) = c.get("/api/sessions").json()
+    assert summary == {
+        "session_id": "s",
+        "seq": 2,
+        "agents": ["a", "b"],
+        "terminated": False,
+        "stop_reason": None,
+        **describe_session("s"),
+    }
+    assert summary["case_id"] == "s" and summary["condition"] is None
     events = c.get("/api/sessions/s/events").json()
     assert [e["seq"] for e in events] == [0, 1, 2]
     assert events[0]["tokens"] == {"in": 0, "out": 0}
@@ -103,3 +105,29 @@ def test_demo_writes_valid_sessions_including_a_rollback() -> None:
     assert rb.rollback_tokens_in > 0
     asyncio.run(run_demo(store, delay=0))  # a second run on the same db does not collide
     assert "demo-consensus-1" in store.sessions()
+
+
+def test_session_list_joins_run_metrics_by_session_id() -> None:
+    store = EventStore()
+    store.append_sync(init("trial|mscore|Data2/Law/Single-choice/complex#7|0", "a"))
+    store.append_sync(init("other", "a"))
+    metrics = {
+        "trial|mscore|Data2/Law/Single-choice/complex#7|0": {
+            "instance_id": "Data2/Law/Single-choice/complex#7",
+            "config": "run-cf2",
+            "seed": "0",
+            "n_agents": "3",
+            "n_counterfactual": "2",
+            "correct": "True",
+        }
+    }
+    c = TestClient(create_app(store, serve_ui=False, metrics=metrics, source="J3"))
+    by_id = {s["session_id"]: s for s in c.get("/api/sessions").json()}
+    joined = by_id["trial|mscore|Data2/Law/Single-choice/complex#7|0"]
+    assert (joined["condition"], joined["enabled_agents"], joined["correct"]) == (
+        "run-cf2",
+        2,
+        True,
+    )
+    assert joined["source"] == "J3"
+    assert by_id["other"]["correct"] is None and by_id["other"]["source"] == "J3"
