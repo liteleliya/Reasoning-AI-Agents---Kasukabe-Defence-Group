@@ -100,6 +100,7 @@ class RotatingAgent:
     listens_to: str
     said: tuple[str, ...]  # explanation of each of its own messages, in order
     swap: tuple[int, Alternative] | None = None
+    counterfactual: bool = False  # may the recovery checkpoint replay this agent's replies?
 
     async def act(self, question: str, board: BoardState) -> EventDraft | None:
         messages = board.messages
@@ -133,17 +134,20 @@ class RotatingAgent:
         )
 
 
-def agents(fixed: bool = False) -> list[RotatingAgent]:
-    """A, B and C. With `fixed`, A's third message (#6) is the alternative instead of a REFUTE."""
+def agents(fixed: bool = False, enabled: tuple[str, ...] = ()) -> list[RotatingAgent]:
+    """A, B and C. With `fixed`, A's third message (#6) is the alternative instead of a REFUTE.
+
+    `enabled` names the agents whose replies the recovery checkpoint may replay.
+    """
 
     def said(name: str) -> tuple[str, ...]:
         return tuple(row[4] for row in _PREFIX if row[0] == name)
 
     swap = (2, ALTERNATIVE) if fixed else None
     return [
-        RotatingAgent("A", 0, "X", "B", said("A"), swap),
-        RotatingAgent("B", 1, "Y", "A", said("B")),
-        RotatingAgent("C", 2, "Y", "B", said("C")),
+        RotatingAgent("A", 0, "X", "B", said("A"), swap, "A" in enabled),
+        RotatingAgent("B", 1, "Y", "A", said("B"), None, "B" in enabled),
+        RotatingAgent("C", 2, "Y", "B", said("C"), None, "C" in enabled),
     ]
 
 

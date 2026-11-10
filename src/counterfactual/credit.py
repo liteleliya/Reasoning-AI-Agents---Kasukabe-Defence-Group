@@ -25,7 +25,7 @@ from agents.prompts import counterfactual_messages
 from blackboard import BoardState, EventStore
 from counterfactual.sandbox import Alternative, Distance, ReplayResult, replay
 from protocol import Event, EventDraft, Kind, Tag, Tokens
-from scheduler import Agent, exact_distance
+from scheduler import Agent, TurnResult, exact_distance
 
 log = logging.getLogger(__name__)
 
@@ -83,16 +83,19 @@ class CounterfactualAgent:
         return self.inner.unposted
 
     async def act(self, question: str, board: BoardState) -> EventDraft | None:
+        return (await self.take_turn(question, board)).draft
+
+    async def take_turn(self, question: str, board: BoardState) -> TurnResult:
         if self._pending is not None:
-            return self._adopt(board)
+            return TurnResult.adapt(self._adopt(board))
         if self._should_replay(board):
             target = replay_target(board, self.name)
             if target is not None:
                 await self._replay(question, board, target)
                 board = self.store.state(board.session_id)
                 if self._pending is not None:
-                    return self._adopt(board)
-        return await self.inner.act(question, board)
+                    return TurnResult.adapt(self._adopt(board))
+        return await self.inner.take_turn(question, board)
 
     def _should_replay(self, board: BoardState) -> bool:
         if self.attempts >= self.max_rollbacks or board.open_rollback is not None:

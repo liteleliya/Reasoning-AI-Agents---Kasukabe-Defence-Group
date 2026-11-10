@@ -5,7 +5,7 @@ import json
 
 import pytest
 
-from agents.llm_client import MockClient
+from agents.llm_client import LLMError, MockClient
 from agents.parsing import PXPParseError, extract_json, parse_pxp, repair_messages
 from agents.pex_agent import PEXAgent
 from agents.prompts import (
@@ -20,7 +20,7 @@ from agents.prompts import (
 )
 from blackboard import EventStore
 from protocol import EventDraft, Tag
-from scheduler import Scheduler, SchedulerConfig
+from scheduler import Scheduler, SchedulerConfig, TurnReason
 
 GOOD = '{"tag": "REFUTE", "prediction": "B", "explanation": "because", "reply_to": 3}'
 
@@ -191,3 +191,41 @@ def test_three_pex_agents_finish_a_session_on_the_scheduler() -> None:
     assert result.stop_reason in ("consensus", "impasse")
     assert result.rejected == []
     assert sum(e.tokens.in_ for e in store.events("s")) == client.total_usage("s/").prompt
+
+
+def test_turn_result_explains_each_way_a_turn_can_end() -> None:
+    ok = PEXAgent(
+        "a", persona_for(0), scripted('{"tag": "INIT", "prediction": "A", "explanation": "e"}')
+    )
+    turn = asyncio.run(ok.take_turn("Q", board_with(msg("b", Tag.INIT))))
+    assert turn.reason is TurnReason.OK and turn.draft is not None
+    assert len(turn.call_ids) == 1
+
+    nothing = PEXAgent("a", persona_for(0), scripted())
+    board = board_with(msg("a", Tag.INIT), msg("b", Tag.INIT), msg("a", Tag.REFUTE, 1))
+    turn = asyncio.run(nothing.take_turn("Q", board))
+    assert (turn.draft, turn.reason, turn.call_ids) == (None, TurnReason.NO_TARGET, ())
+
+    bad = PEXAgent("a", persona_for(0), scripted("x", "y"))
+    turn = asyncio.run(bad.take_turn("Q", board_with(msg("b", Tag.INIT))))
+    assert turn.draft is None and turn.reason is TurnReason.PARSE_FAILURE
+    assert len(turn.call_ids) == 2 and turn.detail  # the first call and the repair
+    legacy = PEXAgent("a", persona_for(0), scripted("x", "y"))
+    assert asyncio.run(legacy.act("Q", board_with(msg("b", Tag.INIT)))) is None  # act is unchanged
+
+
+def test_model_error_is_a_turn_reason_and_keeps_spent_tokens() -> None:
+    calls = []
+
+    def respond(messages) -> str:
+        calls.append(1)
+        if len(calls) == 1:
+            return "not json"
+        raise LLMError("cannot reach the server")
+
+    agent = PEXAgent("a", persona_for(0), MockClient(responder=respond))
+    turn = asyncio.run(agent.take_turn("Q", board_with(msg("b", Tag.INIT))))
+    assert turn.draft is None and turn.reason is TurnReason.MODEL_ERROR
+    assert "cannot reach" in turn.detail and len(turn.call_ids) == 1
+    assert agent.errors == 1 and agent.failures == 0
+    assert agent.unposted.completion > 0  # the first call's tokens still count
