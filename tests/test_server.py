@@ -1,6 +1,7 @@
 """C1: REST reads and WebSocket streaming of blackboard events."""
 
 import asyncio
+import json
 
 from fastapi.testclient import TestClient
 
@@ -162,3 +163,29 @@ def test_results_are_unavailable_without_a_metrics_file() -> None:
     c = client_with(EventStore())
     assert c.get("/api/results").status_code == 404
     assert c.get("/api/trial", params={"session_id": "x"}).status_code == 404
+
+
+def test_case_route_serves_the_public_record_and_nothing_private() -> None:
+    c = client_with(EventStore())
+    body = c.get("/api/case", params={"case_id": "case:restore-p1"}).json()
+    assert body["id"] == "restore-p1" and body["split"] == "dev"
+    assert body["question"].startswith("How should service be restored")
+    assert [e["id"] for e in body["evidence"]] == ["E1", "E2"]
+    assert body["decisions"] == ["A", "B"]
+    assert {f["name"] for f in body["fields"]} == {"downtime", "data_loss", "lag_check"}
+    text = json.dumps(body).lower()
+    for private in ("acceptable", "critical", "rubric", "conditions", "patterns"):
+        assert private not in text
+
+
+def test_case_route_reports_unknown_and_dataset_ids_as_missing() -> None:
+    c = client_with(EventStore())
+    assert c.get("/api/case", params={"case_id": "case:nope"}).status_code == 404
+    assert (
+        c.get("/api/case", params={"case_id": "Data2/Law/Single-choice/complex#9"}).status_code
+        == 404
+    )
+
+
+def test_authored_sessions_get_a_readable_label() -> None:
+    assert describe_session("job-cf0|authored|case:restore-p1|0")["label"] == "Case restore-p1"

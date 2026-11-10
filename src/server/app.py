@@ -10,6 +10,7 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 
+from bench.cases import CaseBook, load_cases, public_view
 from bench.summary import summarize_run
 from blackboard import BoardState, EventStore
 from protocol import Event, classify
@@ -58,11 +59,13 @@ def create_app(
     metrics: Mapping[str, Mapping[str, str]] | None = None,
     source: str = "",
     kind: str | None = None,
+    cases: CaseBook | None = None,
 ) -> FastAPI:
     """`metrics` maps session id to a row of the run's metrics.csv, `source` labels the run and
     `kind` says what it is evidence of (historical, controlled or model)."""
     app = FastAPI(title="Intelligible Blackboard")
     app.state.store = store
+    book = cases if cases is not None else load_cases()
 
     def known(session_id: str) -> None:
         if store.state(session_id).seq < 0:
@@ -93,6 +96,16 @@ def create_app(
         if not metrics:
             raise HTTPException(404, "no metrics file was given; start the server with --metrics")
         return summarize_run(list(metrics.values()), label=source, kind=kind)
+
+    @app.get("/api/case")
+    def case(case_id: str) -> dict[str, Any]:
+        """The public record of an authored case; older archives fall back to the stored id."""
+        public = (
+            book.public.get(case_id.removeprefix("case:")) if case_id.startswith("case:") else None
+        )
+        if public is None:
+            raise HTTPException(404, f"no public case record for {case_id!r}")
+        return public_view(public)
 
     @app.get("/api/trial")
     def trial(session_id: str) -> Mapping[str, str]:

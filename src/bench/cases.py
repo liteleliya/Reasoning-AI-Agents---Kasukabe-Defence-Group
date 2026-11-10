@@ -11,7 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
@@ -132,6 +132,11 @@ class CaseBook:
             case=case,
             grading=grading,
         )
+
+
+def public_view(case: PublicCase) -> dict[str, Any]:
+    """The public record as JSON for the viewer; the grading record has no path into this."""
+    return asdict(case)
 
 
 def question_for(case: PublicCase) -> str:
