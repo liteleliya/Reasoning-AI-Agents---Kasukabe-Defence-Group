@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   conditionLabel, conditionOptions, filterSessions, outcomeOf, siblings,
-} from "./sessionList";
+} from "./sessions";
 import type { SessionInfo } from "./types";
 
 const LAW = "Data2/Law/Single-choice/complex#2534";
