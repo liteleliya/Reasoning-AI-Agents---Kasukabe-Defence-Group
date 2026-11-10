@@ -113,3 +113,12 @@ def test_retries_then_succeeds_and_fails_on_4xx() -> None:
 
     with pytest.raises(LLMError, match="cannot reach"):
         run(http_client(down, max_retries=1).complete(MSGS))
+
+
+def test_every_completion_gets_a_unique_call_id() -> None:
+    client = MockClient()
+    first = asyncio.run(client.complete([{"role": "user", "content": "a"}]))
+    second = asyncio.run(client.complete([{"role": "user", "content": "a"}]))
+    assert first.call_id and second.call_id and first.call_id != second.call_id
+    other = asyncio.run(MockClient().complete([{"role": "user", "content": "a"}]))
+    assert other.call_id == first.call_id  # ids count per client, not globally

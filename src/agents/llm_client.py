@@ -52,6 +52,7 @@ class LLMResponse(BaseModel):
     usage: TokenUsage
     model: str
     latency_s: float
+    call_id: str = ""  # set by the client that made the call, unique within that client
 
 
 Messages = Sequence[ChatMessage | dict]
@@ -66,6 +67,7 @@ class BaseLLMClient(ABC):
 
     def __init__(self) -> None:
         self.usage_log: list[tuple[str, TokenUsage]] = []
+        self._calls = 0
 
     async def complete(
         self,
@@ -85,6 +87,8 @@ class BaseLLMClient(ABC):
             json_mode=json_mode,
         )
         self.usage_log.append((label, response.usage))
+        self._calls += 1
+        response.call_id = f"call-{self._calls}"
         return response
 
     @abstractmethod
