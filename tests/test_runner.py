@@ -185,6 +185,7 @@ def test_authored_agreement_runs_through_the_scheduler_and_the_verdict_is_separa
     assert row["stop_reason"] == "consensus" and row["converged"] is True
     assert row["answer"] == two_min and row["correct"] is True
     saved = read_metrics(tmp_path / "metrics.csv")
+    assert int(saved[0]["productive_revisions"]) >= 1  # agent_b and agent_c answered a challenge
     assert saved[0]["benchmark"] == "authored" and saved[0]["instance_id"] == "case:restore-p1"
 
 

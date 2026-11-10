@@ -173,3 +173,10 @@ def test_agreement_basis_says_how_agreement_was_decided() -> None:
     state = consensus_state().state("s")
     assert trial_row(state, META)["agreement_basis"] == ""
     assert trial_row(state, META, agreement_basis="key")["agreement_basis"] == "key"
+
+
+def test_productive_revisions_are_a_separate_count_from_the_intelligibility_label() -> None:
+    state = consensus_state().state("s")
+    assert trial_row(state, META)["productive_revisions"] == ""
+    row = trial_row(state, META, productive_revisions=2)
+    assert row["productive_revisions"] == 2 and row["intelligibility"]

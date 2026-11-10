@@ -50,6 +50,7 @@ COLUMNS = (
     "stop_detail",
     "decision_seq",
     "agreement_basis",
+    "productive_revisions",
     "ledger_calls",
     "ledger_tokens_in",
     "ledger_tokens_out",
@@ -91,6 +92,7 @@ def trial_row(
     stop_detail: str = "",
     decision_seq: int | None = None,
     agreement_basis: str = "",
+    productive_revisions: int | None = None,
     grading_tokens: int | None = None,
 ) -> dict[str, Any]:
     """One CSV row for a finished session.
@@ -146,6 +148,7 @@ def trial_row(
         "stop_detail": stop_detail,
         "decision_seq": "" if decision_seq is None else decision_seq,
         "agreement_basis": agreement_basis,
+        "productive_revisions": "" if productive_revisions is None else productive_revisions,
         **_ledger_columns(state, ledger),
         "grading_tokens": "" if grading_tokens is None else grading_tokens,
     }

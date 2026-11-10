@@ -31,6 +31,7 @@ from agents.prompts import answer_instructions, persona_for
 from bench import authored
 from bench.metrics import MetricsWriter, TrialMeta, read_metrics, trial_row
 from bench.mscore import Instance, sample
+from bench.revision import productive_revisions
 from bench.splits import KINDS, manifest_info, study_instances
 from blackboard import EventStore
 from counterfactual import CounterfactualAgent
@@ -265,6 +266,9 @@ async def run_trial(
         stop_detail=result.stop_detail,
         decision_seq=result.decision_seq,
         agreement_basis=agreement_basis(fmt),
+        productive_revisions=productive_revisions(
+            result.state.events, scheduler_config(fmt, job, trial.instance).distance, same=same
+        ),
     )
 
 
