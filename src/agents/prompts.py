@@ -155,3 +155,28 @@ def counterfactual_messages(
             "could actually persuade the other agent, rather than repeating your earlier one.",
         },
     ]
+
+
+def candidate_messages(
+    persona: Persona,
+    agent_id: str,
+    question: str,
+    board_before: Sequence[Event],
+    original: Event,
+    objection: Event,
+    new_tag: str,
+    n_agents: int | None = None,
+):
+    """Ask the agent to rewrite one reply, knowing which message challenged it (for the sandbox)."""
+    return [
+        {"role": "system", "content": system_prompt(persona, agent_id, n_agents)},
+        {
+            "role": "user",
+            "content": f"Question:\n{question}\n\nBoard before your message:\n"
+            f"{render_board(board_before)}\n\nYou posted:\n{render_event(original)}\n\n"
+            f"The objection raised was:\n{render_event(objection)}\n\n"
+            f"Write a different version of your message with tag {new_tag}, replying to message "
+            f"{original.reply_to}. Answer the objection with a new explanation or a new "
+            "prediction, rather than repeating your earlier one.",
+        },
+    ]

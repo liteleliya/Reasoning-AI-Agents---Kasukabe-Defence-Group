@@ -58,6 +58,10 @@ class PEXAgent:
         target = unanswered(board, self.name)
         if target is None:
             return TurnResult(None, TurnReason.NO_TARGET)
+        return await self.reply_to_target(question, board, target)
+
+    async def reply_to_target(self, question: str, board: BoardState, target: Event) -> TurnResult:
+        """Answer `target` itself instead of the message the normal picker would choose."""
         msgs = reply_messages(
             self.persona,
             self.name,

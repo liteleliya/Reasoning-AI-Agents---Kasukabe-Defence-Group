@@ -229,3 +229,18 @@ def test_model_error_is_a_turn_reason_and_keeps_spent_tokens() -> None:
     assert "cannot reach" in turn.detail and len(turn.call_ids) == 1
     assert agent.errors == 1 and agent.failures == 0
     assert agent.unposted.completion > 0  # the first call's tokens still count
+
+
+def test_reply_to_target_answers_the_given_message_not_the_picked_one() -> None:
+    reply = '{"tag": "REFUTE", "prediction": "B", "explanation": "no"}'
+    board = board_with(
+        msg("a", Tag.INIT, prediction="B"),
+        msg("b", Tag.INIT, prediction="C"),
+        msg("c", Tag.INIT, prediction="D"),
+    )
+    picked = asyncio.run(PEXAgent("a", persona_for(0), scripted(reply)).take_turn("Q", board))
+    assert picked.draft.reply_to == 2  # the normal picker takes the latest unanswered message
+    forced = asyncio.run(
+        PEXAgent("a", persona_for(0), scripted(reply)).reply_to_target("Q", board, board.events[1])
+    )
+    assert forced.draft.reply_to == 1 and forced.reason is TurnReason.OK
