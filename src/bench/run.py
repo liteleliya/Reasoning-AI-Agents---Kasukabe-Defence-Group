@@ -28,8 +28,10 @@ from agents.ledger import CallLedger, call_scope
 from agents.llm_client import BaseLLMClient, MockClient, make_client
 from agents.pex_agent import PEXAgent
 from agents.prompts import answer_instructions, persona_for
+from bench import authored
 from bench.metrics import MetricsWriter, TrialMeta, read_metrics, trial_row
 from bench.mscore import Instance, sample
+from bench.splits import KINDS, manifest_info, study_instances
 from blackboard import EventStore
 from counterfactual import CounterfactualAgent
 from scheduler import Scheduler, SchedulerConfig
@@ -51,6 +53,7 @@ class JobConfig:
     max_tokens: int = 400
     scheduler: dict = field(default_factory=dict)  # max_messages, impasse_window, stall_rule
     counterfactual: dict = field(default_factory=dict)  # sandbox settings (jobs-v2)
+    cases: dict = field(default_factory=dict)  # study_instances kwargs: split, kinds, ids
 
     @classmethod
     def load(cls, path: str | Path) -> JobConfig:
@@ -81,8 +84,18 @@ def _fallback_same(fmt: str) -> Callable[[str, str], bool]:
     return lambda a, b: bool(key(a)) and key(a) == key(b)
 
 
-def judging(fmt: str) -> tuple[Callable[[str, str], bool], Callable[[str, str], bool]]:
-    """(same_answer, is_correct) for a format: Package 3's rules if merged, else exact match."""
+def judging(
+    fmt: str, instance: Instance | None = None
+) -> tuple[Callable[[str, str], bool], Callable[[str, str], bool]]:
+    """(same_answer, is_correct) for a format: Package 3's rules if merged, else exact match.
+
+    An authored case is judged by its own decision key and fatal rules, not by format.
+    """
+    if fmt == "authored":
+        case, grading = getattr(instance, "case", None), getattr(instance, "grading", None)
+        if case is None or grading is None:
+            raise ValueError("an authored trial needs its public case and grading record")
+        return authored.judge(case, grading)
     try:
         from bench import correctness  # Package 3, lands Sat 3 Oct
     except ImportError:
@@ -104,8 +117,8 @@ def groups(predictions: Mapping[str, str], same: Callable[[str, str], bool]) -> 
     return out
 
 
-def scheduler_config(fmt: str, job: JobConfig) -> SchedulerConfig:
-    same, _ = judging(fmt)
+def scheduler_config(fmt: str, job: JobConfig, instance: Instance | None = None) -> SchedulerConfig:
+    same, _ = judging(fmt, instance)
 
     def consensus(preds: Mapping[str, str]) -> bool:
         return bool(preds) and len(groups(preds, same)) == 1
@@ -126,6 +139,14 @@ def final_answer(predictions: Mapping[str, str], same) -> str:
     return predictions[best[0]]
 
 
+def job_instances(job: JobConfig) -> list[Instance]:
+    """The job's items: a dataset sample, the listed split, or both."""
+    items = list(sample(**job.sample)) if job.sample else []
+    if job.cases:
+        items += study_instances(**job.cases)
+    return items
+
+
 # --- trials ---------------------------------------------------------------------------------
 
 
@@ -140,7 +161,7 @@ def build_trials(job: JobConfig, instances: Sequence[Instance], model: str) -> l
         Trial(
             TrialMeta(
                 config=f"{job.name}-cf{cf}",
-                benchmark="mscore",
+                benchmark="authored" if inst.format == "authored" else "mscore",
                 instance_id=inst.id,
                 seed=seed,
                 n_agents=job.n_agents,
@@ -186,7 +207,7 @@ def default_agents(trial: Trial, client: BaseLLMClient, job: JobConfig, store: E
         for i in range(n)
     ]
     agents: list = list(plain)
-    distance = scheduler_config(trial.instance.format, job).distance
+    distance = scheduler_config(trial.instance.format, job, trial.instance).distance
     for i in range(cf):
         agents[i] = CounterfactualAgent(
             plain[i],
@@ -218,10 +239,10 @@ async def run_trial(
     agents = make_agents(trial, client, job, store)
     sid = fresh_session_id(store, trial.meta.key)
     with call_scope(trial=trial.meta.key):
-        result = await Scheduler(store, agents, scheduler_config(fmt, job)).run(
+        result = await Scheduler(store, agents, scheduler_config(fmt, job, trial.instance)).run(
             sid, question_text(trial.instance)
         )
-    same, correct = judging(fmt)
+    same, correct = judging(fmt, trial.instance)
     answer = final_answer(result.state.predictions, same)
     unposted = sum(
         a.unposted.prompt + a.unposted.completion for a in agents if hasattr(a, "unposted")
@@ -266,7 +287,9 @@ def _gpu() -> str:
 
 
 def provenance(job: JobConfig, shard: tuple[int, int], client: BaseLLMClient) -> dict:
+    cases = manifest_info(job.cases["split"], job.cases.get("kinds", KINDS)) if job.cases else None
     return {
+        "cases": cases,
         "job": asdict(job),
         "shard": f"{shard[0]}/{shard[1]}",
         "commit": _git("rev-parse", "HEAD"),
@@ -306,7 +329,7 @@ async def run_job(
     out.mkdir(parents=True, exist_ok=True)
     client = client or make_client()
     client.ledger = CallLedger(out / "calls.jsonl")  # every model call of this run, for audits
-    instances = instances if instances is not None else sample(**job.sample)
+    instances = instances if instances is not None else job_instances(job)
     trials = shard_of(build_trials(job, instances, getattr(client, "model", "")), shard)
     if limit is not None:
         trials = trials[:limit]

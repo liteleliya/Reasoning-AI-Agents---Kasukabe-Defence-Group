@@ -8,12 +8,14 @@ from pathlib import Path
 import pytest
 
 from agents.ledger import load_ledger
+from bench.cases import load_cases
 from bench.metrics import read_metrics
 from bench.mscore import Instance
 from bench.run import (
     JobConfig,
     build_trials,
     final_answer,
+    job_instances,
     judging,
     mock_client,
     parse_shard,
@@ -156,3 +158,67 @@ def test_a_wrong_consensus_keeps_both_the_agreement_and_the_verdict(tmp_path: Pa
     assert row["stop_reason"] == "consensus" and row["converged"] is True
     assert row["answer"] == "A" and row["correct"] is False
     assert row["ledger_calls"] == 0  # these agents never called the model
+
+
+def authored_job(**cases) -> JobConfig:
+    return JobConfig(name="authored", sample={}, cases={"kinds": ["authored"], **cases})
+
+
+def test_authored_agreement_runs_through_the_scheduler_and_the_verdict_is_separate(
+    tmp_path: Path,
+) -> None:
+    two_min = "B; downtime=2 min; data_loss=30 s; lag_check=before"
+    in_seconds = "B; downtime=120 s; data_loss=30 s; lag_check=before"
+
+    def agents(trial, client, job, store):
+        return [
+            StubbornAgent("agent_a", two_min),
+            FollowerAgent("agent_b", in_seconds),
+            FollowerAgent("agent_c", "A; downtime=6 min; data_loss=0 s; lag_check=none"),
+        ]
+
+    job = authored_job(split="dev", ids=["restore-p1"])
+    rows = asyncio.run(
+        run_job(job, tmp_path, client=mock_client(), make_agents=agents, log=lambda _: None)
+    )
+    (row,) = rows
+    assert row["stop_reason"] == "consensus" and row["converged"] is True
+    assert row["answer"] == two_min and row["correct"] is True
+    saved = read_metrics(tmp_path / "metrics.csv")
+    assert saved[0]["benchmark"] == "authored" and saved[0]["instance_id"] == "case:restore-p1"
+
+
+def test_case_instances_come_from_the_job_without_a_sample() -> None:
+    dev = job_instances(authored_job(split="dev"))
+    assert sorted(i.id for i in dev) == [
+        "case:patch-window",
+        "case:refund-window",
+        "case:restore-p1",
+        "case:restore-p1-unbounded",
+    ]
+    held = job_instances(authored_job(split="heldout"))
+    assert len(held) == 8 and {i.format for i in held} == {"authored"}
+    assert [i.id for i in job_instances(authored_job(split="dev", ids=["restore-p1"]))] == [
+        "case:restore-p1"
+    ]
+
+
+def test_run_json_records_the_manifest_version(tmp_path: Path) -> None:
+    job = authored_job(split="dev", ids=["restore-p1"])
+    asyncio.run(
+        run_job(
+            job,
+            tmp_path,
+            client=mock_client(),
+            make_agents=lambda *_: [StubbornAgent(f"agent_{c}", "A") for c in "abc"],
+            log=lambda _: None,
+        )
+    )
+    run = json.loads((tmp_path / "run.json").read_text())["runs"][0]
+    assert run["cases"]["version"] == load_cases().version
+    assert run["cases"]["split"] == "dev"
+
+
+def test_unknown_case_id_in_a_job_is_an_error() -> None:
+    with pytest.raises(ValueError, match="no-such-case"):
+        job_instances(authored_job(split="dev", ids=["no-such-case"]))

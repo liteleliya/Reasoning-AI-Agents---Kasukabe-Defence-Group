@@ -16,9 +16,11 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from bench.cases import DEFAULT_ROOT, load_cases
-from bench.mscore import Instance, load_file, select_files
+from bench.mscore import Instance, load_file, load_ids, select_files
 
 MIN_REFERENCE, MAX_REFERENCE, MIN_QUESTION = 40, 2500, 8
+
+KINDS = ("authored", "choice", "open")
 
 # The open pool: the automotive Easy stages. "Supply Chain" is left out because the source file
 # is not valid JSON, and the larger files are ~30 MB each, so other domains are added on demand.
@@ -96,6 +98,45 @@ def choice_pool() -> list[Instance]:
 
 def open_pool() -> list[Instance]:
     return [item for path in OPEN_FILES for item in load_file(path)]
+
+
+def study_instances(
+    split: str,
+    kinds: Sequence[str] = KINDS,
+    ids: Sequence[str] | None = None,
+    root: str | Path = DEFAULT_ROOT,
+) -> list[Instance]:
+    """The instances of one split: authored cases (optionally only `ids`) and listed dataset items.
+
+    Reads only local files, so a run needs no network once the dataset files are cached.
+    """
+    if split not in ("dev", "heldout"):
+        raise ValueError(f"split must be dev or heldout, got {split!r}")
+    book, splits = load_cases(root), Splits.load(Path(root) / "splits.json")
+    out: list[Instance] = []
+    for kind in kinds:
+        if kind == "authored":
+            wanted = list(ids) if ids is not None else splits.authored[split]
+            unknown = [i for i in wanted if i not in book.public]
+            if unknown:
+                raise ValueError(f"unknown case id {unknown[0]!r}")
+            out += [book.instance(i) for i in wanted]
+        elif kind in ("choice", "open"):
+            out += load_ids(getattr(getattr(splits, kind), split))
+        else:
+            raise ValueError(f"unknown kind {kind!r}")
+    return out
+
+
+def manifest_info(split: str, kinds: Sequence[str], root: str | Path = DEFAULT_ROOT) -> dict:
+    """What a run.json records so a result can be tied to the exact case files."""
+    splits_file = Path(root) / "splits.json"
+    return {
+        "version": load_cases(root).version,
+        "splits_sha256": hashlib.sha256(splits_file.read_bytes()).hexdigest()[:12],
+        "split": split,
+        "kinds": list(kinds),
+    }
 
 
 def main(argv: Sequence[str] | None = None) -> None:

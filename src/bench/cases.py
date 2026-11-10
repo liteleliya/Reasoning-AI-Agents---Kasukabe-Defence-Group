@@ -101,6 +101,8 @@ class AuthoredInstance(Instance):
     decision(s) for the automatic decision check and is never part of the prompt."""
 
     prompt: str = ""
+    case: PublicCase | None = None
+    grading: GradingRecord | None = None  # private: used by the runner's judge, never shown
 
     def prompt_text(self) -> str:
         return self.prompt
@@ -127,6 +129,8 @@ class CaseBook:
             reference="|".join(grading.acceptable_decisions),
             context=case.context,
             prompt=question_for(case),
+            case=case,
+            grading=grading,
         )
 
 
