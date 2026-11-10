@@ -131,3 +131,34 @@ def test_session_list_joins_run_metrics_by_session_id() -> None:
     )
     assert joined["source"] == "J3"
     assert by_id["other"]["correct"] is None and by_id["other"]["source"] == "J3"
+
+
+def test_results_and_trial_lookup_come_from_the_runs_metrics() -> None:
+    metrics = {
+        "t1": {
+            "config": "run-cf0",
+            "n_counterfactual": "0",
+            "n_agents": "3",
+            "instance_id": "q1",
+            "seed": "0",
+            "model": "qwen",
+            "session_id": "t1",
+            "stop_reason": "consensus",
+            "correct": "True",
+            "rollbacks": "0",
+            "total_tokens": "100",
+        },
+    }
+    app = create_app(EventStore(), serve_ui=False, metrics=metrics, source="J3", kind="historical")
+    c = TestClient(app)
+    results = c.get("/api/results").json()
+    assert results["run"]["label"] == "J3" and results["run"]["kind"] == "historical"
+    assert results["totals"]["consensus"] == 1 and results["totals"]["correct_consensus"] == 1
+    assert c.get("/api/trial", params={"session_id": "t1"}).json()["total_tokens"] == "100"
+    assert c.get("/api/trial", params={"session_id": "nope"}).status_code == 404
+
+
+def test_results_are_unavailable_without_a_metrics_file() -> None:
+    c = client_with(EventStore())
+    assert c.get("/api/results").status_code == 404
+    assert c.get("/api/trial", params={"session_id": "x"}).status_code == 404

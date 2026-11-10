@@ -92,7 +92,7 @@ uv run ruff check . && uv run ruff format --check .
 |---|---|
 | Mock agents on the board (M1 demo, terminal) | `uv run python -m scheduler.demo` |
 | Server + live demo sessions | `uv run python -m server --demo` then open http://127.0.0.1:8000 |
-| Archived run with outcomes in the session list | `uv run python -m server --db <board.sqlite> --metrics <metrics.csv> --source J3` |
+| Archived run with outcomes in the session list | `uv run python -m server --db <board.sqlite> --metrics <metrics.csv> --source J3 --kind historical` |
 | Build the UI the server serves | `cd ui && npm install && npm run build` |
 | UI with hot reload (proxies to :8000) | `cd ui && npm run dev` then open http://localhost:5173 |
 | Sample MSCoRe instances | `uv run python -m bench.mscore --n 5 --domains law finance` |

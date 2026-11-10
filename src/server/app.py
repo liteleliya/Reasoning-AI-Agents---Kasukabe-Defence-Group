@@ -10,6 +10,7 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 
+from bench.summary import summarize_run
 from blackboard import BoardState, EventStore
 from protocol import Event, classify
 from server.catalog import describe_session
@@ -56,8 +57,10 @@ def create_app(
     *,
     metrics: Mapping[str, Mapping[str, str]] | None = None,
     source: str = "",
+    kind: str | None = None,
 ) -> FastAPI:
-    """`metrics` maps session id to a row of the run's metrics.csv, and `source` labels the run."""
+    """`metrics` maps session id to a row of the run's metrics.csv, `source` labels the run and
+    `kind` says what it is evidence of (historical, controlled or model)."""
     app = FastAPI(title="Intelligible Blackboard")
     app.state.store = store
 
@@ -84,6 +87,20 @@ def create_app(
 
     # Query-parameter routes carry any session id; the path routes only work for simple ids,
     # because "/", "|" and "#" in a real id split or truncate the URL path.
+    @app.get("/api/results")
+    def results() -> dict[str, Any]:
+        """The run's aggregate figures, computed in Python from its metrics file."""
+        if not metrics:
+            raise HTTPException(404, "no metrics file was given; start the server with --metrics")
+        return summarize_run(list(metrics.values()), label=source, kind=kind)
+
+    @app.get("/api/trial")
+    def trial(session_id: str) -> Mapping[str, str]:
+        row = (metrics or {}).get(session_id)
+        if row is None:
+            raise HTTPException(404, f"no trial row for session {session_id!r}")
+        return row
+
     @app.get("/api/events")
     @app.get("/api/sessions/{session_id}/events")
     def events(session_id: str, upto: int | None = Query(None, ge=0)) -> list[dict[str, Any]]:

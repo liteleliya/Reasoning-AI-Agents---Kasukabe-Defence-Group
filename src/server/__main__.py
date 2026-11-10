@@ -8,6 +8,7 @@ import contextlib
 
 import uvicorn
 
+from bench.summary import KINDS
 from blackboard import EventStore
 from server.app import create_app
 from server.catalog import load_metrics_index
@@ -23,13 +24,18 @@ def main() -> None:
         "--metrics", help="the run's metrics.csv, to show outcomes in the session list"
     )
     parser.add_argument("--source", default="", help="label for the run shown in the session list")
+    parser.add_argument(
+        "--kind",
+        choices=KINDS,
+        help="what the run is evidence of, shown in the results view",
+    )
     parser.add_argument("--demo", action="store_true", help="stream mock sessions into the board")
     parser.add_argument("--delay", type=float, default=0.8, help="seconds between demo moves")
     args = parser.parse_args()
 
     metrics = load_metrics_index(args.metrics) if args.metrics else None
     store = EventStore(args.db)
-    app = create_app(store, metrics=metrics, source=args.source)
+    app = create_app(store, metrics=metrics, source=args.source, kind=args.kind)
 
     if args.demo:
 
