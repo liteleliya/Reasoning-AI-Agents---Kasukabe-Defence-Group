@@ -24,6 +24,7 @@ class Alternative:
     explanation: str
     prediction: str | None = None  # None = keep the original prediction
     tokens: Tokens = field(default_factory=Tokens)  # cost of producing the alternative
+    call_ids: tuple[str, ...] = ()  # the model calls behind it, for the call ledger
 
 
 @dataclass

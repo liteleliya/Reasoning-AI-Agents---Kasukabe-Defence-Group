@@ -104,6 +104,7 @@ def test_rollback_events_carry_replay_id_branch_labels_and_unrounded_distances()
         "replay_id": result.replay_id,
         "target_seq": 6,
         "challenger_seq": 7,
+        "call_ids": [],  # the scripted fixture alternative came from no model call
     }
     assert (start.author, start.reply_to, start.counterfactual) == ("A", 6, True)
     assert [s.meta["branch"] for s in steps] == ["original"] * 3 + ["replacement"] * 3

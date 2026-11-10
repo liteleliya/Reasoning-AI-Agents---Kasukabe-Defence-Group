@@ -19,6 +19,7 @@ import logging
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 
+from agents.ledger import call_scope
 from agents.llm_client import LLMError, TokenUsage
 from agents.parsing import PXPParseError, parse_pxp, repair_messages
 from agents.pex_agent import PEXAgent
@@ -240,19 +241,26 @@ async def generate_candidate(
     def result(status: str, alt: Alternative | None, reason: str = "") -> Candidate:
         spent = Tokens(in_=usage.prompt, out=usage.completion)
         if alt is not None:
-            alt = Alternative(alt.tag, alt.explanation, alt.prediction, spent)
+            alt = Alternative(alt.tag, alt.explanation, alt.prediction, spent, tuple(call_ids))
         return Candidate(status, alt, reason, spent, tuple(call_ids))
 
     for attempt in range(2):
         try:
-            response = await agent.client.complete(
-                msgs,
-                temperature=agent.temperature,
-                max_tokens=agent.max_tokens,
-                seed=None if agent.seed is None else agent.seed + board.seq + 1,
-                json_mode=True,
-                label=f"candidate/{board.session_id}/{agent.name}",
-            )
+            with call_scope(
+                session_id=board.session_id,
+                phase="candidate",
+                agent=agent.name,
+                parent_seq=target.seq,
+                repair=attempt == 1,
+            ):
+                response = await agent.client.complete(
+                    msgs,
+                    temperature=agent.temperature,
+                    max_tokens=agent.max_tokens,
+                    seed=None if agent.seed is None else agent.seed + board.seq + 1,
+                    json_mode=True,
+                    label=f"candidate/{board.session_id}/{agent.name}",
+                )
         except LLMError as err:
             log.warning("%s: model error while writing a candidate (%s)", agent.name, err)
             return result("failed", None, f"model_error: {err}")
@@ -320,7 +328,13 @@ async def attempt_replay(
     )
     if candidate.alternative is None:
         record_failed_attempt(
-            store, session_id, target, challenger.seq, candidate.reason, candidate.tokens
+            store,
+            session_id,
+            target,
+            challenger.seq,
+            candidate.reason,
+            candidate.tokens,
+            candidate.call_ids,
         )
         return ReplayAttempt(candidate, None)
     pair = await replay_pair(

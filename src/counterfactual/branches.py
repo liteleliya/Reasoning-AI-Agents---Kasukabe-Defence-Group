@@ -13,6 +13,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import Protocol
 
+from agents.ledger import call_scope
 from blackboard import BoardState, EventStore
 from counterfactual.sandbox import Alternative, Distance, latest_predictions
 from protocol import SYSTEM, Event, EventDraft, Kind, ProtocolError, Tokens
@@ -113,7 +114,7 @@ async def replay_pair(
         replacement=replacement,
         distance_recorded=_recorded_distance(real, target_seq, len(original.steps), distance),
     )
-    _record_pair(store, session_id, result, alt.tokens, reason)
+    _record_pair(store, session_id, result, alt.tokens, alt.call_ids, reason)
     return result
 
 
@@ -139,9 +140,10 @@ async def _run_branch(
             if max_tokens is not None and tokens >= max_tokens:
                 why = f"budget: {tokens} tokens spent before {peer.name} replied"
                 break
-            turn = TurnResult.adapt(
-                await peer.reply_to_target(question, fork.state(session_id), tested)
-            )
+            with call_scope(phase="branch", branch=label, session_id=session_id):
+                turn = TurnResult.adapt(
+                    await peer.reply_to_target(question, fork.state(session_id), tested)
+                )
             if turn.draft is None:
                 why = f"{peer.name}: {turn.reason}" + (f" ({turn.detail})" if turn.detail else "")
                 break
@@ -175,7 +177,12 @@ def _next_replay_id(store: EventStore, session_id: str) -> str:
 
 
 def _record_pair(
-    store: EventStore, session_id: str, result: PairResult, candidate_tokens: Tokens, reason: str
+    store: EventStore,
+    session_id: str,
+    result: PairResult,
+    candidate_tokens: Tokens,
+    call_ids: Sequence[str],
+    reason: str,
 ) -> None:
     """Append the replay to the real log as counterfactual events; the board does not move."""
     target, rid = result.target, result.replay_id
@@ -192,6 +199,7 @@ def _record_pair(
                 "replay_id": rid,
                 "target_seq": target.seq,
                 "challenger_seq": result.challenger_seq,
+                "call_ids": list(call_ids),
             },
         )
     )
@@ -213,6 +221,7 @@ def _record_pair(
                         "fork_seq": e.seq,
                         "fork_reply_to": e.reply_to,
                         "tested": i == 0,
+                        "call_ids": e.meta.get("call_ids", []),
                     },
                 )
             )
@@ -253,10 +262,16 @@ def record_failed_attempt(
     challenger_seq: int | None,
     reason: str,
     tokens: Tokens,
+    call_ids: Sequence[str] = (),
 ) -> str:
     """Log a replay that never got a usable replacement, so the attempt is not lost."""
     rid = _next_replay_id(store, session_id)
-    meta = {"replay_id": rid, "target_seq": target.seq, "challenger_seq": challenger_seq}
+    meta = {
+        "replay_id": rid,
+        "target_seq": target.seq,
+        "challenger_seq": challenger_seq,
+        "call_ids": list(call_ids),
+    }
     store.append_sync(
         EventDraft(
             session_id=session_id,

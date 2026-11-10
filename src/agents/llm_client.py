@@ -23,6 +23,8 @@ from typing import Literal
 import httpx
 from pydantic import BaseModel
 
+from agents.ledger import CallLedger, CallRecord, current_scope
+
 TAGS = ("RATIFY", "REVISE", "REFUTE", "REJECT")
 
 
@@ -67,6 +69,7 @@ class BaseLLMClient(ABC):
 
     def __init__(self) -> None:
         self.usage_log: list[tuple[str, TokenUsage]] = []
+        self.ledger = CallLedger()
         self._calls = 0
 
     async def complete(
@@ -79,16 +82,38 @@ class BaseLLMClient(ABC):
         json_mode: bool = False,
         label: str = "",
     ) -> LLMResponse:
-        response = await self._complete(
-            _coerce(messages),
-            temperature=temperature,
-            max_tokens=max_tokens,
-            seed=seed,
-            json_mode=json_mode,
-        )
-        self.usage_log.append((label, response.usage))
         self._calls += 1
-        response.call_id = f"call-{self._calls}"
+        call_id = f"call-{self._calls}"
+        scope = current_scope()
+        row = CallRecord(
+            call_id=call_id,
+            trial=scope.get("trial", ""),
+            session_id=scope.get("session_id", ""),
+            phase=scope.get("phase", "debate"),
+            branch=scope.get("branch", ""),
+            repair=scope.get("repair", False),
+            parent_seq=scope.get("parent_seq"),
+            agent=scope.get("agent", ""),
+        )
+        try:
+            response = await self._complete(
+                _coerce(messages),
+                temperature=temperature,
+                max_tokens=max_tokens,
+                seed=seed,
+                json_mode=json_mode,
+            )
+        except Exception as exc:  # recorded, then raised again for the caller to handle
+            row.status, row.usage, row.detail = "error", "missing", f"{type(exc).__name__}: {exc}"
+            self.ledger.add(row)
+            raise
+        row.usage = "estimated" if response.usage.estimated else "reported"
+        row.prompt_tokens = response.usage.prompt
+        row.completion_tokens = response.usage.completion
+        row.latency_s = response.latency_s
+        self.ledger.add(row)
+        self.usage_log.append((label, response.usage))
+        response.call_id = call_id
         return response
 
     @abstractmethod

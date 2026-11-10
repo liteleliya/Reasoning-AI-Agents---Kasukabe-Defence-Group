@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 
+from agents.ledger import call_scope
 from agents.llm_client import BaseLLMClient, LLMError, TokenUsage
 from agents.parsing import PXPParseError, parse_pxp, repair_messages
 from agents.prompts import Persona, init_messages, reply_messages
@@ -87,14 +88,20 @@ class PEXAgent:
         call_ids: list[str] = []
         for attempt in range(2):
             try:
-                response = await self.client.complete(
-                    msgs,
-                    temperature=self.temperature,
-                    max_tokens=self.max_tokens,
-                    seed=None if self.seed is None else self.seed + board.seq + 1,
-                    json_mode=True,
-                    label=label,
-                )
+                with call_scope(
+                    session_id=board.session_id,
+                    agent=self.name,
+                    parent_seq=None if target is None else target.seq,
+                    repair=attempt == 1,
+                ):
+                    response = await self.client.complete(
+                        msgs,
+                        temperature=self.temperature,
+                        max_tokens=self.max_tokens,
+                        seed=None if self.seed is None else self.seed + board.seq + 1,
+                        json_mode=True,
+                        label=label,
+                    )
             except LLMError as err:
                 self.errors += 1
                 self.unposted = self.unposted + usage
@@ -120,7 +127,11 @@ class PEXAgent:
                 prediction=parsed.prediction,
                 explanation=parsed.explanation,
                 tokens=usage.as_event(),
-                meta={"retried": attempt == 1, "estimated_tokens": usage.estimated},
+                meta={
+                    "retried": attempt == 1,
+                    "estimated_tokens": usage.estimated,
+                    "call_ids": call_ids,
+                },
             )
             return TurnResult(draft, TurnReason.OK, call_ids=tuple(call_ids))
         raise AssertionError("unreachable")
