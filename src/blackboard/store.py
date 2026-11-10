@@ -130,6 +130,25 @@ class EventStore:
                 )
         return copy
 
+    def copy_session(self, source: str, target: str, *, upto: int) -> int:
+        """Copy events 0..upto of `source` into the empty session `target`, same seq numbers.
+
+        Returns the number of events copied. The source is untouched.
+        """
+        events = self.events(source, upto)
+        if not events:
+            raise ValueError(f"no session {source!r} to copy")
+        with self._lock:
+            if self.state(target).seq >= 0:
+                raise ValueError(f"session {target!r} already has events")
+            for event in events:
+                self._conn.execute(
+                    f"INSERT INTO events ({_COLUMNS}) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                    _to_row(event.model_copy(update={"session_id": target})),
+                )
+            self._states.pop(target, None)
+        return len(events)
+
     def close(self) -> None:
         with self._lock:
             self._conn.close()

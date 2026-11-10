@@ -104,6 +104,18 @@ class Scheduler:
     async def run(self, session_id: str, question: str) -> SessionResult:
         if self.store.state(session_id).seq >= 0:
             raise ValueError(f"session {session_id!r} already has events")
+        return await self._loop(session_id, question)
+
+    async def resume(self, session_id: str, question: str) -> SessionResult:
+        """Continue a session whose events were copied in (a shared prefix) with the same loop."""
+        board = self.store.state(session_id)
+        if board.seq < 0:
+            raise ValueError(f"session {session_id!r} has no events to continue")
+        if board.terminated:
+            raise ValueError(f"session {session_id!r} already ended")
+        return await self._loop(session_id, question)
+
+    async def _loop(self, session_id: str, question: str) -> SessionResult:
         result = SessionResult(session_id, "", self.store.state(session_id))
         skip: set[str] = set()  # agents that passed or were rejected on the current board
         skip_seq = -1
