@@ -72,11 +72,15 @@ def create_app(store: EventStore, serve_ui: bool = True) -> FastAPI:
             )
         return out
 
+    # Query-parameter routes carry any session id; the path routes only work for simple ids,
+    # because "/", "|" and "#" in a real id split or truncate the URL path.
+    @app.get("/api/events")
     @app.get("/api/sessions/{session_id}/events")
     def events(session_id: str, upto: int | None = Query(None, ge=0)) -> list[dict[str, Any]]:
         known(session_id)
         return [e.to_record() for e in store.events(session_id, upto)]
 
+    @app.get("/api/snapshot")
     @app.get("/api/sessions/{session_id}/snapshot")
     def snapshot(session_id: str, at: int | None = Query(None, ge=0)) -> dict[str, Any]:
         known(session_id)
