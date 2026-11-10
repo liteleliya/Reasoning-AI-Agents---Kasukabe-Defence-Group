@@ -182,7 +182,7 @@ class Scheduler:
         if opp.eligible and opp.skip_reason is None:
             assert self.recovery is not None
             draft = await self.recovery.attempt(question, board, opp)
-            opp.outcome = "no_reply"
+            opp.outcome = opp.outcome or "no_reply"  # the policy may have said why it did not reply
             if draft is not None:
                 try:
                     await self.store.append(draft)

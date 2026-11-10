@@ -80,13 +80,19 @@ class Opportunity:
     challenger: int | None
     policy: str
     budget_remaining: int
-    outcome: str | None = None  # no_reply, reply_accepted or reply_rejected once attempted
+    outcome: str | None = (
+        None  # why the attempt ended; reply_accepted means a real reply was posted
+    )
+    replay: dict[str, Any] | None = None  # what the recovery policy found, if it ran a replay
 
     def to_record(self) -> dict[str, Any]:
         return asdict(self)
 
     def summary(self) -> dict[str, Any]:
-        return {"eligible": self.eligible, "skip_reason": self.skip_reason, "outcome": self.outcome}
+        out = {"eligible": self.eligible, "skip_reason": self.skip_reason, "outcome": self.outcome}
+        if self.replay:
+            out["replay_id"] = self.replay["replay_id"]
+        return out
 
 
 class Recovery(Protocol):

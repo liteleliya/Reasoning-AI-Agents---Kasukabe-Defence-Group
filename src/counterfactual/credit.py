@@ -208,6 +208,7 @@ class Candidate:
 class ReplayAttempt:
     candidate: Candidate
     pair: PairResult | None  # None when no usable candidate was obtained
+    replay_id: str = ""
 
 
 async def generate_candidate(
@@ -327,7 +328,7 @@ async def attempt_replay(
         author, store, board, question, target, challenger, new_tag=new_tag
     )
     if candidate.alternative is None:
-        record_failed_attempt(
+        replay_id = record_failed_attempt(
             store,
             session_id,
             target,
@@ -336,7 +337,7 @@ async def attempt_replay(
             candidate.tokens,
             candidate.call_ids,
         )
-        return ReplayAttempt(candidate, None)
+        return ReplayAttempt(candidate, None, replay_id)
     pair = await replay_pair(
         store,
         session_id,
@@ -349,4 +350,4 @@ async def attempt_replay(
         max_branch_tokens=max_branch_tokens,
         reason=f"what if {author.name} had replied with {new_tag} to answer #{challenger.seq}?",
     )
-    return ReplayAttempt(candidate, pair)
+    return ReplayAttempt(candidate, pair, pair.replay_id)

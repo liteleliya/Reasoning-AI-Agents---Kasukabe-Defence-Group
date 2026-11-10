@@ -14,6 +14,7 @@ from counterfactual.credit import (
     generate_candidate,
     replay_target,
 )
+from counterfactual.recovery import ReplayRecovery, live_message, outcomes
 from counterfactual.sandbox import Alternative, ReplayResult, replay
 
 __all__ = [
@@ -24,9 +25,12 @@ __all__ = [
     "CreditLog",
     "PairResult",
     "ReplayAttempt",
+    "ReplayRecovery",
     "ReplayResult",
     "attempt_replay",
     "generate_candidate",
+    "live_message",
+    "outcomes",
     "replay",
     "replay_pair",
     "replay_target",
