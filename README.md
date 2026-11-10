@@ -99,6 +99,7 @@ uv run ruff check . && uv run ruff format --check .
 | One prompt to the configured model | `uv run python -m agents.llm_client "Say hi"` |
 | Run (or resume) an experiment job | `uv run python -m bench.run configs/<job>.json --shard 1/1 --parallel 8` (`--mock` needs no model) |
 | Prompt parse check (J1) | `uv run python -m bench.parse_check --n 50` |
+| Stalled and recovered fixture sessions ([docs](docs/recovery_fixture.md)) | `uv run python -m counterfactual.fixture --db results/roadmap_fixture.sqlite` |
 
 The model is chosen by environment variables: `LLM_BACKEND=openai`, `LLM_BASE_URL` (Ollama
 `http://127.0.0.1:11434/v1`, vLLM `http://127.0.0.1:8001/v1`) and `LLM_MODEL`.
