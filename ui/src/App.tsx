@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSessionEvents, useSessions, useSnapshot } from "./api";
 import { CounterfactualPanel } from "./CounterfactualPanel";
+import { EventInspector } from "./EventInspector";
+import { EventList } from "./EventList";
 import { Graph } from "./Graph";
-import { upTo } from "./layout";
+import { firstChallenge, terminationSeq } from "./inspector";
+import { rosterOf, upTo } from "./layout";
 import { Scrubber } from "./Scrubber";
 import { SessionHeader } from "./SessionHeader";
 import { SessionList } from "./SessionList";
@@ -56,6 +59,10 @@ export function App() {
   const visible = useMemo(() => upTo(events, cursor), [events, cursor]);
   const snap = useSnapshot(sessionId, events.length ? cursor : null);
   const term = events.find((e) => e.tag === "TERM");
+  const termSeq = useMemo(() => terminationSeq(events), [events]);
+  const firstChallengeSeq = useMemo(() => firstChallenge(events), [events]);
+  const roster = useMemo(() => rosterOf(events), [events]);
+  const pick = useCallback((seq: number) => scrub(seq, false), [scrub]); // selecting pauses
   const info = sessions.find((s) => s.session_id === sessionId);
 
   let body;
@@ -68,13 +75,24 @@ export function App() {
   } else {
     body = (
       <>
-        <Scrubber events={events} cursor={cursor} live={follow} onChange={scrub} />
+        <Scrubber
+          events={events}
+          cursor={cursor}
+          live={follow}
+          firstChallenge={firstChallengeSeq}
+          termSeq={termSeq}
+          onChange={scrub}
+        />
         <div className="body">
           <div className="left">
-            <Graph events={visible} highlightSeq={cursor} onSelect={(e) => scrub(e.seq, false)} />
+            <Graph events={events} roster={roster} cursor={cursor} onSelect={(e) => pick(e.seq)} />
             <CounterfactualPanel events={visible} />
           </div>
-          <StatePanel snap={snap} />
+          <div className="side">
+            <EventInspector events={events} cursor={cursor} onSelectSeq={pick} />
+            <StatePanel snap={snap} session={info} termSeq={termSeq} />
+            <EventList events={events} cursor={cursor} onSelectSeq={pick} />
+          </div>
         </div>
       </>
     );

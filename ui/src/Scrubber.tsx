@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import type { EventRecord } from "./types";
 
+const PLAY_MS = 450; // fixed in the first release
+
 interface Props {
   events: EventRecord[];
   cursor: number; // seq currently shown
   live: boolean; // following new events
+  firstChallenge: number | null; // seq of the first REFUTE or REJECT
+  termSeq: number | null; // seq of TERM; null while the session is still running
   onChange: (seq: number, live: boolean) => void;
 }
 
-/** History scrubber (C4): pick any seq; the board is rebuilt from the log up to it. */
-export function Scrubber({ events, cursor, live, onChange }: Props) {
+/** History controls (C4): step, play, jump and follow live; the board is rebuilt up to the seq. */
+export function Scrubber({ events, cursor, live, firstChallenge, termSeq, onChange }: Props) {
   const last = events.length ? events[events.length - 1].seq : 0;
   const [playing, setPlaying] = useState(false);
 
@@ -19,17 +23,23 @@ export function Scrubber({ events, cursor, live, onChange }: Props) {
       setPlaying(false);
       return;
     }
-    const id = setTimeout(() => onChange(cursor + 1, false), 450);
+    const id = setTimeout(() => onChange(cursor + 1, false), PLAY_MS);
     return () => clearTimeout(id);
   }, [playing, cursor, last, onChange]);
 
+  const jump = (seq: number | null) => {
+    if (seq === null) return;
+    setPlaying(false);
+    onChange(seq, false);
+  };
   const current = events.find((e) => e.seq === cursor);
   const disabled = !events.length;
 
   return (
     <div className="scrubber">
-      <button onClick={() => onChange(Math.max(0, cursor - 1), false)} disabled={disabled}
-        aria-label="Previous event">◀</button>
+      <button onClick={() => jump(Math.max(0, cursor - 1))} disabled={disabled || cursor <= 0}>
+        ◀ Previous
+      </button>
       <button
         onClick={() => {
           if (cursor >= last) onChange(0, false);
@@ -37,10 +47,17 @@ export function Scrubber({ events, cursor, live, onChange }: Props) {
         }}
         disabled={disabled}
       >
-        {playing ? "Pause" : "Replay"}
+        {playing ? "Pause" : "Play"}
       </button>
-      <button onClick={() => onChange(Math.min(last, cursor + 1), false)} disabled={disabled}
-        aria-label="Next event">▶</button>
+      <button onClick={() => jump(Math.min(last, cursor + 1))} disabled={disabled || cursor >= last}>
+        Next ▶
+      </button>
+      <button onClick={() => jump(firstChallenge)} disabled={firstChallenge === null}>
+        First challenge
+      </button>
+      <button onClick={() => jump(termSeq)} disabled={termSeq === null}>
+        Termination
+      </button>
       <input
         type="range"
         min={0}
@@ -50,18 +67,23 @@ export function Scrubber({ events, cursor, live, onChange }: Props) {
         onChange={(e) => {
           setPlaying(false);
           const seq = Number(e.target.value);
-          onChange(seq, seq === last);
+          onChange(seq, termSeq === null && seq === last);
         }}
         aria-label="Event sequence number"
       />
-      <span className="seq">
+      <span className="seq" aria-live="polite">
         seq {cursor} / {last}
         {current && ` · ${current.author} ${current.tag ?? current.kind}`}
       </span>
-      <label className="follow">
-        <input type="checkbox" checked={live} onChange={(e) => onChange(last, e.target.checked)} />
-        follow live
-      </label>
+      {termSeq === null && (
+        <button
+          className={live ? "live on" : "live"}
+          aria-pressed={live}
+          onClick={() => (live ? onChange(cursor, false) : onChange(last, true))}
+        >
+          Live
+        </button>
+      )}
     </div>
   );
 }
