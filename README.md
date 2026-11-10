@@ -101,6 +101,7 @@ uv run ruff check . && uv run ruff format --check .
 | Run (or resume) an experiment job | `uv run python -m bench.run configs/<job>.json --shard 1/1 --parallel 8` (`--mock` needs no model) |
 | Pick held-out and development items ([docs](docs/cases.md)) | `uv run python -m bench.splits` |
 | Blinded grading sheet and score join | `uv run python -m bench.grading export configs/<job>.json --run <dir> --out <dir>` |
+| Three-arm paired runner ([docs](docs/paired_runner.md)) | `uv run python -m bench.run configs/paired_dev.json --mock --limit 6 --out results/paired-smoke` |
 | Prompt parse check (J1) | `uv run python -m bench.parse_check --n 50` |
 | Stalled and recovered fixture sessions ([docs](docs/recovery_fixture.md)) | `uv run python -m counterfactual.fixture --db results/roadmap_fixture.sqlite` |
 
