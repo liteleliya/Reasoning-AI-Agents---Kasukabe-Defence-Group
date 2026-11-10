@@ -29,3 +29,41 @@ The file is append-only and fsynced per row; `trial_key` is unique and is what a
 | `total_tokens` | H3: `tokens_in + tokens_out + unposted_tokens` |
 | `rollback_tokens_in`, `rollback_tokens_out` | Of which spent inside counterfactual replays |
 | `wall_time_s` | Wall-clock time of the trial |
+| `stop_detail` | Why the stop reason applied: `consensus`, `message_cap`, `no_progress`, `debate_stall`, `all_passed` or `failed_turns` (spec section 4.1) |
+| `decision_seq` | Last committed event when the stop was decided |
+| `ledger_calls` | Model calls in the trial's call ledger (`calls.jsonl`); empty when no ledger was kept |
+| `ledger_tokens_in`, `ledger_tokens_out` | Tokens over every call, including calls that failed to parse, were refused or were spent in the sandbox |
+| `ledger_unposted_tokens` | Of those, tokens of calls no event lists in `meta.call_ids` |
+| `ledger_missing` | Calls whose usage is unknown (they failed before a reply); they add no tokens |
+| `grading_tokens` | Offline grading cost; never part of `total_tokens` |
+
+With a ledger, `total_tokens` is `ledger_tokens_in + ledger_tokens_out`: every call once. The board
+tokens (`tokens_in`, `tokens_out`) are the subtotal of calls that events list in `meta.call_ids`,
+so `total_tokens = tokens_in + tokens_out + ledger_unposted_tokens`. Calls with estimated usage are
+included; the ledger row marks them `estimated`. Without a ledger the old definition applies.
+The identity holds for the checkpoint recovery path; the older opportunistic replay posts its
+tokens without call ids, so for those runs `ledger_unposted_tokens` also counts calls that are on
+the board, and only `total_tokens` is exact.
+
+A `metrics.csv` written before these columns existed has a different header: the writer refuses
+to append to it, so write a resumed run to a new folder.
+
+## Call ledger (`calls.jsonl`)
+
+One JSON line per model request, written at the client boundary, so failed and unparseable calls
+are kept.
+
+| Field | Meaning |
+|---|---|
+| `call_id` | `call-<n>`, unique within one client |
+| `trial`, `session_id` | Which trial and session the call belongs to |
+| `phase` | `debate`, `candidate` or `branch` |
+| `branch` | `original` or `replacement` for branch calls |
+| `repair` | The retry sent after an unusable reply |
+| `parent_seq` | The message the call was made to answer |
+| `agent` | Who made the call |
+| `status` | `ok` or `error` |
+| `usage` | `reported`, `estimated` or `missing` |
+| `prompt_tokens`, `completion_tokens` | Null when usage is missing |
+| `latency_s`, `detail` | Latency, and the error text for failed calls |
+
