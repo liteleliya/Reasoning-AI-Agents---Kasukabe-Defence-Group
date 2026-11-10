@@ -15,7 +15,7 @@ from pathlib import Path
 
 from blackboard import BoardState, EventStore
 from counterfactual.sandbox import Alternative, replay
-from protocol import SYSTEM, EventDraft, Tag
+from protocol import SYSTEM, Event, EventDraft, Tag
 from scheduler import CONSENSUS, IMPASSE, SchedulerConfig
 
 CASE_ID = "toy-recovery-xy"
@@ -116,10 +116,17 @@ class RotatingAgent:
         if self.swap is not None and self.swap[0] == sent:
             alt = self.swap[1]
             return self._draft(board, alt.tag, target.seq, alt.prediction or "", alt.explanation)
+        return self._reply(board, target, sent)
+
+    async def reply_to_target(self, question: str, board: BoardState, target: Event) -> EventDraft:
+        """Answer `target` whatever the turn order is; used by the sandbox branches."""
+        sent = sum(1 for e in board.messages if e.author == self.name)
+        return self._reply(board, target, sent)
+
+    def _reply(self, board: BoardState, target: Event, sent: int) -> EventDraft:
         tag = Tag.RATIFY if target.prediction == self.answer else Tag.REFUTE
-        return self._draft(
-            board, tag, target.seq, self.answer, self.said[min(sent, len(self.said) - 1)]
-        )
+        explanation = self.said[min(sent, len(self.said) - 1)]
+        return self._draft(board, tag, target.seq, self.answer, explanation)
 
     def _draft(
         self, board: BoardState, tag: Tag, reply_to: int | None, prediction: str, explanation: str

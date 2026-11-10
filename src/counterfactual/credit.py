@@ -19,13 +19,15 @@ import logging
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 
-from agents.parsing import PXPParseError, parse_pxp
+from agents.llm_client import LLMError, TokenUsage
+from agents.parsing import PXPParseError, parse_pxp, repair_messages
 from agents.pex_agent import PEXAgent
-from agents.prompts import counterfactual_messages
+from agents.prompts import candidate_messages, counterfactual_messages
 from blackboard import BoardState, EventStore
+from counterfactual.branches import PairResult, Responder, record_failed_attempt, replay_pair
 from counterfactual.sandbox import Alternative, Distance, ReplayResult, replay
-from protocol import Event, EventDraft, Kind, Tag, Tokens
-from scheduler import Agent, TurnResult, exact_distance
+from protocol import Event, EventDraft, Kind, ProtocolError, Tag, Tokens, validate
+from scheduler import Agent, TurnResult, exact_distance, normalise
 
 log = logging.getLogger(__name__)
 
@@ -185,3 +187,152 @@ class CounterfactualAgent:
             explanation=alt.explanation,
             meta={"adopted_counterfactual": True},
         )
+
+
+# --- candidate replacement and the matched replay (roadmap section 04) -------------------------
+
+
+@dataclass(frozen=True)
+class Candidate:
+    """The replacement reply asked of the target's author, or why none was obtained."""
+
+    status: str  # "ok" or "failed"
+    alternative: Alternative | None
+    reason: str = ""
+    tokens: Tokens = field(default_factory=Tokens)  # everything spent, failed calls included
+    call_ids: tuple[str, ...] = ()
+
+
+@dataclass
+class ReplayAttempt:
+    candidate: Candidate
+    pair: PairResult | None  # None when no usable candidate was obtained
+
+
+async def generate_candidate(
+    agent: PEXAgent,
+    store: EventStore,
+    board: BoardState,
+    question: str,
+    target: Event,
+    challenger: Event,
+    *,
+    new_tag: Tag = Tag.REVISE,
+) -> Candidate:
+    """One attempt and at most one repair at a replacement for `target`, given its objection.
+
+    The candidate always answers the message `target` answered, whatever reply_to the model gave.
+    It must change the prediction or the explanation and pass the protocol validator on a fork of
+    the board taken just before `target`.
+    """
+    msgs = candidate_messages(
+        agent.persona,
+        agent.name,
+        question,
+        [e for e in board.events if e.seq < target.seq],
+        target,
+        challenger,
+        new_tag.value,
+        agent.n_agents,
+    )
+    usage, call_ids = TokenUsage(), []
+
+    def result(status: str, alt: Alternative | None, reason: str = "") -> Candidate:
+        spent = Tokens(in_=usage.prompt, out=usage.completion)
+        if alt is not None:
+            alt = Alternative(alt.tag, alt.explanation, alt.prediction, spent)
+        return Candidate(status, alt, reason, spent, tuple(call_ids))
+
+    for attempt in range(2):
+        try:
+            response = await agent.client.complete(
+                msgs,
+                temperature=agent.temperature,
+                max_tokens=agent.max_tokens,
+                seed=None if agent.seed is None else agent.seed + board.seq + 1,
+                json_mode=True,
+                label=f"candidate/{board.session_id}/{agent.name}",
+            )
+        except LLMError as err:
+            log.warning("%s: model error while writing a candidate (%s)", agent.name, err)
+            return result("failed", None, f"model_error: {err}")
+        usage = usage + response.usage
+        call_ids.append(response.call_id)
+        try:
+            return result("ok", _vet(agent, store, board, target, response.text, new_tag))
+        except PXPParseError as err:  # also used for "unchanged" and "refused by the protocol"
+            if attempt == 1:
+                log.warning("%s: unusable candidate after repair (%s)", agent.name, err.reason)
+                return result("failed", None, err.reason)
+            msgs = [*msgs, *repair_messages(response.text, err)]
+    raise AssertionError("unreachable")
+
+
+def _vet(
+    agent: PEXAgent, store: EventStore, board: BoardState, target: Event, text: str, tag: Tag
+) -> Alternative:
+    parsed = parse_pxp(text, allowed_tags=(tag.value,))
+    if (normalise(parsed.prediction), normalise(parsed.explanation)) == (
+        normalise(target.prediction),
+        normalise(target.explanation),
+    ):
+        raise PXPParseError(
+            "no change: the new message repeats your original prediction and reason"
+        )
+    draft = EventDraft(
+        session_id=board.session_id,
+        author=agent.name,
+        tag=tag,
+        reply_to=target.reply_to,
+        prediction=parsed.prediction,
+        explanation=parsed.explanation,
+    )
+    fork = store.fork(board.session_id, target.seq - 1)
+    try:
+        validate(draft, fork.events(board.session_id))
+    except ProtocolError as exc:
+        raise PXPParseError(f"invalid: {exc.reason}") from exc
+    finally:
+        fork.close()
+    return Alternative(tag=tag, explanation=parsed.explanation, prediction=parsed.prediction)
+
+
+async def attempt_replay(
+    store: EventStore,
+    board: BoardState,
+    question: str,
+    target: Event,
+    challenger: Event,
+    author: PEXAgent,
+    make_peers: Callable[[], Sequence[Responder]],
+    *,
+    distance: Distance = exact_distance,
+    new_tag: Tag = Tag.REVISE,
+    max_branch_tokens: int | None = None,
+) -> ReplayAttempt:
+    """Get a candidate from `author`, run it against the original on matched forks and log it.
+
+    A failed candidate is logged too (a rollback with no steps), so no attempt goes unrecorded.
+    """
+    session_id = board.session_id
+    candidate = await generate_candidate(
+        author, store, board, question, target, challenger, new_tag=new_tag
+    )
+    if candidate.alternative is None:
+        record_failed_attempt(
+            store, session_id, target, challenger.seq, candidate.reason, candidate.tokens
+        )
+        return ReplayAttempt(candidate, None)
+    pair = await replay_pair(
+        store,
+        session_id,
+        target.seq,
+        candidate.alternative,
+        make_peers,
+        question,
+        distance=distance,
+        challenger_seq=challenger.seq,
+        max_branch_tokens=max_branch_tokens,
+        reason=f"what if {author.name} had replied with {new_tag} to answer #{challenger.seq}?",
+    )
+    return ReplayAttempt(candidate, pair)
