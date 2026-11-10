@@ -86,7 +86,7 @@ export function App() {
         <div className="body">
           <div className="left">
             <Graph events={events} roster={roster} cursor={cursor} onSelect={(e) => pick(e.seq)} />
-            <CounterfactualPanel events={visible} />
+            <CounterfactualPanel events={visible} cursor={cursor} onSelectSeq={pick} />
           </div>
           <div className="side">
             <EventInspector events={events} cursor={cursor} onSelectSeq={pick} />
