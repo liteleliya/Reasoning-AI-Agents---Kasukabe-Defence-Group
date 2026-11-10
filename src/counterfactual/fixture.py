@@ -10,13 +10,19 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 from dataclasses import dataclass
 from pathlib import Path
 
+from agents.ledger import call_scope
+from agents.llm_client import MockClient
+from agents.pex_agent import PEXAgent
+from agents.prompts import persona_for
 from blackboard import BoardState, EventStore
-from counterfactual.sandbox import Alternative, replay
-from protocol import SYSTEM, Event, EventDraft, Tag
-from scheduler import CONSENSUS, IMPASSE, SchedulerConfig
+from counterfactual.recovery import ReplayRecovery
+from counterfactual.sandbox import Alternative
+from protocol import Event, EventDraft, Tag
+from scheduler import Scheduler, SchedulerConfig
 
 CASE_ID = "toy-recovery-xy"
 QUESTION = (
@@ -162,25 +168,22 @@ def scheduler_config() -> SchedulerConfig:
     return SchedulerConfig(impasse_window=WINDOW)
 
 
-def _term(store: EventStore, session_id: str, reason: str) -> None:
-    store.append_sync(
-        EventDraft(session_id=session_id, author=SYSTEM, tag=Tag.TERM, explanation=reason)
-    )
-
-
 def build_handoff_db(path: str | Path) -> EventStore:
-    """Write the two demo sessions to a fresh store: one that stalls and one that recovers."""
-    store = EventStore(path)
-    for session_id in (OFF_SESSION, ON_SESSION):
-        for draft in prefix_drafts(session_id):
-            store.append_sync(draft)
-    _term(store, OFF_SESSION, IMPASSE)
+    """Write the two demo sessions to a fresh store, both through the normal scheduler.
 
-    peers = [a for a in agents() if a.name != "A"]
-    reason = "what if A had conceded the four-minute limit?"
-    asyncio.run(replay(store, ON_SESSION, TARGET_SEQ, ALTERNATIVE, peers, QUESTION, reason=reason))
-    store.append_sync(adoption_draft(ON_SESSION))
-    _term(store, ON_SESSION, CONSENSUS)
+    Only the recovery policy differs: the off session stalls at #8 and ends in an impasse, and the
+    on session replays #6, adopts the replacement as a real reply to #7 and reaches consensus.
+    """
+    store = EventStore(path)
+    candidate = json.dumps(
+        {"tag": "REVISE", "prediction": ANSWER, "explanation": ALTERNATIVE.explanation}
+    )
+    author = PEXAgent("A", persona_for(0), MockClient(responder=lambda _: candidate), n_agents=3)
+    recovery = ReplayRecovery(store, {"A": author}, lambda: [a for a in agents() if a.name != "A"])
+    for session_id, policy in ((OFF_SESSION, None), (ON_SESSION, recovery)):
+        scheduler = Scheduler(store, agents(enabled=("A",)), scheduler_config(), recovery=policy)
+        with call_scope(trial=session_id):
+            asyncio.run(scheduler.run(session_id, QUESTION))
     return store
 
 

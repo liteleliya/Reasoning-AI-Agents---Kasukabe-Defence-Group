@@ -127,12 +127,21 @@ def test_handoff_db_holds_a_stalled_and_a_recovered_session(tmp_path) -> None:
     assert shape(events[:9]) == EXPECTED_PREFIX
     end = next(e for e in events if e.kind is Kind.ROLLBACK_END)
     assert end.meta["credit_delta"] == pytest.approx(-1 / 3, abs=1e-4)
+    assert end.meta["status"] == "completed" and end.meta["replay_id"] == f"{ON_SESSION}::replay-1"
+    assert events[-1].meta["recovery"] == {
+        "eligible": True,
+        "skip_reason": None,
+        "outcome": "reply_accepted",
+        "replay_id": end.meta["replay_id"],
+    }  # the session came from the checkpoint, not from hand-written events
+    assert store.events(OFF_SESSION)[-1].meta["recovery"]["skip_reason"] == "recovery_disabled"
 
     adopted = [e for e in events if e.meta.get("adopted_counterfactual")]
     assert len(adopted) == 1 and adopted[0].seq > end.seq
     assert (adopted[0].author, adopted[0].tag) == ("A", Tag.REVISE)
     assert adopted[0].reply_to == CHALLENGER_SEQ and not adopted[0].counterfactual
     assert "four-minute" in adopted[0].explanation
+    assert adopted[0].meta["replay_id"] == end.meta["replay_id"]
     # the real board only moves at the adopted reply, not during the sandbox branch
     assert store.snapshot(ON_SESSION, end.seq).predictions == {"A": "X", "B": "Y", "C": "Y"}
     assert store.snapshot(ON_SESSION, adopted[0].seq).predictions["A"] == ANSWER
