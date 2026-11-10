@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useResults, useSessionEvents, useSessions, useSnapshot } from "./api";
+import { useCaseBrief, useResults, useSessionEvents, useSessions, useSnapshot } from "./api";
+import { CaseBrief } from "./CaseBrief";
 import { CounterfactualPanel } from "./CounterfactualPanel";
 import { EventInspector } from "./EventInspector";
 import { EventList } from "./EventList";
@@ -74,6 +75,7 @@ export function App() {
   const roster = useMemo(() => rosterOf(events), [events]);
   const pick = useCallback((seq: number) => scrub(seq, false), [scrub]); // selecting pauses
   const info = sessions.find((s) => s.session_id === sessionId);
+  const caseBrief = useCaseBrief(view === "explore" ? (info?.case_id ?? null) : null);
 
   let body;
   if (!sessionId) {
@@ -152,6 +154,9 @@ export function App() {
             stopDetail={term ? term.explanation : null}
             onSelect={selectSession}
           />
+        )}
+        {view === "explore" && sessionId && (
+          <CaseBrief caseId={info?.case_id ?? null} brief={caseBrief.brief} status={caseBrief.status} />
         )}
         {view === "explore" && body}
       </main>

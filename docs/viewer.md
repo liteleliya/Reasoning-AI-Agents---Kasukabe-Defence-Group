@@ -53,3 +53,11 @@ browser yet. Check these by hand and note the session and event ids used.
 5. **Results.** Open Results for J3: 117 of 120 reached consensus, 93 correct, 0 replays logged,
    the four conditions in order, the eligible counts unavailable. Open an example: it lands on that
    session in Explore.
+
+## Task and evidence panel
+
+Open an authored case session (for example `case:restore-p1`): a collapsed "Task and evidence"
+section sits under the session header. Expand it and check the question, context, labelled
+evidence (E1, E2) and the lines under "Agents state". Open a J3 session: it says no public prompt
+is stored and shows the item id. Switch sessions quickly: the previous case's task must never show
+under the new one.

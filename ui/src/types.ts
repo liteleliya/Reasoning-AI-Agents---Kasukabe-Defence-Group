@@ -33,6 +33,19 @@ export interface SessionInfo {
   correct: boolean | null;
 }
 
+/** The public record of an authored case; the grading record is never sent to the viewer. */
+export interface CaseBrief {
+  id: string;
+  split: string;
+  version: number;
+  domain: string;
+  question: string;
+  context: string;
+  evidence: { id: string; text: string }[];
+  decisions: string[];
+  fields: { name: string; kind: string; unit: string; values: string[]; decisive: boolean; description: string }[];
+}
+
 export interface Snapshot {
   session_id: string;
   seq: number;

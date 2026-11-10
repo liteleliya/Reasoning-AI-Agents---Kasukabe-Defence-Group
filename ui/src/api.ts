@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { accept, isCurrentSnapshot, nextSeq, type Buffered } from "./stream";
-import type { EventRecord, RunSummary, SessionInfo, Snapshot } from "./types";
+import { briefUrl, hasBrief } from "./taskBrief";
+import type { BriefStatus } from "./CaseBrief";
+import type { CaseBrief, EventRecord, RunSummary, SessionInfo, Snapshot } from "./types";
 
 export async function getJSON<T>(url: string, signal?: AbortSignal): Promise<T> {
   const res = await fetch(url, { signal });
@@ -200,5 +202,26 @@ export function useResults(active: boolean): {
       });
     return () => ctl.abort();
   }, [active]);
+  return state;
+}
+
+/** The public record of the open session's case, fetched only for authored cases. */
+export function useCaseBrief(caseId: string | null): { brief: CaseBrief | null; status: BriefStatus } {
+  const [state, setState] = useState<{ brief: CaseBrief | null; status: BriefStatus }>({
+    brief: null, status: "idle",
+  });
+  useEffect(() => {
+    if (!caseId) return setState({ brief: null, status: "idle" });
+    if (!hasBrief(caseId)) return setState({ brief: null, status: "unavailable" });
+    const ctl = new AbortController();
+    setState({ brief: null, status: "loading" }); // never show the previous case's task
+    getJSON<CaseBrief>(briefUrl(caseId), ctl.signal)
+      .then((brief) => setState({ brief, status: "ready" }))
+      .catch((err) => {
+        if (ctl.signal.aborted) return;
+        setState({ brief: null, status: /^404/.test(message(err)) ? "unavailable" : "error" });
+      });
+    return () => ctl.abort();
+  }, [caseId]);
   return state;
 }
