@@ -167,3 +167,9 @@ def test_grading_cost_stop_detail_and_decision_seq_are_kept_apart() -> None:
         8,
     )
     assert row["total_tokens"] == plain["total_tokens"]  # offline grading is not trial cost
+
+
+def test_agreement_basis_says_how_agreement_was_decided() -> None:
+    state = consensus_state().state("s")
+    assert trial_row(state, META)["agreement_basis"] == ""
+    assert trial_row(state, META, agreement_basis="key")["agreement_basis"] == "key"

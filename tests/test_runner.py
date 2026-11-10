@@ -222,3 +222,27 @@ def test_run_json_records_the_manifest_version(tmp_path: Path) -> None:
 def test_unknown_case_id_in_a_job_is_an_error() -> None:
     with pytest.raises(ValueError, match="no-such-case"):
         job_instances(authored_job(split="dev", ids=["no-such-case"]))
+
+
+def test_rows_label_how_agreement_was_decided(tmp_path: Path) -> None:
+    from bench.run import agreement_basis
+
+    assert agreement_basis("single_choice") == "exact"
+    assert agreement_basis("judgment") == "exact"
+    assert agreement_basis("authored") == "key"
+    assert agreement_basis("open_qa") == "approximate"  # lexical overlap, not a verified key
+    rows = go(tmp_path, limit=1)
+    assert rows[0]["agreement_basis"] == "exact"
+
+
+def test_a_copied_reference_with_a_flipped_conclusion_fails_despite_overlap() -> None:
+    from bench.cases import load_cases
+    from bench.correctness import rouge_l_f1
+
+    book = load_cases()
+    instance = book.instance("restore-p1")
+    _, correct = judging("authored", instance)
+    copied = "A; downtime=2 min; data_loss=30 s; lag_check=before"
+    right = "B; downtime=2 min; data_loss=30 s; lag_check=before"
+    assert rouge_l_f1(copied, right) > 0.8
+    assert correct(right, "B") and not correct(copied, "B")

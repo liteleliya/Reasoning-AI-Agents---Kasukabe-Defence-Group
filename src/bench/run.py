@@ -104,6 +104,11 @@ def judging(
     return correctness.same_answer(fmt), lambda pred, ref: correctness.is_correct(fmt, pred, ref)
 
 
+def agreement_basis(fmt: str) -> str:
+    """How `judging` decides agreement for a format; approximate results are labelled as such."""
+    return {"authored": "key", "open_qa": "approximate"}.get(fmt, "exact")
+
+
 def groups(predictions: Mapping[str, str], same: Callable[[str, str], bool]) -> list[list[str]]:
     """Greedy grouping in sorted agent order, so it is deterministic."""
     out: list[list[str]] = []
@@ -259,6 +264,7 @@ async def run_trial(
         ledger=client.ledger.for_trial(trial.meta.key),
         stop_detail=result.stop_detail,
         decision_seq=result.decision_seq,
+        agreement_basis=agreement_basis(fmt),
     )
 
 

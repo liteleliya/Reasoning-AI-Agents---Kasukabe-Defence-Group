@@ -49,6 +49,7 @@ COLUMNS = (
     "wall_time_s",
     "stop_detail",
     "decision_seq",
+    "agreement_basis",
     "ledger_calls",
     "ledger_tokens_in",
     "ledger_tokens_out",
@@ -89,6 +90,7 @@ def trial_row(
     ledger: Sequence[CallRecord] | None = None,
     stop_detail: str = "",
     decision_seq: int | None = None,
+    agreement_basis: str = "",
     grading_tokens: int | None = None,
 ) -> dict[str, Any]:
     """One CSV row for a finished session.
@@ -100,7 +102,9 @@ def trial_row(
     With the trial's `ledger` rows, `total_tokens` is the sum over every model call, the board
     tokens are the subtotal of calls that events list in `meta["call_ids"]`, and calls no event
     lists are the ledger's unposted tokens. Calls with unknown usage are counted as missing and
-    add nothing. `grading_tokens` is the offline grading cost and never part of the trial total.
+    add nothing. `agreement_basis` says how agreement was decided: exact match, a verified
+    key, or approximate lexical overlap. `grading_tokens` is the offline grading cost and never
+    part of the trial total.
     """
     msgs = [e for e in state.messages if e.author != "system"]
     counts = {t: sum(1 for e in msgs if e.tag is t) for t in Tag}
@@ -141,6 +145,7 @@ def trial_row(
         "wall_time_s": "" if wall_time_s is None else round(wall_time_s, 3),
         "stop_detail": stop_detail,
         "decision_seq": "" if decision_seq is None else decision_seq,
+        "agreement_basis": agreement_basis,
         **_ledger_columns(state, ledger),
         "grading_tokens": "" if grading_tokens is None else grading_tokens,
     }

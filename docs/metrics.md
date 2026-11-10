@@ -35,6 +35,7 @@ The file is append-only and fsynced per row; `trial_key` is unique and is what a
 | `ledger_tokens_in`, `ledger_tokens_out` | Tokens over every call, including calls that failed to parse, were refused or were spent in the sandbox |
 | `ledger_unposted_tokens` | Of those, tokens of calls no event lists in `meta.call_ids` |
 | `ledger_missing` | Calls whose usage is unknown (they failed before a reply); they add no tokens |
+| `agreement_basis` | How agreement was decided: `exact` (letters, judgment), `key` (authored decision key) or `approximate` (open QA lexical overlap; not a verified key) |
 | `grading_tokens` | Offline grading cost; never part of `total_tokens` |
 
 With a ledger, `total_tokens` is `ledger_tokens_in + ledger_tokens_out`: every call once. The board
