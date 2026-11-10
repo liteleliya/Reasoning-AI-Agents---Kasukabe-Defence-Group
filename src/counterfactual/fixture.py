@@ -8,12 +8,15 @@ sandbox, metrics and viewer tests, so the known answer lives here and nowhere el
 
 from __future__ import annotations
 
+import argparse
+import asyncio
 from dataclasses import dataclass
+from pathlib import Path
 
-from blackboard import BoardState
-from counterfactual.sandbox import Alternative
-from protocol import EventDraft, Tag
-from scheduler import SchedulerConfig
+from blackboard import BoardState, EventStore
+from counterfactual.sandbox import Alternative, replay
+from protocol import SYSTEM, EventDraft, Tag
+from scheduler import CONSENSUS, IMPASSE, SchedulerConfig
 
 CASE_ID = "toy-recovery-xy"
 QUESTION = (
@@ -21,6 +24,8 @@ QUESTION = (
     "Plan X takes six minutes. Plan Y takes two minutes. Which plan, X or Y?"
 )
 ANSWER = "Y"
+OFF_SESSION = f"{CASE_ID}-off"  # stalls at #8, no recovery
+ON_SESSION = f"{CASE_ID}-on"  # replays #6, then A answers #7 for real
 TARGET_SEQ = 6  # A's reply that gets replayed
 CHALLENGER_SEQ = 7  # B's REFUTE of the target
 WINDOW = 3  # a deliberately short impasse window; calibrate the model window separately
@@ -46,6 +51,22 @@ ALTERNATIVE = Alternative(
         "so Plan Y at two minutes is the only plan that complies."
     ),
 )
+
+
+def adoption_draft(session_id: str) -> EventDraft:
+    """A's real reply to the challenger #7 once the replay showed that conceding helps."""
+    return EventDraft(
+        session_id=session_id,
+        author="A",
+        tag=ALTERNATIVE.tag,
+        reply_to=CHALLENGER_SEQ,
+        prediction=ANSWER,
+        explanation=(
+            "Acknowledged: the four-minute limit is binding and Plan X needs six minutes, "
+            "so I switch to Plan Y."
+        ),
+        meta={"adopted_counterfactual": True},
+    )
 
 
 def prefix_drafts(session_id: str) -> list[EventDraft]:
@@ -128,3 +149,43 @@ def agents(fixed: bool = False) -> list[RotatingAgent]:
 
 def scheduler_config() -> SchedulerConfig:
     return SchedulerConfig(impasse_window=WINDOW)
+
+
+def _term(store: EventStore, session_id: str, reason: str) -> None:
+    store.append_sync(
+        EventDraft(session_id=session_id, author=SYSTEM, tag=Tag.TERM, explanation=reason)
+    )
+
+
+def build_handoff_db(path: str | Path) -> EventStore:
+    """Write the two demo sessions to a fresh store: one that stalls and one that recovers."""
+    store = EventStore(path)
+    for session_id in (OFF_SESSION, ON_SESSION):
+        for draft in prefix_drafts(session_id):
+            store.append_sync(draft)
+    _term(store, OFF_SESSION, IMPASSE)
+
+    peers = [a for a in agents() if a.name != "A"]
+    reason = "what if A had conceded the four-minute limit?"
+    asyncio.run(replay(store, ON_SESSION, TARGET_SEQ, ALTERNATIVE, peers, QUESTION, reason=reason))
+    store.append_sync(adoption_draft(ON_SESSION))
+    _term(store, ON_SESSION, CONSENSUS)
+    return store
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(
+        description="Write the stalled and recovered fixture sessions."
+    )
+    parser.add_argument("--db", type=Path, default=Path("results/roadmap_fixture.sqlite"))
+    args = parser.parse_args(argv)
+    if args.db.exists():
+        parser.error(f"{args.db} already exists; delete it or choose another --db")
+    args.db.parent.mkdir(parents=True, exist_ok=True)
+    build_handoff_db(args.db).close()
+    print(f"wrote {OFF_SESSION} and {ON_SESSION} to {args.db}")
+    print(f"view: uv run python -m server --db {args.db}")
+
+
+if __name__ == "__main__":
+    main()
