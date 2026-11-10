@@ -63,6 +63,7 @@ def _condition(config: str, rows: Sequence[Row]) -> dict[str, Any]:
         "consensus": len(consensus),
         "correct_consensus": sum(_yes(r.get("correct")) for r in consensus),
         "wrong_consensus": sum(r.get("correct") == "False" for r in consensus),
+        "ungraded_consensus": sum(r.get("correct") not in ("True", "False") for r in consensus),
         "eligible": _count(rows, "eligible"),
         "median_tokens": _median(_tokens(rows)),
     }

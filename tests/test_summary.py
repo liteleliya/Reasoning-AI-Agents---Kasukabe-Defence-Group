@@ -1,6 +1,7 @@
 """The results view shows numbers computed here; the UI never decides what counts."""
 
 import csv
+import json
 from pathlib import Path
 
 import pytest
@@ -42,6 +43,7 @@ def test_counts_each_condition_apart_and_orders_them_by_enabled_agents() -> None
     zero = out["conditions"][0]
     assert (zero["trials"], zero["consensus"], zero["correct_consensus"]) == (3, 2, 1)
     assert (zero["wrong_consensus"], zero["median_tokens"]) == (1, 200)
+    assert zero["ungraded_consensus"] == 0
     assert (zero["enabled_agents"], zero["n_agents"]) == (0, 3)
     assert out["totals"] == {
         "trials": 4,
@@ -130,3 +132,26 @@ def test_j3_reports_117_of_120_consensus_93_correct_and_no_replays() -> None:
     assert [by[n]["correct_consensus"] for n in range(4)] == [23, 24, 23, 23]
     assert all(c["eligible"] is None for c in out["conditions"])
     assert out["run"]["model"] == "qwen2.5:7b-instruct" and out["run"]["conditions"] == 4
+
+
+def test_a_consensus_with_no_verdict_is_counted_apart_from_right_and_wrong() -> None:
+    rows = [row(correct="True"), row(case=2, correct="False"), row(case=3, correct="")]
+    (only,) = summarize_run(rows)["conditions"]
+    assert (only["correct_consensus"], only["wrong_consensus"], only["ungraded_consensus"]) == (
+        1,
+        1,
+        1,
+    )
+
+
+FIXTURE = Path("ui/src/testing/j3-results.json")
+
+
+@pytest.mark.skipif(not J3.exists(), reason="the J3 results are not in this checkout")
+def test_the_ui_fixture_is_the_real_export_of_the_j3_metrics() -> None:
+    """The UI is built against this file, so it must be what the server would send."""
+    with J3.open(newline="") as f:
+        rows = list(csv.DictReader(f))
+    assert json.loads(FIXTURE.read_text()) == json.loads(
+        json.dumps(summarize_run(rows, label="J3", kind="historical"))
+    )

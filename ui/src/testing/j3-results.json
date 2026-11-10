@@ -1,0 +1,162 @@
+{
+  "run": {
+    "label": "J3",
+    "kind": "historical",
+    "model": "qwen2.5:7b-instruct",
+    "trials": 120,
+    "cases": 30,
+    "conditions": 4,
+    "seeds": [
+      0
+    ]
+  },
+  "totals": {
+    "trials": 120,
+    "consensus": 117,
+    "correct_consensus": 93,
+    "recorded_replays": 0
+  },
+  "conditions": [
+    {
+      "condition": "j3_prelim_hot-cf0",
+      "enabled_agents": 0,
+      "n_agents": 3,
+      "trials": 30,
+      "consensus": 29,
+      "correct_consensus": 23,
+      "wrong_consensus": 6,
+      "ungraded_consensus": 0,
+      "eligible": null,
+      "median_tokens": 3121.5
+    },
+    {
+      "condition": "j3_prelim_hot-cf1",
+      "enabled_agents": 1,
+      "n_agents": 3,
+      "trials": 30,
+      "consensus": 30,
+      "correct_consensus": 24,
+      "wrong_consensus": 6,
+      "ungraded_consensus": 0,
+      "eligible": null,
+      "median_tokens": 3094.5
+    },
+    {
+      "condition": "j3_prelim_hot-cf2",
+      "enabled_agents": 2,
+      "n_agents": 3,
+      "trials": 30,
+      "consensus": 29,
+      "correct_consensus": 23,
+      "wrong_consensus": 6,
+      "ungraded_consensus": 0,
+      "eligible": null,
+      "median_tokens": 3107.5
+    },
+    {
+      "condition": "j3_prelim_hot-cf3",
+      "enabled_agents": 3,
+      "n_agents": 3,
+      "trials": 30,
+      "consensus": 29,
+      "correct_consensus": 23,
+      "wrong_consensus": 6,
+      "ungraded_consensus": 0,
+      "eligible": null,
+      "median_tokens": 3107.5
+    }
+  ],
+  "recovery": [
+    {
+      "stage": "recorded",
+      "label": "Replays logged on the board",
+      "count": 0
+    },
+    {
+      "stage": "eligible",
+      "label": "Eligible checkpoints",
+      "count": null
+    },
+    {
+      "stage": "attempted",
+      "label": "Replays attempted",
+      "count": null
+    },
+    {
+      "stage": "completed",
+      "label": "Comparisons completed",
+      "count": null
+    },
+    {
+      "stage": "helpful",
+      "label": "Replacements that helped",
+      "count": null
+    },
+    {
+      "stage": "adopted",
+      "label": "Adopted as a real reply",
+      "count": null
+    },
+    {
+      "stage": "recovered",
+      "label": "Correct recovery",
+      "count": null
+    }
+  ],
+  "examples": [
+    {
+      "kind": "wrong_consensus",
+      "title": "Consensus on a wrong answer",
+      "session_id": "j3_prelim_hot-cf0|mscore|Data2/Finance/Single-choice/complex#1526|0",
+      "case_id": "Data2/Finance/Single-choice/complex#1526",
+      "label": "Finance complex #1526",
+      "condition": "j3_prelim_hot-cf0",
+      "outcome": "consensus"
+    },
+    {
+      "kind": "wrong_consensus",
+      "title": "Consensus on a wrong answer",
+      "session_id": "j3_prelim_hot-cf0|mscore|Data2/Finance/Single-choice/complex#2250|0",
+      "case_id": "Data2/Finance/Single-choice/complex#2250",
+      "label": "Finance complex #2250",
+      "condition": "j3_prelim_hot-cf0",
+      "outcome": "consensus"
+    },
+    {
+      "kind": "wrong_consensus",
+      "title": "Consensus on a wrong answer",
+      "session_id": "j3_prelim_hot-cf0|mscore|Data2/Finance/Single-choice/complex#412|0",
+      "case_id": "Data2/Finance/Single-choice/complex#412",
+      "label": "Finance complex #412",
+      "condition": "j3_prelim_hot-cf0",
+      "outcome": "consensus"
+    },
+    {
+      "kind": "impasse",
+      "title": "Stopped in an impasse",
+      "session_id": "j3_prelim_hot-cf0|mscore|Data2/Law/Single-choice/complex#2534|0",
+      "case_id": "Data2/Law/Single-choice/complex#2534",
+      "label": "Law complex #2534",
+      "condition": "j3_prelim_hot-cf0",
+      "outcome": "impasse"
+    },
+    {
+      "kind": "impasse",
+      "title": "Stopped in an impasse",
+      "session_id": "j3_prelim_hot-cf2|mscore|Data2/Law/Single-choice/complex#2534|0",
+      "case_id": "Data2/Law/Single-choice/complex#2534",
+      "label": "Law complex #2534",
+      "condition": "j3_prelim_hot-cf2",
+      "outcome": "impasse"
+    },
+    {
+      "kind": "impasse",
+      "title": "Stopped in an impasse",
+      "session_id": "j3_prelim_hot-cf3|mscore|Data2/Law/Single-choice/complex#2534|0",
+      "case_id": "Data2/Law/Single-choice/complex#2534",
+      "label": "Law complex #2534",
+      "condition": "j3_prelim_hot-cf3",
+      "outcome": "impasse"
+    }
+  ]
+}
