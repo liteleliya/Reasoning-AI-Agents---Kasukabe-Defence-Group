@@ -233,6 +233,45 @@ def fresh_session_id(store: EventStore, key: str) -> str:
     return sid
 
 
+def finish_row(
+    trial: Trial,
+    state,
+    job: JobConfig,
+    client: BaseLLMClient,
+    ledger_keys: Sequence[str],
+    *,
+    wall_time_s: float,
+    rejected: int = 0,
+    failed_replies: int = 0,
+    unposted_tokens: int = 0,
+    stop_detail: str = "",
+    decision_seq: int | None = None,
+    paired: Mapping | None = None,
+) -> dict:
+    """The metrics row of a finished session: final answer, verdict and the full-trial cost."""
+    fmt = trial.instance.format
+    same, correct = judging(fmt, trial.instance)
+    answer = final_answer(state.predictions, same)
+    return trial_row(
+        state,
+        trial.meta,
+        answer=answer,
+        correct=correct(answer, trial.instance.reference) if answer else False,
+        wall_time_s=wall_time_s,
+        rejected=rejected,
+        failed_replies=failed_replies,
+        unposted_tokens=unposted_tokens,
+        ledger=[r for key in ledger_keys for r in client.ledger.for_trial(key)],
+        stop_detail=stop_detail,
+        decision_seq=decision_seq,
+        agreement_basis=agreement_basis(fmt),
+        productive_revisions=productive_revisions(
+            state.events, scheduler_config(fmt, job, trial.instance).distance, same=same
+        ),
+        paired=paired,
+    )
+
+
 async def run_trial(
     trial: Trial,
     store: EventStore,
@@ -241,34 +280,26 @@ async def run_trial(
     make_agents: AgentFactory,
 ) -> dict:
     start = time.perf_counter()
-    fmt = trial.instance.format
     agents = make_agents(trial, client, job, store)
     sid = fresh_session_id(store, trial.meta.key)
     with call_scope(trial=trial.meta.key):
-        result = await Scheduler(store, agents, scheduler_config(fmt, job, trial.instance)).run(
-            sid, question_text(trial.instance)
-        )
-    same, correct = judging(fmt, trial.instance)
-    answer = final_answer(result.state.predictions, same)
-    unposted = sum(
-        a.unposted.prompt + a.unposted.completion for a in agents if hasattr(a, "unposted")
-    )
-    return trial_row(
+        result = await Scheduler(
+            store, agents, scheduler_config(trial.instance.format, job, trial.instance)
+        ).run(sid, question_text(trial.instance))
+    return finish_row(
+        trial,
         result.state,
-        trial.meta,
-        answer=answer,
-        correct=correct(answer, trial.instance.reference) if answer else False,
+        job,
+        client,
+        [trial.meta.key],
         wall_time_s=time.perf_counter() - start,
         rejected=len(result.rejected),
         failed_replies=sum(getattr(a, "failures", 0) for a in agents),
-        unposted_tokens=unposted,
-        ledger=client.ledger.for_trial(trial.meta.key),
+        unposted_tokens=sum(
+            a.unposted.prompt + a.unposted.completion for a in agents if hasattr(a, "unposted")
+        ),
         stop_detail=result.stop_detail,
         decision_seq=result.decision_seq,
-        agreement_basis=agreement_basis(fmt),
-        productive_revisions=productive_revisions(
-            result.state.events, scheduler_config(fmt, job, trial.instance).distance, same=same
-        ),
     )
 
 

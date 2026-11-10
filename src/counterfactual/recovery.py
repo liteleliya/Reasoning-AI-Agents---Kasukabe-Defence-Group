@@ -61,7 +61,7 @@ class ReplayRecovery:
             target,
             challenger,
             author,
-            self.make_peers,
+            lambda: [p for p in self.make_peers() if p.name != author.name],
             distance=self.distance,
             new_tag=self.new_tag,
             max_branch_tokens=self.max_branch_tokens,
