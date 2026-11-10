@@ -99,6 +99,8 @@ uv run ruff check . && uv run ruff format --check .
 | Figures from a metrics CSV | `uv run python -m bench.plots results/metrics.csv --out results/figures` |
 | One prompt to the configured model | `uv run python -m agents.llm_client "Say hi"` |
 | Run (or resume) an experiment job | `uv run python -m bench.run configs/<job>.json --shard 1/1 --parallel 8` (`--mock` needs no model) |
+| Pick held-out and development items ([docs](docs/cases.md)) | `uv run python -m bench.splits` |
+| Blinded grading sheet and score join | `uv run python -m bench.grading export configs/<job>.json --run <dir> --out <dir>` |
 | Prompt parse check (J1) | `uv run python -m bench.parse_check --n 50` |
 | Stalled and recovered fixture sessions ([docs](docs/recovery_fixture.md)) | `uv run python -m counterfactual.fixture --db results/roadmap_fixture.sqlite` |
 
@@ -115,7 +117,7 @@ The model is chosen by environment variables: `LLM_BACKEND=openai`, `LLM_BASE_UR
 | `agents` | `make_client` (mock / OpenAI-compatible, token counts), `PEXAgent`, prompts, `parse_pxp` |
 | `counterfactual` | `replay` (sandbox, credit delta), `CounterfactualAgent` (credit assignment) |
 | `server` | `create_app` (REST + `/ws`), `--demo` streamer |
-| `bench` | `mscore` ingestor, `run` (resumable runner), `parse_check`, `metrics`, `plots` |
+| `bench` | `mscore` ingestor, `run` (resumable runner), `cases`/`authored`/`splits`/`grading`/`revision` (authored cases, agreement, grading), `parse_check`, `metrics`, `plots` |
 | `configs/` | Job configs: `j2_baseline.json`, `j3_prelim.json` |
 | `ui/` | graph view, history scrubber, counterfactual split panel |
 
