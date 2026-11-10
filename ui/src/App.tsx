@@ -1,28 +1,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSessionEvents, useSessions, useSnapshot } from "./api";
+import { useResults, useSessionEvents, useSessions, useSnapshot } from "./api";
 import { CounterfactualPanel } from "./CounterfactualPanel";
 import { EventInspector } from "./EventInspector";
 import { EventList } from "./EventList";
 import { Graph } from "./Graph";
 import { firstChallenge, terminationSeq } from "./inspector";
 import { rosterOf, upTo } from "./layout";
+import { ResultsView } from "./ResultsView";
 import { Scrubber } from "./Scrubber";
 import { SessionHeader } from "./SessionHeader";
 import { SessionList } from "./SessionList";
 import { siblings } from "./sessions";
 import { StatePanel } from "./StatePanel";
-import { buildSearch, parseSearch } from "./urlState";
+import { buildSearch, parseSearch, type View } from "./urlState";
 
 export function App() {
   const { sessions, loaded, error: listError } = useSessions();
   const [initial] = useState(() => parseSearch(location.search));
   // the one place that owns which session is open, where the cursor is and whether it follows
+  const [view, setView] = useState<View>(initial.view);
   const [sessionId, setSessionId] = useState<string | null>(initial.session);
   const [cursor, setCursor] = useState(initial.seq ?? 0);
   const [follow, setFollow] = useState(initial.seq === null);
   const wantedSeq = useRef(initial.seq); // the address-bar position, applied once the events load
 
   const { events, status, error } = useSessionEvents(sessionId);
+  const results = useResults(view === "results");
 
   useEffect(() => {
     if (!sessionId && sessions.length) setSessionId(sessions[0].session_id);
@@ -41,9 +44,9 @@ export function App() {
   }, [events, follow]);
 
   useEffect(() => {
-    const search = buildSearch(sessionId, follow ? null : cursor);
+    const search = buildSearch(sessionId, follow ? null : cursor, view);
     if (search !== location.search) history.replaceState(null, "", `${location.pathname}${search}`);
-  }, [sessionId, cursor, follow]);
+  }, [sessionId, cursor, follow, view]);
 
   const selectSession = useCallback((id: string) => {
     wantedSeq.current = null;
@@ -51,6 +54,13 @@ export function App() {
     setCursor(0);
     setFollow(true);
   }, []);
+  const openFromResults = useCallback(
+    (id: string) => {
+      selectSession(id);
+      setView("explore");
+    },
+    [selectSession],
+  );
   const scrub = useCallback((seq: number, following: boolean) => {
     setCursor(seq);
     setFollow(following);
@@ -102,6 +112,19 @@ export function App() {
     <div className="app">
       <aside>
         <h1>Blackboard</h1>
+        <nav className="views" role="tablist" aria-label="View">
+          {(["explore", "results"] as const).map((v) => (
+            <button
+              key={v}
+              role="tab"
+              aria-selected={view === v}
+              className={view === v ? "tab active" : "tab"}
+              onClick={() => setView(v)}
+            >
+              {v === "explore" ? "Explore" : "Results"}
+            </button>
+          ))}
+        </nav>
         <SessionList
           sessions={sessions}
           loaded={loaded}
@@ -111,7 +134,15 @@ export function App() {
         />
       </aside>
       <main>
-        {sessionId && (
+        {view === "results" && (
+          <ResultsView
+            summary={results.summary}
+            status={results.status}
+            error={results.error}
+            onOpen={openFromResults}
+          />
+        )}
+        {view === "explore" && sessionId && (
           <SessionHeader
             sessionId={sessionId}
             info={info}
@@ -122,7 +153,7 @@ export function App() {
             onSelect={selectSession}
           />
         )}
-        {body}
+        {view === "explore" && body}
       </main>
     </div>
   );

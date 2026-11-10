@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { accept, isCurrentSnapshot, nextSeq, type Buffered } from "./stream";
-import type { EventRecord, SessionInfo, Snapshot } from "./types";
+import type { EventRecord, RunSummary, SessionInfo, Snapshot } from "./types";
 
 export async function getJSON<T>(url: string, signal?: AbortSignal): Promise<T> {
   const res = await fetch(url, { signal });
@@ -174,4 +174,31 @@ export function useSnapshot(sessionId: string | null, seq: number | null): Snaps
     return () => ctl.abort();
   }, [sessionId, seq]);
   return sessionId && snap?.session_id === sessionId ? snap : null;
+}
+
+export type ResultsStatus = "idle" | "loading" | "ready" | "unavailable" | "error";
+
+/** The run summary from the server; read only when the Results view is open. */
+export function useResults(active: boolean): {
+  summary: RunSummary | null;
+  status: ResultsStatus;
+  error: string | null;
+} {
+  const [state, setState] = useState<{ summary: RunSummary | null; status: ResultsStatus; error: string | null }>({
+    summary: null, status: "idle", error: null,
+  });
+  useEffect(() => {
+    if (!active) return;
+    const ctl = new AbortController();
+    setState((prev) => ({ ...prev, status: "loading" }));
+    getJSON<RunSummary>("/api/results", ctl.signal)
+      .then((summary) => setState({ summary, status: "ready", error: null }))
+      .catch((err) => {
+        if (ctl.signal.aborted) return;
+        const none = /^404/.test(message(err));
+        setState({ summary: null, status: none ? "unavailable" : "error", error: message(err) });
+      });
+    return () => ctl.abort();
+  }, [active]);
+  return state;
 }

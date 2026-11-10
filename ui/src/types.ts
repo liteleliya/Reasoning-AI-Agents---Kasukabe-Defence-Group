@@ -48,3 +48,39 @@ export interface Snapshot {
     pairs: { sender: string; receiver: string; tags: Tag[]; one_way: boolean }[];
   };
 }
+
+/** The run summary computed by the server (src/bench/summary.py); a null count was not recorded. */
+export interface RunSummary {
+  run: {
+    label: string;
+    kind: "historical" | "controlled" | "model" | null;
+    model: string;
+    trials: number;
+    cases: number;
+    conditions: number;
+    seeds: number[];
+  };
+  totals: { trials: number; consensus: number; correct_consensus: number; recorded_replays: number };
+  conditions: {
+    condition: string;
+    enabled_agents: number | null;
+    n_agents: number | null;
+    trials: number;
+    consensus: number;
+    correct_consensus: number;
+    wrong_consensus: number;
+    ungraded_consensus: number;
+    eligible: number | null;
+    median_tokens: number | null;
+  }[];
+  recovery: { stage: string; label: string; count: number | null }[];
+  examples: {
+    kind: string;
+    title: string;
+    session_id: string;
+    case_id: string;
+    label: string;
+    condition: string;
+    outcome: string;
+  }[];
+}

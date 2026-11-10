@@ -194,3 +194,31 @@ mark { background: color-mix(in srgb, #e69f00 38%, transparent); color: inherit;
   .cf-heads { display: none; }
   .cf-row { grid-template-columns: 1fr; }
 }
+
+.views { display: flex; gap: 4px; margin: 0 0 12px; }
+.views .tab { border-bottom: 1px solid var(--line); border-radius: 8px; flex: 1; justify-content: center; }
+.results { padding: 16px 20px; display: grid; gap: 18px; max-width: 1100px; }
+.results h2 { font-size: 16px; margin: 0; }
+.results h3 { font-size: 13px; margin: 0 0 8px; }
+.results-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 0; border: 0; }
+.results-head p { margin: 0; flex-basis: 100%; }
+.kind { font-size: 11px; font-weight: 700; padding: 2px 10px; border: 1px solid var(--line); border-radius: 999px; text-transform: uppercase; letter-spacing: 0.03em; }
+.kind.historical { border-style: dashed; }
+.headline { font-size: 14px; margin: 0; }
+.table-wrap { overflow-x: auto; }
+.conditions { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+.conditions th, .conditions td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: right; }
+.conditions thead th { color: var(--muted); font-size: 12px; font-weight: 600; vertical-align: bottom; }
+.conditions th:first-child, .conditions th[scope="row"] { text-align: left; }
+.conditions th[scope="row"] { font-weight: 600; }
+.unavailable { color: var(--muted); font-style: italic; }
+.note { font-size: 12px; margin: 8px 0 0; }
+.stages { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.stages li { display: grid; grid-template-columns: minmax(150px, 220px) minmax(60px, 1fr) 90px auto; gap: 10px; align-items: center; font-size: 13px; }
+.bar { height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; }
+.bar span { display: block; height: 100%; background: var(--accent); }
+.stage-count { font-variant-numeric: tabular-nums; }
+.examples { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.examples button { width: 100%; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; text-align: left; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); cursor: pointer; font-size: 13px; }
+.examples button:hover { background: var(--line); }
+.examples button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }

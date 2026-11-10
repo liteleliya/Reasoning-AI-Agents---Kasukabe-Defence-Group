@@ -8,17 +8,17 @@ describe("url state", () => {
     const search = buildSearch(ID, 3);
     expect(search.startsWith("?")).toBe(true);
     expect(search).not.toContain("#");
-    expect(parseSearch(search)).toEqual({ session: ID, seq: 3 });
+    expect(parseSearch(search)).toEqual({ session: ID, seq: 3, view: "explore" });
   });
 
   it("leaves the sequence out when following the live end", () => {
     expect(buildSearch(ID, null)).not.toContain("seq");
-    expect(parseSearch(buildSearch(ID, null))).toEqual({ session: ID, seq: null });
+    expect(parseSearch(buildSearch(ID, null))).toEqual({ session: ID, seq: null, view: "explore" });
   });
 
   it("reads an empty or odd query as nothing selected", () => {
-    expect(parseSearch("")).toEqual({ session: null, seq: null });
-    expect(parseSearch("?session=")).toEqual({ session: null, seq: null });
+    expect(parseSearch("")).toEqual({ session: null, seq: null, view: "explore" });
+    expect(parseSearch("?session=")).toEqual({ session: null, seq: null, view: "explore" });
     expect(parseSearch("?session=a&seq=abc").seq).toBeNull();
     expect(parseSearch("?session=a&seq=-2").seq).toBeNull();
     expect(parseSearch("?session=a&seq=1.5").seq).toBeNull();
@@ -26,5 +26,12 @@ describe("url state", () => {
 
   it("builds an empty query when nothing is selected", () => {
     expect(buildSearch(null, null)).toBe("");
+  });
+
+  it("remembers the results view, with or without a selected session", () => {
+    expect(buildSearch(null, null, "results")).toBe("?view=results");
+    expect(parseSearch("?view=results").view).toBe("results");
+    expect(parseSearch(buildSearch(ID, 2, "results"))).toEqual({ session: ID, seq: 2, view: "results" });
+    expect(parseSearch("?view=other").view).toBe("explore");
   });
 });
