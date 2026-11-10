@@ -22,6 +22,15 @@ export interface SessionInfo {
   agents: string[];
   terminated: boolean;
   stop_reason: string | null;
+  /** What the server could tell about the session; null where the archive does not say. */
+  case_id: string;
+  label: string;
+  condition: string | null;
+  seed: number | null;
+  source: string;
+  enabled_agents: number | null;
+  n_agents: number | null;
+  correct: boolean | null;
 }
 
 export interface Snapshot {
