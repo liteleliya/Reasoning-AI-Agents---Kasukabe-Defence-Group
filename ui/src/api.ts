@@ -72,6 +72,11 @@ export function useEventStream(sessionId: string | null): {
   return { events, connected };
 }
 
+/** Snapshot URL; the id travels as a query value because real ids contain "/", "|" and "#". */
+export function snapshotUrl(sessionId: string, seq: number): string {
+  return `/api/snapshot?${new URLSearchParams({ session_id: sessionId, at: String(seq) })}`;
+}
+
 /** Board state rebuilt by the server from the log at `seq` (C4). */
 export function useSnapshot(sessionId: string | null, seq: number | null): Snapshot | null {
   const [snap, setSnap] = useState<Snapshot | null>(null);
@@ -81,7 +86,7 @@ export function useSnapshot(sessionId: string | null, seq: number | null): Snaps
       return;
     }
     let alive = true;
-    getJSON<Snapshot>(`/api/sessions/${encodeURIComponent(sessionId)}/snapshot?at=${seq}`)
+    getJSON<Snapshot>(snapshotUrl(sessionId, seq))
       .then((s) => alive && setSnap(s))
       .catch(() => undefined);
     return () => {
