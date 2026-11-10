@@ -1,0 +1,57 @@
+{
+  "seed": 0,
+  "choice": {
+    "heldout": [
+      "Data2/Finance/Single-choice/complex#2829",
+      "Data2/Finance/Single-choice/easy#1983",
+      "Data2/Law/Single-choice/complex#906",
+      "Data2/Law/Single-choice/simple#2611",
+      "Data2/Finance/Single-choice/complex#2480",
+      "Data2/Finance/Single-choice/easy#2742",
+      "Data2/Law/Single-choice/complex#952",
+      "Data2/Law/Single-choice/simple#2260"
+    ],
+    "dev": [
+      "Data2/Finance/Single-choice/complex#1952",
+      "Data2/Finance/Single-choice/easy#2478",
+      "Data2/Law/Single-choice/complex#160"
+    ]
+  },
+  "open": {
+    "heldout": [
+      "Automotive Value Chain/Easy/Design#7254",
+      "Automotive Value Chain/Easy/Manufacture#8096",
+      "Automotive Value Chain/Easy/Qulaity Inspection#2156",
+      "Automotive Value Chain/Easy/Recycling#7525",
+      "Automotive Value Chain/Easy/Sales#6086",
+      "Automotive Value Chain/Easy/Design#9105",
+      "Automotive Value Chain/Easy/Manufacture#2785",
+      "Automotive Value Chain/Easy/Qulaity Inspection#2871"
+    ],
+    "dev": [
+      "Automotive Value Chain/Easy/Recycling#2498",
+      "Automotive Value Chain/Easy/Sales#3674",
+      "Automotive Value Chain/Easy/Design#8111",
+      "Automotive Value Chain/Easy/Manufacture#1154",
+      "Automotive Value Chain/Easy/Qulaity Inspection#6941"
+    ]
+  },
+  "authored": {
+    "heldout": [
+      "contractor-access",
+      "deletion-request",
+      "event-capacity",
+      "payment-plan",
+      "rollback-release",
+      "sample-storage",
+      "shipping-route",
+      "vendor-select"
+    ],
+    "dev": [
+      "patch-window",
+      "refund-window",
+      "restore-p1",
+      "restore-p1-unbounded"
+    ]
+  }
+}
