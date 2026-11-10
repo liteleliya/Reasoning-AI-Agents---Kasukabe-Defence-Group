@@ -64,6 +64,11 @@ ANSWER_FORMATS = {
     "multi_choice": 'Your "prediction" lists every correct option letter joined by "|", e.g. "A|C".',
     "judgment": 'Your "prediction" is exactly "是" (true) or "否" (false).',
     "open_qa": 'Your "prediction" is your answer in at most 60 words.',
+    "authored": (
+        'Your "prediction" is the decision, then each requested value as name=value, all '
+        'separated by ";", e.g. "A; downtime=3 min; lag_check=none". Put your justification and '
+        'the evidence IDs you cite (e.g. E1, E2) in "explanation".'
+    ),
 }
 
 

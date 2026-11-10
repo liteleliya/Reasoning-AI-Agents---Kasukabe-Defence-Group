@@ -244,3 +244,10 @@ def test_reply_to_target_answers_the_given_message_not_the_picked_one() -> None:
         PEXAgent("a", persona_for(0), scripted(reply)).reply_to_target("Q", board, board.events[1])
     )
     assert forced.draft.reply_to == 1 and forced.reason is TurnReason.OK
+
+
+def test_authored_format_asks_for_a_decision_then_named_values() -> None:
+    from agents.prompts import answer_instructions
+
+    text = answer_instructions("authored")
+    assert "name=value" in text and "evidence IDs" in text
