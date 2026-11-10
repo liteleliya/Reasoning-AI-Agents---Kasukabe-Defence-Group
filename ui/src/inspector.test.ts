@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { describeEvent, eventRow, firstChallenge, terminationSeq } from "./inspector";
+import { describeEvent, eventRow, firstChallenge, metaFacts, terminationSeq } from "./inspector";
 import type { EventRecord } from "./types";
 
 let seq = 0;
@@ -68,5 +68,31 @@ describe("eventRow", () => {
 
   it("labels TERM with its reason", () => {
     expect(eventRow(log[7])).toEqual({ text: "TERM · impasse", indent: false, replay: false });
+  });
+});
+
+
+describe("metaFacts", () => {
+  it("lists the facts worth showing, in a fixed order, rounding numbers only for display", () => {
+    const end = ev("a", null, null, {
+      kind: "rollback_end", counterfactual: true,
+      meta: { credit_delta: -1 / 3, replay_id: "s::replay-1", status: "completed", call_ids: ["c1"],
+        distance_original: 1 / 3, distance_replacement: 0, reason: "" },
+    });
+    expect(metaFacts(end)).toEqual([
+      ["replay_id", "s::replay-1"],
+      ["status", "completed"],
+      ["credit_delta", "-0.333"],
+      ["distance_original", "0.333"],
+      ["distance_replacement", "0"],
+    ]);
+  });
+
+  it("shows why a session stopped and skips empty values", () => {
+    const term = ev("system", "TERM", null, {
+      explanation: "impasse", meta: { detail: "debate_stall", decision_seq: 8, credit_delta: null },
+    });
+    expect(metaFacts(term)).toEqual([["detail", "debate_stall"], ["decision_seq", "8"]]);
+    expect(metaFacts(log[0])).toEqual([]);
   });
 });

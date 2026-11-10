@@ -55,3 +55,19 @@ export function eventRow(e: EventRecord): Row {
       };
   }
 }
+
+const SHOWN = [
+  "replay_id", "branch", "status", "reason", "credit_delta", "distance_original",
+  "distance_replacement", "detail", "decision_seq", "adopted_counterfactual",
+];
+
+/** The metadata worth showing for an event, in a fixed order; numbers rounded for display only. */
+export function metaFacts(e: EventRecord): [string, string][] {
+  const facts: [string, string][] = [];
+  for (const key of SHOWN) {
+    const v = e.meta[key];
+    if (v === undefined || v === null || v === "") continue;
+    facts.push([key, typeof v === "number" && !Number.isInteger(v) ? v.toFixed(3) : String(v)]);
+  }
+  return facts;
+}
