@@ -144,3 +144,17 @@ def test_no_credit_leaves_a_note_and_answers_normally() -> None:
     cf = agents[0]
     assert cf.attempts == 1 and cf.credit.replays[0].credit_delta >= 0
     assert cf.credit.adopted == 0 and len(a.notes) == 1
+
+
+def test_opportunistic_replay_can_be_turned_off_for_the_checkpoint() -> None:
+    client = MockClient(responder=stubborn_llm)
+    store = EventStore()
+    a = PEXAgent("agent_a", persona_for(0), client)
+    agents: list = [
+        CounterfactualAgent(a, store, lambda: agents, opportunistic=False),
+        PEXAgent("agent_b", persona_for(1), client),
+    ]
+    result = asyncio.run(Scheduler(store, agents).run("s", "A or B?"))
+    assert result.stop_reason in ("impasse", "cap")
+    assert agents[0].attempts == 0
+    assert not any(e.kind is Kind.ROLLBACK_START for e in store.events("s"))

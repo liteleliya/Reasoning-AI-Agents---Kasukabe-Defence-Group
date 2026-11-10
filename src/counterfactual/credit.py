@@ -60,6 +60,7 @@ class CounterfactualAgent:
         max_rollbacks: int = 1,
         distance: Distance = exact_distance,
         new_tag: Tag = Tag.REVISE,
+        opportunistic: bool = True,
     ) -> None:
         self.inner = inner
         self.name = inner.name
@@ -69,6 +70,7 @@ class CounterfactualAgent:
         self.max_rollbacks = max_rollbacks
         self.distance = distance
         self.new_tag = new_tag
+        self.opportunistic = opportunistic  # False: only the scheduler checkpoint triggers replays
         self.credit = CreditLog()
         self.attempts = 0  # replays tried, including ones whose alternative was unusable
         self._pending: Alternative | None = None
@@ -98,6 +100,8 @@ class CounterfactualAgent:
         return await self.inner.take_turn(question, board)
 
     def _should_replay(self, board: BoardState) -> bool:
+        if not self.opportunistic:
+            return False
         if self.attempts >= self.max_rollbacks or board.open_rollback is not None:
             return False
         names = set(board.latest)
