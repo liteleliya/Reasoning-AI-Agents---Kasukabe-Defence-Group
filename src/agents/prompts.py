@@ -46,10 +46,43 @@ PERSONAS: dict[str, Persona] = {
 }
 
 
-def persona_for(index: int) -> Persona:
+# Reasoning styles that tend to reach different answers on the same question, for studies that
+# need real disagreement; the default set differs mainly in tone.
+DIVERGENT_PERSONAS: dict[str, Persona] = {
+    p.name: p
+    for p in [
+        Persona(
+            "contrarian",
+            "You distrust the obvious answer. Before you commit, argue seriously for the option "
+            "most people would dismiss, and choose it if you cannot find a concrete flaw in it.",
+        ),
+        Persona(
+            "risk_averse",
+            "You choose the answer that avoids the worst outcome if you are wrong. When two "
+            "answers are close, you take the more cautious one and say what could go wrong.",
+        ),
+        Persona(
+            "first_principles",
+            "You ignore conventional wisdom and derive the answer from the facts given, step by "
+            "step. You stay with your derivation unless someone shows a specific error in it.",
+        ),
+        Persona(
+            "pragmatist",
+            "You pick the answer that works in practice, even if it is not the textbook one, and "
+            "you do not agree just to end the discussion.",
+        ),
+    ]
+}
+PERSONA_SETS = {"default": PERSONAS, "divergent": DIVERGENT_PERSONAS}
+
+
+def persona_for(index: int, kind: str = "default") -> Persona:
     """Personas assigned in a fixed order, so agent i always gets the same one."""
-    names = list(PERSONAS)
-    return PERSONAS[names[index % len(names)]]
+    if kind not in PERSONA_SETS:
+        raise ValueError(f"unknown persona set {kind!r}; choose from {sorted(PERSONA_SETS)}")
+    chosen = PERSONA_SETS[kind]
+    names = list(chosen)
+    return chosen[names[index % len(names)]]
 
 
 TAG_RULES = """\

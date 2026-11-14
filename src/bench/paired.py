@@ -31,6 +31,7 @@ from bench.run import (
     Trial,
     finish_row,
     fresh_session_id,
+    job_client_args,
     job_instances,
     provenance,
     question_text,
@@ -62,7 +63,7 @@ def model_roster(trial: Trial, client: BaseLLMClient, job: JobConfig) -> Roster:
         return [
             PEXAgent(
                 f"agent_{chr(ord('a') + i)}",
-                persona_for(i),
+                persona_for(i, job.persona_set),
                 client,
                 counterfactual=True,  # every agent may be replayed; the arms differ in policy only
                 temperature=job.temperature,
@@ -166,7 +167,7 @@ async def run_paired(
     if unknown:
         raise ValueError(f"unknown arm {unknown[0]!r}; arms are {ARMS}")
     out.mkdir(parents=True, exist_ok=True)
-    client = client or make_client()
+    client = client or make_client(**job_client_args(job))
     client.ledger = CallLedger(out / "calls.jsonl")
     items = instances if instances is not None else job_instances(job)
     writer, store = MetricsWriter(out / "metrics.csv"), EventStore(out / "board.sqlite")

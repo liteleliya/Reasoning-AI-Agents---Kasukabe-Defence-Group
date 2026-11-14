@@ -57,6 +57,8 @@ class JobConfig:
     cases: dict = field(default_factory=dict)  # study_instances kwargs: split, kinds, ids
     arms: tuple[str, ...] = ()  # non-empty: the three-arm paired experiment (bench.paired)
     allowance_calls: int = 6  # model calls an arm may spend after the shared trigger
+    persona_set: str = "default"  # agents.prompts.PERSONA_SETS key
+    model: str = ""  # overrides LLM_MODEL for this job
 
     @classmethod
     def load(cls, path: str | Path) -> JobConfig:
@@ -192,6 +194,11 @@ def shard_of(trials: Sequence[Trial], shard: tuple[int, int]) -> list[Trial]:
     return [t for n, t in enumerate(trials) if n % k == i - 1]
 
 
+def job_client_args(job: JobConfig) -> dict:
+    """Keyword arguments for `make_client` that the job pins (the model build)."""
+    return {"model": job.model} if job.model else {}
+
+
 def question_text(inst: Instance) -> str:
     return f"{inst.prompt_text()}\n\n{answer_instructions(inst.format)}"
 
@@ -205,7 +212,7 @@ def default_agents(trial: Trial, client: BaseLLMClient, job: JobConfig, store: E
     plain = [
         PEXAgent(
             f"agent_{chr(ord('a') + i)}",
-            persona_for(i),
+            persona_for(i, job.persona_set),
             client,
             counterfactual=i < cf,
             temperature=job.temperature,
@@ -371,7 +378,7 @@ async def run_job(
 ) -> list[dict]:
     """Run the job's unfinished trials for this shard; returns the rows written this time."""
     out.mkdir(parents=True, exist_ok=True)
-    client = client or make_client()
+    client = client or make_client(**job_client_args(job))
     client.ledger = CallLedger(out / "calls.jsonl")  # every model call of this run, for audits
     instances = instances if instances is not None else job_instances(job)
     trials = shard_of(build_trials(job, instances, getattr(client, "model", "")), shard)

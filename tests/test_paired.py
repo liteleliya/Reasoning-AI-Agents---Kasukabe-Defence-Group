@@ -223,3 +223,15 @@ def test_a_job_with_arms_runs_through_the_command_line_on_the_mock_model(tmp_pat
     rows = read_metrics(tmp_path / "out" / "shard-1-of-1" / "metrics.csv")
     assert [r["arm"] for r in rows] == ["standard", "replay"]
     assert all(r["checkpoint"] in ("opened", "none") for r in rows)
+
+
+def test_a_job_can_pin_the_persona_set_and_the_model() -> None:
+    from bench.paired import model_roster
+    from bench.run import Trial, TrialMeta, job_client_args
+
+    job = JobConfig(name="p", sample={}, persona_set="divergent", model="qwen2.5:3b-instruct")
+    assert job_client_args(job) == {"model": "qwen2.5:3b-instruct"}
+    assert job_client_args(JobConfig(name="p", sample={})) == {}
+    meta = TrialMeta("p-prefix", "mscore", "x#0", 0, 3, 3)
+    team = model_roster(Trial(meta, INSTANCE), MockClient(), job).agents
+    assert [a.persona.name for a in team] == ["contrarian", "risk_averse", "first_principles"]

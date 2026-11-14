@@ -251,3 +251,15 @@ def test_authored_format_asks_for_a_decision_then_named_values() -> None:
 
     text = answer_instructions("authored")
     assert "name=value" in text and "evidence IDs" in text
+
+
+def test_persona_sets_assign_in_a_fixed_order_and_reject_unknown_names() -> None:
+    from agents.prompts import DIVERGENT_PERSONAS
+
+    assert persona_for(0).name == "expert"
+    assert persona_for(0, "divergent").name == "contrarian"
+    assert persona_for(4, "divergent") is persona_for(0, "divergent")
+    assert len({persona_for(i, "divergent").style for i in range(3)}) == 3
+    assert set(DIVERGENT_PERSONAS).isdisjoint(PERSONAS)
+    with pytest.raises(ValueError, match="unknown persona set"):
+        persona_for(0, "nope")
