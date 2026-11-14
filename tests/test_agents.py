@@ -263,3 +263,9 @@ def test_persona_sets_assign_in_a_fixed_order_and_reject_unknown_names() -> None
     assert set(DIVERGENT_PERSONAS).isdisjoint(PERSONAS)
     with pytest.raises(ValueError, match="unknown persona set"):
         persona_for(0, "nope")
+
+
+def test_the_dissenter_set_has_one_dissenter_and_two_ordinary_agents() -> None:
+    names = [persona_for(i, "dissenter").name for i in range(3)]
+    assert names == ["dissenter", "expert", "sceptic"]
+    assert "Concede only when" in persona_for(0, "dissenter").style

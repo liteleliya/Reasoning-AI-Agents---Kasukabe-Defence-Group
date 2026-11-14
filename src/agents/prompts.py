@@ -73,7 +73,23 @@ DIVERGENT_PERSONAS: dict[str, Persona] = {
         ),
     ]
 }
-PERSONA_SETS = {"default": PERSONAS, "divergent": DIVERGENT_PERSONAS}
+# One designated dissenter and two ordinary agents, so a debate starts as X against Y/Y.
+DISSENTER_PERSONAS: dict[str, Persona] = {
+    "dissenter": Persona(
+        "dissenter",
+        "You are the designated dissenter. Pick the second most plausible answer to the question "
+        "and defend it. Concede only when someone points to a specific stated fact or constraint "
+        "that your answer violates; repeating their view, agreeing in tone or appealing to "
+        "consensus is not a reason to change your answer.",
+    ),
+    "expert": PERSONAS["expert"],
+    "sceptic": PERSONAS["sceptic"],
+}
+PERSONA_SETS = {
+    "default": PERSONAS,
+    "divergent": DIVERGENT_PERSONAS,
+    "dissenter": DISSENTER_PERSONAS,
+}
 
 
 def persona_for(index: int, kind: str = "default") -> Persona:
