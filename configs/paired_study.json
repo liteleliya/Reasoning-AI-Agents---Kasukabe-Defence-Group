@@ -1,0 +1,35 @@
+{
+  "name": "paired_study",
+  "sample": {},
+  "cases": {
+    "split": "heldout",
+    "kinds": [
+      "authored",
+      "choice",
+      "open"
+    ]
+  },
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "n_agents": 3,
+  "model": "qwen2.5:3b-instruct",
+  "persona_set": "dissenter",
+  "temperature": 1.0,
+  "max_tokens": 400,
+  "scheduler": {
+    "impasse_window": 4
+  },
+  "counterfactual": {},
+  "arms": [
+    "standard",
+    "forward",
+    "replay"
+  ],
+  "allowance_calls": 6
+}
