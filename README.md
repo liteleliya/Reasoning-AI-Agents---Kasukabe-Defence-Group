@@ -103,6 +103,7 @@ uv run ruff check . && uv run ruff format --check .
 | Blinded grading sheet and score join | `uv run python -m bench.grading export configs/<job>.json --run <dir> --out <dir>` |
 | Three-arm paired runner ([docs](docs/paired_runner.md)) | `uv run python -m bench.run configs/paired_dev.json --mock --limit 6 --out results/paired-smoke` |
 | Tables, paired comparison and figures from a paired run ([docs](docs/analysis.md)) | `uv run python -m bench.paired_analysis <run dir> --out <dir>` |
+| Run the final paired study (needs Ollama and `qwen2.5:3b-instruct`; [guide](docs/study_run.md)) | `uv run python -m bench.run configs/paired_study.json --out results/paired-study` |
 | Prompt parse check (J1) | `uv run python -m bench.parse_check --n 50` |
 | Stalled and recovered fixture sessions ([docs](docs/recovery_fixture.md)) | `uv run python -m counterfactual.fixture --db results/roadmap_fixture.sqlite` |
 
