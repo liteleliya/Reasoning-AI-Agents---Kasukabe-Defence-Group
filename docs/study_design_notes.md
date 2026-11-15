@@ -10,7 +10,7 @@ Screening prefix-only runs (about 20 s each, `bench.screen`) on development item
 | 7B, divergent personas, T1.0 | 38 | 16% | 100% | 0 |
 | 7B, designated dissenter, T1.0 | 38 | 24% | 97% | 1 |
 | 3B, default personas, T1.0 | 38 | 24% | 89% | 3 |
-| **3B, designated dissenter, T1.0, window 4** | 38 | n/a | 79% | **6 (16%)** |
+| **3B, designated dissenter, T1.0, window 4** | 38 | 24% | 79% | **6 (16%)** |
 
 J3 (7B, 120 sessions) recorded zero rollbacks. With 7B, agents rarely disagree and give way within
 one or two replies, so there is nothing for replay to recover from.
