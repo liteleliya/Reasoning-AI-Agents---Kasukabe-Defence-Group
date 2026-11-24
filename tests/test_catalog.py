@@ -64,3 +64,26 @@ def test_the_metrics_index_is_keyed_by_session_id(tmp_path: Path) -> None:
     assert set(index) == {"s1", "s2"} and index["s1"]["instance_id"] == "q1"
     with pytest.raises(FileNotFoundError):
         load_metrics_index(tmp_path / "missing.csv")
+
+
+def test_the_metrics_index_reads_utf8_content(tmp_path: Path) -> None:
+    path = tmp_path / "metrics.csv"
+    path.write_text(
+        "session_id,instance_id,answer\n"
+        "s1,q1,设计紧急情况下的安全辅助系统\n",
+        encoding="utf-8",
+    )
+
+    index = load_metrics_index(path)
+    assert index["s1"]["answer"] == "设计紧急情况下的安全辅助系统"
+
+
+def test_the_metrics_index_accepts_a_utf8_bom(tmp_path: Path) -> None:
+    path = tmp_path / "metrics.csv"
+    path.write_text(
+        "\ufeffsession_id,instance_id,correct\ns1,q1,True\n",
+        encoding="utf-8",
+    )
+
+    index = load_metrics_index(path)
+    assert index["s1"]["instance_id"] == "q1"

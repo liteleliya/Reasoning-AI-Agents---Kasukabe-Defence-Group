@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { accept, isCurrentSnapshot, nextSeq, type Buffered } from "./stream";
 import { briefUrl, hasBrief } from "./taskBrief";
 import type { BriefStatus } from "./CaseBrief";
-import type { CaseBrief, EventRecord, RunSummary, SessionInfo, Snapshot } from "./types";
+import type { CaseBrief, EventRecord, RunSummary, SessionInfo, Snapshot, StudyReport } from "./types";
 
 export async function getJSON<T>(url: string, signal?: AbortSignal): Promise<T> {
   const res = await fetch(url, { signal });
@@ -179,6 +179,7 @@ export function useSnapshot(sessionId: string | null, seq: number | null): Snaps
 }
 
 export type ResultsStatus = "idle" | "loading" | "ready" | "unavailable" | "error";
+export type StudyStatus = ResultsStatus;
 
 /** The run summary from the server; read only when the Results view is open. */
 export function useResults(active: boolean): {
@@ -199,6 +200,31 @@ export function useResults(active: boolean): {
         if (ctl.signal.aborted) return;
         const none = /^404/.test(message(err));
         setState({ summary: null, status: none ? "unavailable" : "error", error: message(err) });
+      });
+    return () => ctl.abort();
+  }, [active]);
+  return state;
+}
+
+/** A paired-study report prepared by the server from frozen local outputs, never recomputed in React. */
+export function useStudy(active: boolean): {
+  report: StudyReport | null;
+  status: StudyStatus;
+  error: string | null;
+} {
+  const [state, setState] = useState<{ report: StudyReport | null; status: StudyStatus; error: string | null }>({
+    report: null, status: "idle", error: null,
+  });
+  useEffect(() => {
+    if (!active) return;
+    const ctl = new AbortController();
+    setState((prev) => ({ ...prev, status: "loading" }));
+    getJSON<StudyReport>("/api/study", ctl.signal)
+      .then((report) => setState({ report, status: "ready", error: null }))
+      .catch((err) => {
+        if (ctl.signal.aborted) return;
+        const unavailable = /^404/.test(message(err));
+        setState({ report: null, status: unavailable ? "unavailable" : "error", error: message(err) });
       });
     return () => ctl.abort();
   }, [active]);

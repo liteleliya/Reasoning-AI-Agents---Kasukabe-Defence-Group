@@ -4,8 +4,8 @@ import asyncio
 
 import pytest
 
-from agents.ledger import CallLedger, call_scope, load_ledger
-from agents.llm_client import LLMError, LLMResponse, MockClient, TokenUsage
+from agents.ledger import CallLedger, call_budget, call_scope, load_ledger
+from agents.llm_client import CallAllowanceError, LLMError, LLMResponse, MockClient, TokenUsage
 from agents.pex_agent import PEXAgent
 from agents.prompts import persona_for
 from blackboard import EventStore
@@ -42,6 +42,24 @@ def test_scopes_nest_default_to_debate_and_reset() -> None:
         ("debate", "", ""),
     ]
     assert [r.call_id for r in client.ledger.for_trial("t")] == ["call-1", "call-2"]
+
+
+def test_call_budget_blocks_a_request_before_it_reaches_the_model() -> None:
+    client = MockClient()
+
+    async def spend() -> None:
+        with call_budget(1):
+            await client.complete([{"role": "user", "content": "first"}])
+            with pytest.raises(CallAllowanceError, match="allowance exhausted"):
+                await client.complete([{"role": "user", "content": "blocked"}])
+
+    asyncio.run(spend())
+    assert client.ledger.rows[0].status == "ok"
+    assert (client.ledger.rows[1].status, client.ledger.rows[1].usage, client.ledger.rows[1].tokens) == (
+        "skipped",
+        "missing",
+        0,
+    )
 
 
 def test_a_failed_call_stays_in_the_ledger_with_missing_usage() -> None:

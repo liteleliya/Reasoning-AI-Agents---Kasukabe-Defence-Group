@@ -1,4 +1,4 @@
-"""Per-trial metrics rows and a crash-safe CSV writer (D3). Columns: docs/metrics.md."""
+"""Per-trial metrics rows and a crash-safe CSV writer (D3). Columns: docs/architecture_and_evaluation.md."""
 
 from __future__ import annotations
 
@@ -194,13 +194,14 @@ def _ledger_columns(state: BoardState, ledger: Sequence[CallRecord] | None) -> d
             "",
         )
     posted = {i for e in state.events for i in e.meta.get("call_ids", [])}
-    known = [r for r in ledger if r.usage != "missing"]
+    attempted = [r for r in ledger if r.status != "skipped"]
+    known = [r for r in attempted if r.usage != "missing"]
     return {
-        "ledger_calls": len(ledger),
+        "ledger_calls": len(attempted),
         "ledger_tokens_in": sum(r.prompt_tokens or 0 for r in known),
         "ledger_tokens_out": sum(r.completion_tokens or 0 for r in known),
         "ledger_unposted_tokens": sum(r.tokens for r in known if r.call_id not in posted),
-        "ledger_missing": len(ledger) - len(known),
+        "ledger_missing": len(attempted) - len(known),
     }
 
 
@@ -214,10 +215,10 @@ class MetricsWriter:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         if not self.path.exists() or self.path.stat().st_size == 0:
-            with self.path.open("w", newline="") as f:
+            with self.path.open("w", encoding="utf-8", newline="") as f:
                 csv.writer(f).writerow(COLUMNS)
         else:
-            with self.path.open(newline="") as f:
+            with self.path.open("r", encoding="utf-8-sig", newline="") as f:
                 header = next(csv.reader(f), [])
             if tuple(header) != COLUMNS:
                 raise ValueError(f"{self.path} has different columns; write to a new file")
@@ -226,7 +227,7 @@ class MetricsWriter:
         return {r["trial_key"] for r in read_metrics(self.path)}
 
     def write(self, row: dict[str, Any]) -> None:
-        with self.path.open("a", newline="") as f:
+        with self.path.open("a", encoding="utf-8", newline="") as f:
             csv.DictWriter(f, fieldnames=COLUMNS).writerow(row)
             f.flush()
             os.fsync(f.fileno())
@@ -234,7 +235,7 @@ class MetricsWriter:
 
 def read_metrics(path: str | Path) -> list[dict[str, str]]:
     """Rows as strings; drops a trailing partial line left by a crash mid-write."""
-    with Path(path).open(newline="") as f:
+    with Path(path).open("r", encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
     return [r for r in rows if r.get(COLUMNS[-1]) is not None]
 

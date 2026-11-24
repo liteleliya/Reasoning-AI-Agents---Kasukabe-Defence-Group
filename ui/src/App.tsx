@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useCaseBrief, useResults, useSessionEvents, useSessions, useSnapshot } from "./api";
+import { useCaseBrief, useResults, useSessionEvents, useSessions, useSnapshot, useStudy } from "./api";
 import { CaseBrief } from "./CaseBrief";
 import { CounterfactualPanel } from "./CounterfactualPanel";
 import { EventInspector } from "./EventInspector";
@@ -13,11 +13,17 @@ import { SessionHeader } from "./SessionHeader";
 import { SessionList } from "./SessionList";
 import { siblings } from "./sessions";
 import { StatePanel } from "./StatePanel";
+import { StudyView } from "./StudyView";
+import { ProjectGuide } from "./ProjectGuide";
 import { buildSearch, parseSearch, type View } from "./urlState";
 
 export function App() {
   const { sessions, loaded, error: listError } = useSessions();
-  const [initial] = useState(() => parseSearch(location.search));
+  const [initial] = useState(() => {
+    const parsed = parseSearch(location.search);
+    if (!new URLSearchParams(location.search).has("view") && !parsed.session) parsed.view = "results";
+    return parsed;
+  });
   // the one place that owns which session is open, where the cursor is and whether it follows
   const [view, setView] = useState<View>(initial.view);
   const [sessionId, setSessionId] = useState<string | null>(initial.session);
@@ -27,6 +33,7 @@ export function App() {
 
   const { events, status, error } = useSessionEvents(sessionId);
   const results = useResults(view === "results");
+  const study = useStudy(view === "results");
 
   useEffect(() => {
     if (!sessionId && sessions.length) setSessionId(sessions[0].session_id);
@@ -111,11 +118,14 @@ export function App() {
   }
 
   return (
-    <div className="app">
-      <aside>
-        <h1>Blackboard</h1>
-        <nav className="views" role="tablist" aria-label="View">
-          {(["explore", "results"] as const).map((v) => (
+    <div className={`app app-${view}`}>
+      <header className="appbar">
+        <a className="brand" href="?view=results" onClick={(event) => { event.preventDefault(); setView("results"); }}>
+          <span className="brand-mark" aria-hidden="true">IB</span>
+          <span><strong>Intelligible Blackboard</strong><small>Multi-agent reasoning study</small></span>
+        </a>
+        <nav className="views" role="tablist" aria-label="Project sections">
+          {(["guide", "results", "explore"] as const).map((v) => (
             <button
               key={v}
               role="tab"
@@ -123,26 +133,29 @@ export function App() {
               className={view === v ? "tab active" : "tab"}
               onClick={() => setView(v)}
             >
-              {v === "explore" ? "Explore" : "Results"}
+              {v === "guide" ? "Project guide" : v === "results" ? "Results" : "Explore runs"}
             </button>
           ))}
         </nav>
-        <SessionList
-          sessions={sessions}
-          loaded={loaded}
-          error={listError}
-          selected={sessionId}
-          onSelect={selectSession}
-        />
-      </aside>
-      <main>
+        <div className="appbar-meta"><span className="status-dot" /> Local study archive</div>
+      </header>
+      {view === "explore" && <aside className="session-rail">
+        <div className="rail-heading"><span>Recorded runs</span><strong>{sessions.length}</strong></div>
+        <SessionList sessions={sessions} loaded={loaded} error={listError} selected={sessionId} onSelect={selectSession} />
+      </aside>}
+      <main className={`main-${view}`}>
+        {view === "guide" && <ProjectGuide />}
         {view === "results" && (
-          <ResultsView
-            summary={results.summary}
-            status={results.status}
-            error={results.error}
-            onOpen={openFromResults}
-          />
+          study.status === "ready" && study.report ? (
+            <StudyView report={study.report} onOpen={openFromResults} />
+          ) : (
+            <ResultsView
+              summary={results.summary}
+              status={results.status}
+              error={results.error}
+              onOpen={openFromResults}
+            />
+          )
         )}
         {view === "explore" && sessionId && (
           <SessionHeader

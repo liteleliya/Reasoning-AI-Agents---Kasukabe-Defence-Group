@@ -23,7 +23,7 @@ from typing import Literal
 import httpx
 from pydantic import BaseModel
 
-from agents.ledger import CallLedger, CallRecord, current_scope
+from agents.ledger import CallBudgetExceeded, CallLedger, CallRecord, current_budget, current_scope
 
 TAGS = ("RATIFY", "REVISE", "REFUTE", "REJECT")
 
@@ -95,6 +95,16 @@ class BaseLLMClient(ABC):
             parent_seq=scope.get("parent_seq"),
             agent=scope.get("agent", ""),
         )
+        budget = current_budget()
+        if budget is not None:
+            try:
+                budget.reserve()
+            except CallBudgetExceeded as exc:
+                # Keep an auditable row for the blocked attempt, but do not represent it as a
+                # paid/model request in metrics.
+                row.status, row.usage, row.detail = "skipped", "missing", str(exc)
+                self.ledger.add(row)
+                raise CallAllowanceError(str(exc)) from exc
         try:
             response = await self._complete(
                 _coerce(messages),
@@ -180,6 +190,10 @@ class MockClient(BaseLLMClient):
 
 class LLMError(RuntimeError):
     pass
+
+
+class CallAllowanceError(LLMError):
+    """The configured local intervention allowance prevented a model request."""
 
 
 class OpenAICompatibleClient(BaseLLMClient):

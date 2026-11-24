@@ -1,7 +1,8 @@
-# Python
+# Python environments, bytecode and local tool caches
+.venv/
+.venv-*/
 __pycache__/
 *.py[cod]
-.venv/
 *.egg-info/
 build/
 dist/
@@ -9,24 +10,78 @@ dist/
 .ruff_cache/
 .coverage
 htmlcov/
+.uv-cache/
 
-# Env / secrets
+# Local settings and credentials
 .env
 .env.*
+!.env.example
+.claude/
 
-# Data and run artefacts (keep folders, not contents)
+# Downloaded benchmark cache (the case manifest and authored cases remain tracked)
+data/mscore/
+
+# Local run databases and verbose model call logs
 *.sqlite
 *.sqlite3
 *.db
+*.sqlite-shm
+*.sqlite-wal
+*.zip
 
-# Node / UI
+# JavaScript and compiled frontend assets
 node_modules/
+ui/node_modules/
 ui/dist/
 
-# OS / editors
+# Operating system and editor files
 .DS_Store
+Thumbs.db
 .idea/
 .vscode/
+*.swp
 
-# Notebooks
+# Notebook checkpoints
 .ipynb_checkpoints/
+
+# Results: keep small, readable summaries and figures; keep raw trials locally only.
+/results/*
+!/results/README.md
+!/results/figures/
+/results/figures/*
+!/results/figures/*.png
+!/results/figures/*.pdf
+!/results/figures/summary.csv
+!/results/paired-study/
+/results/paired-study/*
+!/results/paired-study/README.md
+!/results/paired-study/analysis/
+/results/paired-study/analysis/*
+!/results/paired-study/analysis/analysis.json
+!/results/paired-study/analysis/outcome_table.csv
+!/results/paired-study/analysis/*.png
+
+# Share the requested 500-case study artifacts through the repository.
+# Keep metrics, provenance/manifests, policy state, analysis and SQLite traces pullable.
+!/results/proposal-density-500/
+!/results/proposal-density-500/**
+!/results/proposal-density-static-500/
+!/results/proposal-density-static-500/**
+!/results/proposal-policy-comparison/
+!/results/proposal-policy-comparison/**
+!/results/kramabench-pilot/
+!/results/kramabench-pilot/**
+!/results/kramabench-study/
+!/results/kramabench-study/**
+!/results/medagentbench-pilot/
+!/results/medagentbench-pilot/**
+!/results/medagentbench-study/
+!/results/medagentbench-study/**
+
+# The global database/archive ignores above still apply unless specifically re-included here.
+!/results/proposal-density-500/**/*.sqlite
+!/results/proposal-density-500/**/*.sqlite3
+!/results/proposal-density-static-500/**/*.sqlite
+!/results/proposal-density-static-500/**/*.sqlite3
+!/results/kramabench-study/**/*.sqlite
+!/results/medagentbench-study/**/*.sqlite

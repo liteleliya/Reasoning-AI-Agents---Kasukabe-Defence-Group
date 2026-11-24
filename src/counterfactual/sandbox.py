@@ -25,6 +25,7 @@ class Alternative:
     prediction: str | None = None  # None = keep the original prediction
     tokens: Tokens = field(default_factory=Tokens)  # cost of producing the alternative
     call_ids: tuple[str, ...] = ()  # the model calls behind it, for the call ledger
+    strategy_id: str = ""  # policy tactic used to generate the alternative, if learned
 
 
 @dataclass
@@ -75,6 +76,7 @@ async def replay(
         prediction=alt.prediction if alt.prediction is not None else target.prediction,
         explanation=alt.explanation,
         tokens=alt.tokens,
+        meta={"strategy_id": alt.strategy_id} if alt.strategy_id else {},
     )
     steps = [fork.append_sync(altered)]
     for agent in sorted(others, key=lambda a: a.name):
@@ -113,6 +115,8 @@ async def replay(
 
 def _record(store: EventStore, session_id: str, result: ReplayResult, reason: str) -> None:
     author = result.target.author
+    strategy_id = result.steps[0].meta.get("strategy_id", "") if result.steps else ""
+    policy_meta = {"strategy_id": strategy_id} if strategy_id else {}
     store.append_sync(
         EventDraft(
             session_id=session_id,
@@ -121,6 +125,7 @@ def _record(store: EventStore, session_id: str, result: ReplayResult, reason: st
             reply_to=result.target.seq,
             counterfactual=True,
             explanation=reason or f"replay seq {result.target.seq} as {result.steps[0].tag}",
+            meta=policy_meta,
         )
     )
     for e in result.steps:
@@ -134,7 +139,7 @@ def _record(store: EventStore, session_id: str, result: ReplayResult, reason: st
                 explanation=e.explanation,
                 counterfactual=True,
                 tokens=e.tokens,
-                meta={"fork_seq": e.seq, "fork_reply_to": e.reply_to},
+                meta={**policy_meta, "fork_seq": e.seq, "fork_reply_to": e.reply_to},
             )
         )
     store.append_sync(
@@ -150,6 +155,7 @@ def _record(store: EventStore, session_id: str, result: ReplayResult, reason: st
                 "distance_real": round(result.distance_real, 4),
                 "distance_replay": round(result.distance_replay, 4),
                 "target_seq": result.target.seq,
+                **policy_meta,
             },
         )
     )

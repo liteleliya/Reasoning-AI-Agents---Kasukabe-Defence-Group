@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import json
 import os
 import platform
@@ -30,11 +31,12 @@ from agents.pex_agent import PEXAgent
 from agents.prompts import answer_instructions, persona_for
 from bench import authored
 from bench.metrics import MetricsWriter, TrialMeta, read_metrics, trial_row
-from bench.mscore import Instance, sample
+from bench.mscore import Instance, sample, sample_total
 from bench.revision import productive_revisions
 from bench.splits import KINDS, manifest_info, study_instances
 from blackboard import EventStore
 from counterfactual import CounterfactualAgent
+from counterfactual.policy import PolicyMemory
 from scheduler import Scheduler, SchedulerConfig
 
 REPO = Path(__file__).resolve().parents[2]
@@ -59,6 +61,7 @@ class JobConfig:
     allowance_calls: int = 6  # model calls an arm may spend after the shared trigger
     persona_set: str = "default"  # agents.prompts.PERSONA_SETS key
     model: str = ""  # overrides LLM_MODEL for this job
+    policy_learning: bool = False  # learn which counterfactual explanation tactic reduces distance
 
     @classmethod
     def load(cls, path: str | Path) -> JobConfig:
@@ -152,7 +155,11 @@ def final_answer(predictions: Mapping[str, str], same) -> str:
 
 def job_instances(job: JobConfig) -> list[Instance]:
     """The job's items: a dataset sample, the listed split, or both."""
-    items = list(sample(**job.sample)) if job.sample else []
+    if job.sample:
+        sampler = sample_total if "n_total" in job.sample else sample
+        items = list(sampler(**job.sample))
+    else:
+        items = []
     if job.cases:
         items += study_instances(**job.cases)
     return items
@@ -172,7 +179,7 @@ def build_trials(job: JobConfig, instances: Sequence[Instance], model: str) -> l
         Trial(
             TrialMeta(
                 config=f"{job.name}-cf{cf}",
-                benchmark="authored" if inst.format == "authored" else "mscore",
+                benchmark=inst.benchmark,
                 instance_id=inst.id,
                 seed=seed,
                 n_agents=job.n_agents,
@@ -200,15 +207,48 @@ def job_client_args(job: JobConfig) -> dict:
 
 
 def question_text(inst: Instance) -> str:
+    """The public task plus an answer contract agents can satisfy without seeing a rubric."""
+    if inst.format == "authored" and getattr(inst, "case", None) is not None:
+        case = inst.case
+        fields = "; ".join(
+            f"{field.name}=<{' | '.join(field.values) if field.kind == 'enum' else field.kind}>"
+            for field in case.fields
+        )
+        return (
+            f"{inst.prompt_text()}\n\n"
+            'In the JSON "prediction", use this exact one-line schema: '
+            f"<decision>; {fields}.\n"
+            f"Use one of these decision words exactly: {' | '.join(case.decisions)}. "
+            'Keep the evidence-based reasoning, including evidence IDs, in "explanation".'
+        )
     return f"{inst.prompt_text()}\n\n{answer_instructions(inst.format)}"
+
+
+def answer_contract(inst: Instance):
+    """Return task-level output validators for a model agent, never private grading rules."""
+    if inst.format != "authored" or getattr(inst, "case", None) is None:
+        return None, None
+    case = inst.case
+    return (
+        lambda prediction: authored.canonical_prediction(case, prediction),
+        lambda explanation: authored.evidence_in_explanation(case, explanation),
+    )
 
 
 AgentFactory = Callable[[Trial, BaseLLMClient, JobConfig, EventStore], list]
 
 
-def default_agents(trial: Trial, client: BaseLLMClient, job: JobConfig, store: EventStore) -> list:
+def default_agents(
+    trial: Trial,
+    client: BaseLLMClient,
+    job: JobConfig,
+    store: EventStore,
+    *,
+    policy_memory: PolicyMemory | None = None,
+) -> list:
     """n agents with fixed personas; the first n_counterfactual of them are counterfactual."""
     n, cf = trial.meta.n_agents, trial.meta.n_counterfactual
+    canonicalize, candidate_explanation = answer_contract(trial.instance)
     plain = [
         PEXAgent(
             f"agent_{chr(ord('a') + i)}",
@@ -219,6 +259,8 @@ def default_agents(trial: Trial, client: BaseLLMClient, job: JobConfig, store: E
             max_tokens=job.max_tokens,
             seed=trial.meta.seed * 1000 + i,
             n_agents=n,
+            prediction_canonicalizer=canonicalize,
+            candidate_explanation_validator=candidate_explanation,
         )
         for i in range(n)
     ]
@@ -231,6 +273,9 @@ def default_agents(trial: Trial, client: BaseLLMClient, job: JobConfig, store: E
             lambda: agents,
             max_rollbacks=job.counterfactual.get("max_rollbacks", 1),
             distance=distance,
+            policy_memory=policy_memory,
+            policy_condition=f"{job.name}-cf{cf}",
+            policy_trial_id=trial.meta.key,
         )
     return agents
 
@@ -296,6 +341,16 @@ async def run_trial(
         result = await Scheduler(
             store, agents, scheduler_config(trial.instance.format, job, trial.instance)
         ).run(sid, question_text(trial.instance))
+    opportunity = result.opportunity
+    replayed = any(e.kind.value == "rollback_start" for e in result.state.events)
+    checkpoint = "opened" if replayed or (opportunity and opportunity.eligible) else "none"
+    recovery_outcome = (
+        opportunity.outcome
+        if opportunity is not None and opportunity.outcome
+        else "replay_attempted"
+        if replayed
+        else ""
+    )
     return finish_row(
         trial,
         result.state,
@@ -310,6 +365,11 @@ async def run_trial(
         ),
         stop_detail=result.stop_detail,
         decision_seq=result.decision_seq,
+        paired={
+            "checkpoint": checkpoint,
+            "skip_reason": opportunity.skip_reason if opportunity else "",
+            "recovery_outcome": recovery_outcome,
+        },
     )
 
 
@@ -337,10 +397,21 @@ def _gpu() -> str:
         return ""
 
 
-def provenance(job: JobConfig, shard: tuple[int, int], client: BaseLLMClient) -> dict:
+def provenance(
+    job: JobConfig,
+    shard: tuple[int, int],
+    client: BaseLLMClient,
+    instances: Sequence[Instance] = (),
+) -> dict:
     cases = manifest_info(job.cases["split"], job.cases.get("kinds", KINDS)) if job.cases else None
+    instance_ids = sorted(instance.id for instance in instances)
     return {
         "cases": cases,
+        "instance_manifest": {
+            "count": len(instance_ids),
+            "sha256": hashlib.sha256("\n".join(instance_ids).encode()).hexdigest(),
+            "ids": instance_ids,
+        },
         "job": asdict(job),
         "shard": f"{shard[0]}/{shard[1]}",
         "commit": _git("rev-parse", "HEAD"),
@@ -377,7 +448,18 @@ async def run_job(
     log: Callable[[str], None] = print,
 ) -> list[dict]:
     """Run the job's unfinished trials for this shard; returns the rows written this time."""
+    if job.policy_learning and parallel != 1:
+        raise ValueError("policy_learning requires --parallel 1 for a reproducible update order")
+    if job.policy_learning and make_agents is not default_agents:
+        raise ValueError("policy_learning currently requires the default agent factory")
     out.mkdir(parents=True, exist_ok=True)
+    if job.policy_learning:
+        memory = PolicyMemory(out / "policy_memory.json")
+
+        def learning_agents(trial, client, config, store):
+            return default_agents(trial, client, config, store, policy_memory=memory)
+
+        make_agents = learning_agents
     client = client or make_client(**job_client_args(job))
     client.ledger = CallLedger(out / "calls.jsonl")  # every model call of this run, for audits
     instances = instances if instances is not None else job_instances(job)
@@ -392,7 +474,10 @@ async def run_job(
     info_path = out / "run.json"
     info = json.loads(info_path.read_text()) if info_path.exists() else {}
     info.setdefault("runs", []).append(
-        {"started": datetime.now(UTC).isoformat(), **provenance(job, shard, client)}
+        {
+            "started": datetime.now(UTC).isoformat(),
+            **provenance(job, shard, client, instances),
+        }
     )
     info_path.write_text(json.dumps(info, indent=2))
 

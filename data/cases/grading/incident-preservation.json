@@ -1,0 +1,16 @@
+{
+  "id": "incident-preservation",
+  "rubric_version": 1,
+  "acceptable_decisions": ["capture_then_isolate"],
+  "conditions": [
+    {"id": "deadline", "description": "adds six elapsed minutes, five capture minutes and two isolation minutes", "patterns": ["(13|thirteen)", "15"]},
+    {"id": "volatile", "description": "preserves the memory keys before containment", "patterns": ["memory|key"]},
+    {"id": "active", "description": "recognises that exfiltration is active", "patterns": ["exfiltrat|active"]}
+  ],
+  "critical": [
+    {"id": "late", "description": "isolation after the 15-minute deadline breaches I5", "when": {"containment_in": {"gt": 900}}},
+    {"id": "power_off", "description": "powering off destroys required volatile evidence", "when": {"decision": "power_off"}},
+    {"id": "lost_memory", "description": "the approved sequence must preserve memory", "when": {"memory_preserved": "no"}}
+  ],
+  "evidence_required": ["E1", "E2", "E3"]
+}

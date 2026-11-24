@@ -18,6 +18,31 @@ from types import MappingProxyType
 from typing import Any
 
 _SCOPE: ContextVar[Mapping[str, Any]] = ContextVar("llm_call_scope", default=MappingProxyType({}))
+_BUDGET: ContextVar[CallBudget | None] = ContextVar("llm_call_budget", default=None)
+
+
+class CallBudgetExceeded(RuntimeError):
+    """Raised before a request reaches the model when an arm has spent its allowance."""
+
+
+@dataclass
+class CallBudget:
+    """A shared request allowance for one intervention continuation.
+
+    The paired study compares intervention policies under the same post-checkpoint request
+    allowance.  This object lives in a context variable so candidate generation, both sandbox
+    branches and later live deliberation draw from exactly the same pool.
+    """
+
+    limit: int
+    used: int = 0
+    blocked: int = 0
+
+    def reserve(self) -> None:
+        if self.used >= self.limit:
+            self.blocked += 1
+            raise CallBudgetExceeded(f"call allowance exhausted ({self.used}/{self.limit})")
+        self.used += 1
 
 
 @contextmanager
@@ -34,8 +59,29 @@ def call_scope(**fields: Any) -> Iterator[None]:
         _SCOPE.reset(token)
 
 
+@contextmanager
+def call_budget(limit: int) -> Iterator[CallBudget]:
+    """Cap model requests made by the current async task and all nested helpers.
+
+    A blocked request is recorded by the client as ``skipped`` but is never sent to the model and
+    therefore does not consume the experimental allowance.
+    """
+    if limit < 0:
+        raise ValueError("call allowance must be non-negative")
+    budget = CallBudget(limit)
+    token = _BUDGET.set(budget)
+    try:
+        yield budget
+    finally:
+        _BUDGET.reset(token)
+
+
 def current_scope() -> dict[str, Any]:
     return dict(_SCOPE.get())
+
+
+def current_budget() -> CallBudget | None:
+    return _BUDGET.get()
 
 
 @dataclass
@@ -48,7 +94,7 @@ class CallRecord:
     repair: bool = False  # the retry sent after an unusable reply
     parent_seq: int | None = None  # the message the call was made to answer
     agent: str = ""
-    status: str = "ok"  # ok or error
+    status: str = "ok"  # ok, error, or skipped (a local allowance blocked the request)
     usage: str = "reported"  # reported, estimated or missing
     prompt_tokens: int | None = None
     completion_tokens: int | None = None

@@ -1,0 +1,16 @@
+{
+  "id": "supplier-waiver",
+  "rubric_version": 1,
+  "acceptable_decisions": ["supplier_c"],
+  "conditions": [
+    {"id": "a_total", "description": "Supplier A would cost $49,000 after extension", "patterns": ["49[,.]?000"]},
+    {"id": "b_late", "description": "Supplier B exceeds the 45-day limit", "patterns": ["60", "45"]},
+    {"id": "c_fit", "description": "Supplier C meets cost, warranty and delivery rules", "patterns": ["49[,.]?000", "12", "40"]}
+  ],
+  "critical": [
+    {"id": "a_short", "description": "Supplier A without extension misses the warranty rule", "when": {"decision": "supplier_a_extended", "warranty": {"lt": 12}}},
+    {"id": "b_late", "description": "Supplier B misses the delivery deadline", "when": {"decision": "supplier_b"}},
+    {"id": "cap", "description": "the $50,000 purchase cap cannot be exceeded", "when": {"total_cost": {"gt": 50000}}}
+  ],
+  "evidence_required": ["E1", "E2", "E3"]
+}

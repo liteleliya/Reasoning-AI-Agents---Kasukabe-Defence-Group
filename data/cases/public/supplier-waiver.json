@@ -1,0 +1,22 @@
+{
+  "id": "supplier-waiver",
+  "split": "challenge",
+  "version": 1,
+  "domain": "procurement",
+  "question": "Which supplier plan satisfies the equipment purchase rules?",
+  "context": "Policy P3 requires at least a 12-month warranty and delivery within 45 days for purchases above $40,000. The total purchase cap is $50,000. No waiver is available.",
+  "evidence": [
+    {"id": "E1", "text": "Supplier A costs $46,000, delivers in 30 days and offers a 6-month warranty. A 12-month warranty extension costs $3,000."},
+    {"id": "E2", "text": "Supplier B costs $44,000, delivers in 60 days and includes a 12-month warranty."},
+    {"id": "E3", "text": "Supplier C costs $49,000, delivers in 40 days and includes a 12-month warranty."}
+  ],
+  "response": {
+    "decisions": ["supplier_a_extended", "supplier_b", "supplier_c"],
+    "fields": [
+      {"name": "total_cost", "kind": "number", "unit": "USD", "decisive": true, "description": "total cost including required warranty"},
+      {"name": "warranty", "kind": "number", "unit": "months", "decisive": true, "description": "warranty length"},
+      {"name": "delivery_days", "kind": "number", "unit": "days", "decisive": true, "description": "delivery time in days"}
+    ],
+    "cite_evidence": true
+  }
+}

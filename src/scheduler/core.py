@@ -258,6 +258,8 @@ class Scheduler:
     @staticmethod
     def _pass_detail(notes: Sequence[TurnNote], seq: int) -> str:
         failed = (TurnReason.PARSE_FAILURE, TurnReason.MODEL_ERROR)
+        if any(n.seq == seq and n.reason is TurnReason.CALL_ALLOWANCE for n in notes):
+            return "call_allowance_exhausted"
         return (
             "failed_turns"
             if any(n.seq == seq and n.reason in failed for n in notes)

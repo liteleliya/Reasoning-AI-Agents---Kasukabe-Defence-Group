@@ -52,6 +52,14 @@
       "refund-window",
       "restore-p1",
       "restore-p1-unbounded"
+    ],
+    "challenge": [
+      "audit-export",
+      "cold-chain-reroute",
+      "incident-preservation",
+      "release-gate",
+      "supplier-waiver",
+      "grant-eligibility"
     ]
   }
 }

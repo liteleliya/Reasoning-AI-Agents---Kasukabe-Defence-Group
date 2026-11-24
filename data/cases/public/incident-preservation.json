@@ -1,0 +1,22 @@
+{
+  "id": "incident-preservation",
+  "split": "challenge",
+  "version": 1,
+  "domain": "security-operations",
+  "question": "What containment sequence should the incident commander approve?",
+  "context": "Response policy I5 requires an actively exfiltrating host to be isolated within 15 minutes. Forensic evidence must be preserved first when a memory capture can finish without missing that containment deadline.",
+  "evidence": [
+    {"id": "E1", "text": "Network monitoring detected active exfiltration from the host six minutes ago."},
+    {"id": "E2", "text": "A memory capture takes five minutes; isolating the host takes two minutes after the capture."},
+    {"id": "E3", "text": "Powering the host off immediately would destroy the in-memory encryption keys needed for the investigation."}
+  ],
+  "response": {
+    "decisions": ["capture_then_isolate", "isolate_immediately", "power_off"],
+    "fields": [
+      {"name": "containment_in", "kind": "duration", "unit": "s", "decisive": true, "description": "minutes from detection until isolation completes"},
+      {"name": "memory_preserved", "kind": "enum", "values": ["yes", "no"], "decisive": true, "description": "is volatile memory captured before isolation"},
+      {"name": "host_power", "kind": "enum", "values": ["on", "off"], "decisive": false, "description": "host power state during the sequence"}
+    ],
+    "cite_evidence": true
+  }
+}

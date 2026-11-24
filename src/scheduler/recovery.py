@@ -24,6 +24,7 @@ class TurnReason(StrEnum):
     NO_TARGET = "no_target"  # nothing left for the agent to answer
     PARSE_FAILURE = "parse_failure"  # the reply stayed unparseable after the repair retry
     MODEL_ERROR = "model_error"  # the model could not be reached or answered with an error
+    CALL_ALLOWANCE = "call_allowance"  # a paired arm spent its post-checkpoint request budget
     PASSED = "passed"  # a plain agent returned None without saying why
     INVALID_DRAFT = "invalid_draft"  # the store refused the draft
     TAG_MISMATCH = "tag_mismatch"  # a RATIFY whose prediction differs from the one it ratifies

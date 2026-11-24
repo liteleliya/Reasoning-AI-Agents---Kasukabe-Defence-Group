@@ -1,0 +1,149 @@
+% CS F407 Artificial Intelligence: final project report.
+% Four-page limit including references, per the course submission update.
+% This report uses a copy of the supplied template; its layout settings are unchanged.
+\documentclass[11pt,a4paper,twocolumn]{article}
+
+\usepackage[margin=2cm,columnsep=0.8cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+\titleformat{\section}{\normalsize\bfseries}{\thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.3ex}{0.6ex}
+\setlist{nosep,leftmargin=*}
+\setlength{\parskip}{0.3ex}
+
+\newcommand{\coursename}{CS F407 Artificial Intelligence, AY 2026--27 Semester I}
+\newcommand{\teamno}{Kasukabe Defence Group}
+\newcommand{\githuburl}{https://github.com/liteleliya/Reasoning-AI-Agents---Kasukabe-Defence-Group}
+
+\begin{document}
+
+\twocolumn[{%
+\begin{center}
+  {\large\bfseries Intelligible Blackboard with Counterfactual Agents}\\[1ex]
+  \teamno\\
+  Samarth Bhatnagar (2023B5A70853G), Parth Jhalani (2023A7PS0439G), Aadi Pandey (2023A7PS0470G), Sheil Maniar (2024A7PS0498G)\\[0.5ex]
+  {\small \coursename, BITS Pilani, K.K. Birla Goa Campus}\\[1.5ex]
+  \begin{minipage}{0.85\textwidth}
+    \small
+    \centerline{\bfseries Abstract}\vspace{0.5ex}
+    Multi-agent language-model teams can expose their reasoning through linked claims and explanations, but disagreement can end in an impasse or an incorrect consensus. We built an event-based blackboard where three agents exchange structured prediction-and-explanation messages, then compared ordinary continuation, forward rethink, and matched counterfactual replay from the same saved prefixes. The frozen baseline covered 24 cases with six seeds each: 144 prefixes and 432 arm outcomes. Fifty-two prefixes opened an eligible checkpoint. Correct recovery occurred once for ordinary continuation, zero times for forward rethink, and once for replay. Replay used more tokens and did not improve over ordinary continuation in the paired comparison. The result is inconclusive, and answer-format failures plus automatic-only grading limit its interpretation. The project therefore demonstrates an inspectable experimental system and a carefully qualified baseline, not evidence that replay improves agent reasoning.
+  \end{minipage}
+\end{center}
+\vspace{1.5ex}
+}]
+
+\section{Introduction}
+When language-model agents disagree, a system must decide whether to keep debating, change an answer, or stop. A consensus-only design can hide a wrong answer, while an unstructured transcript makes it difficult to see which claim caused a change. We study whether an inspectable, bounded counterfactual replay can help a group recover after a disagreement checkpoint.
+
+Our input is a decision or benchmark question with its public context; our output is a shared answer and an event history showing each agent's prediction, explanation, reply target, and dialogue move. We implemented an append-only blackboard, a turn scheduler, PXP message validation, three matched continuation arms, automatic answer checks, and a local results viewer. The primary outcome is correct recovery among eligible checkpoint prefixes; agreement, replay adoption, intelligibility, and cost are reported separately.
+
+\section{Background and related work}
+Baskar et al. formalize interactions between agents that make predictions and provide explanations, and define intelligibility as a property of interaction traces~\cite{baskar}. We adapt the prediction-and-explanation idea into a practical multi-agent protocol: messages carry a prediction, explanation, tag, and reply link. Our scheduler, shared event store, checkpoint rule, paired arms, and replay-based recovery test are course-project extensions; we do not claim to reproduce the paper's full formal model.
+
+For external questions, we use a small selected subset of MSCoRe, a benchmark for multi-stage collaborative reasoning~\cite{mscore}. The study also includes team-authored decision cases with explicit constraints so that an automatic checker can inspect critical conditions. Qwen2.5 Instruct models serve as the local agents; the final model tag and quantization are recorded with the run~\cite{qwen}.
+
+\section{Method}
+Each of three agents reads a shared blackboard and writes a structured message containing a prediction, explanation, PXP tag, and reference to the message answered. \texttt{RATIFY} accepts another agent's reasoning; \texttt{REFUTE} challenges it with corrective information while preserving the sender's answer; \texttt{REVISE} changes the prediction; and \texttt{REJECT} declines a contribution. The scheduler uses these messages to update the board and detect termination or a recovery opportunity.
+
+At an eligible checkpoint, the paired runner copies the same prefix into three arms. \emph{Standard} lets the challenged agent answer normally. \emph{Forward rethink} asks that agent to reconsider the challenge in a new live reply. \emph{Replay} tests the original challenged message and a proposed replacement on matched temporary branches. Each branch uses the same peers and reply limits; the branch-distance difference estimates whether the replacement brought predictions closer under the configured comparator. A helpful candidate may then be posted as a live revision. The SQLite event log distinguishes these counterfactual events from live messages, so the branch does not rewrite the original board history.
+
+Correct recovery requires all three conditions: an eligible shared prefix, consensus after the arm continues, and a final answer that passes the grader. Thus, an adopted replacement is not automatically a correct recovery. The primary unit is a case--seed pair, not an individual arm or message.
+
+\section{Experimental setup}
+The frozen paired baseline contains 24 cases: eight team-authored decision cases and sixteen imported MSCoRe items (eight open-answer and eight choice questions). Each case ran with six seeds, producing 144 shared prefixes and 432 outcomes across the three arms. All arms for a case--seed pair began from the same saved prefix. The final run used three agents with the dissenter persona set, temperature 1.0, a 400-token response limit, and an impasse window of four. The configured post-checkpoint allowance was six model calls.
+
+Inference was local through Ollama 0.40.5 on Windows 10 with an NVIDIA RTX 4050 Laptop GPU. The final model was \texttt{qwen2.5:3b-instruct}, a 3.09B-parameter Q4\_K\_M build. Qwen2.5 7B was used in earlier exploratory runs, but those runs used different settings and questions; they are not a controlled model-size experiment. J1 first checked structured-message parsing, and J2/J3 were earlier dialogue pilots. The complete paired run is saved with configuration, model digest, metrics, and event records.
+
+We report consensus and automatic correctness separately. The primary metric is correct recovery among the 52 eligible prefixes. The paired comparison counts wins, losses, and ties on this outcome; its descriptive 95\% interval resamples whole cases to retain seeds together. Token cost uses mean full-trial tokens among eligible items. No human rubric grades were joined to the saved baseline.
+
+\section{Results}
+Table~\ref{tab:results} shows little separation between arms. Replay and standard each had one correct recovery out of 52 eligible prefixes; forward rethink had none. Overall consensus across all 144 items was also similar, but it is not a correctness metric.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+Method & Consensus & Correct recovery & Mean tokens\\
+ & (of 144) & (of 52) & (eligible)\\
+\midrule
+Standard & 71 & 1 & 13,449.8\\
+Forward rethink & 70 & 0 & 13,234.4\\
+Counterfactual replay & 71 & 1 & 19,578.9\\
+\bottomrule
+\end{tabular}
+\caption{Arm outcomes. Correct recovery requires an eligible prefix, consensus, and an automatically correct final answer. Token means include each arm's full trial.}
+\label{tab:results}
+\end{table}
+
+Replay versus standard had one win, one loss, and 50 ties: a 0.0 percentage-point difference, with a case-bootstrap interval of approximately -5.4 to +5.8 pp. Replay versus forward had one win and 51 ties, a +1.9 pp difference (approximately 0 to +6.5 pp). Replay's mean cost exceeded standard by about 6,129 tokens per eligible item.
+
+Replay was attempted on all 52 eligible prefixes. Fifty-one paired comparisons completed; ten were judged helpful and adopted, while 41 were not helpful and one was incomplete. Only one adopted replay ended in an automatically correct recovery. Checkpoints opened on 36.1\% of prefixes, but the dissenter setup was deliberately selected to create disagreement and this rate does not estimate how often ordinary agents naturally stall.
+
+\section{Discussion and limitations}
+The result does not support a replay advantage in this baseline. One correct recovery in each of the standard and replay arms leaves the observed difference at zero, and the interval is compatible with a modest benefit or harm. Replay also incurred a substantial token cost. The experiment is best presented as a working, auditable comparison that exposes where the intervention loses value, not as a successful accuracy improvement.
+
+Several validity issues reinforce this conclusion. Of the 35 eligible authored prefixes, 30 contained at least one agent prediction that failed to resolve against the authored answer schema. One replay recovery graded correct began from malformed action strings. In addition, three replay arms exceeded the intended six-call post-checkpoint allowance. These issues may affect whether a checkpoint represents a substantive disagreement, whether an outcome is interpretable, and whether costs are fairly bounded. The reported automatic checks do not judge explanation quality, and no human rubric scores are available. Open-answer agreement is approximate lexical matching.
+
+The benchmark subset is small and is mixed with team-authored cases. The dissenter persona was chosen after earlier configurations produced few checkpoints, so results are conditional on that setup. Earlier 7B runs used different cases and configurations; the effect of model size remains untested. The intelligibility classifier is a rule-based trace label, not a user study. We make no claim of reliable advice or general safety.
+
+The next study should validate every authored answer against the public response schema before counting an eligible disagreement, then freeze a corrected case set and runner. It should enforce the call budget in the code, test the post-adoption peer reply and stopping window, and compare model sizes only with identical cases, seeds, prompts, and settings. Blind human rubric grading and a double-scored subset are needed before drawing stronger conclusions about answer quality.
+
+\section{Conclusion}
+We built an event-sourced multi-agent blackboard and compared three ways to continue from matched disagreement checkpoints. In the saved baseline, replay matched standard on correct recoveries and cost more, so the experiment provides no evidence of a replay benefit. The contribution is a reproducible, inspectable system and a qualified starting point for a better-controlled follow-up.
+
+\section*{Individual member contributions}
+{\small
+\begin{tabularx}{\linewidth}{@{}l X@{}}
+\toprule
+Name & Contribution\\
+\midrule
+Samarth Bhatnagar & Lorem ipsum dolor sit amet.\\
+Parth Jhalani & Lorem ipsum dolor sit amet.\\
+Aadi Pandey & Lorem ipsum dolor sit amet.\\
+Sheil Maniar & Lorem ipsum dolor sit amet.\\
+\bottomrule
+\end{tabularx}}
+
+\smallskip
+\noindent All members have read this report and agree with the statement above.
+
+\section*{Generative AI disclosure}
+OpenAI Codex and Anthropic Claude were used to create raw scaffolding code; exact product versions were not recorded. The team wrote the project-specific architecture, prompts, experiment design, code refinements, analysis, and report, and reviewed the scaffolding output. Benchmark questions were imported from MSCoRe for the external-question subset; the team authored the structured decision cases. Qwen2.5 7B Instruct was used in earlier exploratory agent runs, while the final paired run used Qwen2.5 3B Instruct (\texttt{qwen2.5:3b-instruct}, 3.09B parameters, Q4\_K\_M) through local Ollama. We checked the generated code and take responsibility for the submitted work.
+
+\section*{Code availability}
+\noindent Code, authored cases, run instructions, and aggregate results:\\
+\url{\githuburl}\\
+The repository README describes local setup, reproduction, and the results viewer.
+
+\begin{thebibliography}{9}
+\small
+\bibitem{baskar}
+A.~Baskar, A.~Srinivasan, M.~Bain, and E.~Coiera.
+\newblock A Model for Intelligible Interaction Between Agents That Predict and Explain.
+\newblock arXiv:2301.01819, 2023; revised 2024.
+\newblock \url{https://arxiv.org/abs/2301.01819}.
+
+\bibitem{mscore}
+Y.~Lei, H.~Xie, J.~Zhao, S.~Liu, and X.~Song.
+\newblock MSCoRe: A Benchmark for Multi-Stage Collaborative Reasoning in LLM Agents.
+\newblock arXiv:2509.17628, 2025.
+\newblock \url{https://arxiv.org/abs/2509.17628}.
+
+\bibitem{qwen}
+Qwen Team.
+\newblock Qwen2.5 Technical Report.
+\newblock arXiv:2412.15115, 2024.
+\newblock \url{https://arxiv.org/abs/2412.15115}.
+\end{thebibliography}
+
+\end{document}

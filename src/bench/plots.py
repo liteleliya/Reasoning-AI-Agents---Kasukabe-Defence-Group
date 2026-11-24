@@ -330,7 +330,7 @@ def render(metrics_csv: str | Path, out_dir: str | Path) -> list[Path]:
             written.append(path)
         plt.close(fig)
     summary = out / "summary.csv"
-    with summary.open("w", newline="") as f:
+    with summary.open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(asdict(cells[0])))
         w.writeheader()
         for c in cells:

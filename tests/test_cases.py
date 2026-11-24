@@ -60,6 +60,13 @@ def test_runner_question_never_includes_the_reference(book) -> None:
     assert text.startswith("How should service be restored")
 
 
+def test_authored_question_includes_its_exact_public_prediction_contract(book) -> None:
+    text = question_text(book.instance("contractor-access"))
+    assert "extend | exception | revoke" in text
+    assert "total_days=<number>" in text
+    assert "exception_signed=<yes | no>" in text
+
+
 def test_instance_matches_the_runner_interface(book) -> None:
     inst = book.instance("vendor-select")
     assert inst.id == "case:vendor-select"

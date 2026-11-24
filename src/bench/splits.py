@@ -110,8 +110,8 @@ def study_instances(
 
     Reads only local files, so a run needs no network once the dataset files are cached.
     """
-    if split not in ("dev", "heldout"):
-        raise ValueError(f"split must be dev or heldout, got {split!r}")
+    if split not in ("dev", "heldout", "challenge"):
+        raise ValueError(f"split must be dev, heldout or challenge, got {split!r}")
     book, splits = load_cases(root), Splits.load(Path(root) / "splits.json")
     out: list[Instance] = []
     for kind in kinds:
@@ -122,6 +122,8 @@ def study_instances(
                 raise ValueError(f"unknown case id {unknown[0]!r}")
             out += [book.instance(i) for i in wanted]
         elif kind in ("choice", "open"):
+            if split == "challenge":
+                raise ValueError("the challenge split contains authored deliberation cases only")
             out += load_ids(getattr(getattr(splits, kind), split))
         else:
             raise ValueError(f"unknown kind {kind!r}")

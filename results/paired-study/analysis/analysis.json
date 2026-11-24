@@ -1,0 +1,222 @@
+{
+  "verification": {
+    "rows": 432,
+    "duplicates": [],
+    "unpaired": [],
+    "tokens_posted": 3906268,
+    "tokens_full": 3920097,
+    "grades": {
+      "rubric": 0,
+      "automatic": 432,
+      "missing": 0
+    }
+  },
+  "outcomes": [
+    {
+      "arm": "standard",
+      "trials": 144,
+      "eligible": 52,
+      "consensus": 71,
+      "correct_consensus": 29,
+      "wrong_consensus": 42,
+      "ungraded_consensus": 0,
+      "correct_recovery": 1,
+      "median_cost": 6396.5,
+      "median_wall_s": 0.024
+    },
+    {
+      "arm": "forward",
+      "trials": 144,
+      "eligible": 52,
+      "consensus": 70,
+      "correct_consensus": 28,
+      "wrong_consensus": 42,
+      "ungraded_consensus": 0,
+      "correct_recovery": 0,
+      "median_cost": 6396.5,
+      "median_wall_s": 0.032
+    },
+    {
+      "arm": "replay",
+      "trials": 144,
+      "eligible": 52,
+      "consensus": 71,
+      "correct_consensus": 29,
+      "wrong_consensus": 42,
+      "ungraded_consensus": 0,
+      "correct_recovery": 1,
+      "median_cost": 6396.5,
+      "median_wall_s": 0.036000000000000004
+    }
+  ],
+  "funnel": {
+    "replay": [
+      {
+        "stage": "eligible",
+        "count": 52
+      },
+      {
+        "stage": "attempted",
+        "count": 52
+      },
+      {
+        "stage": "completed",
+        "count": 51
+      },
+      {
+        "stage": "helpful",
+        "count": 10
+      },
+      {
+        "stage": "adopted",
+        "count": 10
+      },
+      {
+        "stage": "correct_recovery",
+        "count": 1
+      }
+    ],
+    "reasons": {
+      "outcomes": {
+        "not_helpful": 41,
+        "reply_accepted": 10,
+        "incomplete": 1
+      },
+      "skipped": {
+        "no_full_window": 23
+      }
+    }
+  },
+  "comparisons": {
+    "replay_vs_forward": {
+      "arm": "replay",
+      "other": "forward",
+      "pairs": 52,
+      "cases": 17,
+      "wins": 1,
+      "losses": 0,
+      "small": false,
+      "ties": 51,
+      "rate_difference": 0.019230769230769232,
+      "ci": [
+        0.0,
+        0.06451612903225806
+      ],
+      "differences": {
+        "total_tokens": {
+          "n": 52,
+          "mean": 6344.5,
+          "ci": [
+            6012.115384615385,
+            6658.207547169812
+          ]
+        },
+        "intervention_tokens": {
+          "n": 52,
+          "mean": 6344.5,
+          "ci": [
+            6012.115384615385,
+            6658.207547169812
+          ]
+        },
+        "tokens_in": {
+          "n": 52,
+          "mean": 5883.0192307692305,
+          "ci": [
+            5512.061224489796,
+            6209.596774193548
+          ]
+        },
+        "tokens_out": {
+          "n": 52,
+          "mean": 414.88461538461536,
+          "ci": [
+            387.90625,
+            444.2826086956522
+          ]
+        },
+        "wall_time_s": {
+          "n": 52,
+          "mean": 10.399326923076924,
+          "ci": [
+            8.853063829787233,
+            12.58434920634921
+          ]
+        }
+      }
+    },
+    "replay_vs_standard": {
+      "arm": "replay",
+      "other": "standard",
+      "pairs": 52,
+      "cases": 17,
+      "wins": 1,
+      "losses": 1,
+      "small": false,
+      "ties": 50,
+      "rate_difference": 0.0,
+      "ci": [
+        -0.05405405405405406,
+        0.057692307692307696
+      ],
+      "differences": {
+        "total_tokens": {
+          "n": 52,
+          "mean": 6129.153846153846,
+          "ci": [
+            5421.781818181818,
+            6654.127272727273
+          ]
+        },
+        "intervention_tokens": {
+          "n": 52,
+          "mean": 6129.153846153846,
+          "ci": [
+            5421.781818181818,
+            6654.127272727273
+          ]
+        },
+        "tokens_in": {
+          "n": 52,
+          "mean": 5679.192307692308,
+          "ci": [
+            4990.533333333334,
+            6192.12962962963
+          ]
+        },
+        "tokens_out": {
+          "n": 52,
+          "mean": 403.36538461538464,
+          "ci": [
+            354.6,
+            447.77358490566036
+          ]
+        },
+        "wall_time_s": {
+          "n": 52,
+          "mean": 9.996961538461537,
+          "ci": [
+            8.18046153846154,
+            12.189163636363638
+          ]
+        }
+      }
+    }
+  },
+  "trace_examples": {
+    "successful_recovery": [
+      "paired_study-replay|authored|case:rollback-release|4"
+    ],
+    "declined_branch": [
+      "paired_study-replay|mscore|Automotive Value Chain/Easy/Design#7254|1",
+      "paired_study-replay|mscore|Automotive Value Chain/Easy/Design#7254|2",
+      "paired_study-replay|mscore|Automotive Value Chain/Easy/Design#7254|3"
+    ],
+    "wrong_consensus": [
+      "paired_study-standard|mscore|Automotive Value Chain/Easy/Design#9105|1",
+      "paired_study-forward|mscore|Automotive Value Chain/Easy/Design#9105|1",
+      "paired_study-replay|mscore|Automotive Value Chain/Easy/Design#9105|1"
+    ]
+  },
+  "note": "J3 is the historical pilot: its zero rollbacks give no estimate of replay."
+}

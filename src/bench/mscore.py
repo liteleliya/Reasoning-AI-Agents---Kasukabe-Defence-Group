@@ -12,7 +12,7 @@ import json
 import random
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import quote
@@ -23,6 +23,7 @@ REPO_URL = "https://huggingface.co/datasets/032564yn/MSCoRe/resolve/main/"
 DEFAULT_CACHE = Path(__file__).resolve().parents[2] / "data" / "mscore"
 
 OPEN_QA, SINGLE, MULTI, JUDGMENT = "open_qa", "single_choice", "multi_choice", "judgment"
+SEQUENCE = "sequence_order"
 
 
 @dataclass(frozen=True)
@@ -121,6 +122,13 @@ MANIFEST: tuple[SourceFile, ...] = (
     ),
     SourceFile("Data2/Construction/simple/data.json", "construction", JUDGMENT, "simple", ""),
     SourceFile("Data2/Construction/complex/data.json", "construction", JUDGMENT, "complex", ""),
+    SourceFile(
+        "Software_Engineer/Software_Engineering.json",
+        "software_engineering",
+        SEQUENCE,
+        "unspecified",
+        "ordering",
+    ),
 )
 _BY_PATH = {f.path: f for f in MANIFEST}
 
@@ -133,9 +141,11 @@ class Instance:
     difficulty: str
     stage: str
     question: str
-    reference: str  # open QA: reference answer; choice: "A" or "A|B|C"; judgment: 是 / 否
+    reference: str  # open QA text, choice labels, judgment label, or ordered sequence
     context: str = ""
     options: tuple[tuple[str, str], ...] = ()
+    benchmark: str = "mscore"
+    metadata: dict = field(default_factory=dict)
 
     def prompt_text(self) -> str:
         """The question as shown to agents, with context and lettered options if any."""
@@ -166,8 +176,20 @@ def parse(source: SourceFile, records: Sequence[dict]) -> list[Instance]:
     out = []
     for i, r in enumerate(records):
         if source.format == OPEN_QA:
-            question, reference, context = r["instruction"], r["output"], r.get("input", "")
+            question = r.get("instruction", r.get("question", ""))
+            reference = r.get("output", r.get("answer", ""))
+            context = r.get("input", r.get("context", ""))
             options: tuple[tuple[str, str], ...] = ()
+        elif source.format == SEQUENCE:
+            question = r.get("instruction", r.get("question", r.get("query", "")))
+            reference = r.get("output", r.get("answer", r.get("solution", "")))
+            context = r.get("input", r.get("context", ""))
+            options = tuple(sorted(r.get("options", {}).items()))
+            if not question or not reference:
+                raise ValueError(
+                    f"{source.path} record {i}: expected a question/instruction and "
+                    "answer/output/solution for sequence-ordering"
+                )
         else:
             question, reference, context = r["question"], str(r["answer"]), ""
             options = tuple(sorted(r.get("options", {}).items()))
@@ -230,6 +252,61 @@ def sample(
         pool = [inst for s in groups[key] for inst in load_file(s.path, cache_dir)]
         rng = random.Random(f"{seed}|{key[0]}|{key[1]}")
         picked += rng.sample(pool, min(n_per_group, len(pool)))
+    return picked
+
+
+def sample_total(
+    n_total: int,
+    seed: int,
+    *,
+    domains: Iterable[str] | None = None,
+    formats: Iterable[str] | None = None,
+    difficulties: Iterable[str] | None = None,
+    exclude_files: Iterable[str] = (),
+    cache_dir: Path = DEFAULT_CACHE,
+) -> list[Instance]:
+    """Draw exactly `n_total` unique records, balanced round-robin across source groups.
+
+    Unlike `sample`, this raises if the selected source pool cannot supply the requested number.
+    Each (domain, difficulty, format) group is shuffled deterministically before the balanced
+    draw, so the returned IDs and cross-condition ablation manifest are reproducible.
+    """
+    if n_total < 1:
+        raise ValueError("n_total must be positive")
+    excluded = set(exclude_files)
+    groups: dict[tuple[str, str, str], list[SourceFile]] = defaultdict(list)
+    for source in select_files(domains, formats, difficulties):
+        if source.path not in excluded:
+            groups[(source.domain, source.difficulty, source.format)].append(source)
+    if not groups:
+        raise ValueError("the selected benchmark filters contain no source groups")
+
+    pools: dict[tuple[str, str, str], list[Instance]] = {}
+    for key, sources in sorted(groups.items()):
+        pool = [item for source in sources for item in load_file(source.path, cache_dir)]
+        rng = random.Random(f"{seed}|{key!r}")
+        rng.shuffle(pool)
+        pools[key] = pool
+    available = sum(map(len, pools.values()))
+    if available < n_total:
+        raise ValueError(
+            f"requested {n_total} unique instances but selected sources contain only {available}"
+        )
+
+    picked: list[Instance] = []
+    positions = dict.fromkeys(pools, 0)
+    while len(picked) < n_total:
+        progressed = False
+        for key, pool in pools.items():
+            position = positions[key]
+            if position < len(pool):
+                picked.append(pool[position])
+                positions[key] = position + 1
+                progressed = True
+                if len(picked) == n_total:
+                    break
+        if not progressed:
+            raise AssertionError("balanced sampler exhausted a pool before reaching n_total")
     return picked
 
 

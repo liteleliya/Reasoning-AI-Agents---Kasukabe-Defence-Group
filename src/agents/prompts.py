@@ -112,6 +112,10 @@ ANSWER_FORMATS = {
     "single_choice": 'Your "prediction" is exactly one option letter, e.g. "B".',
     "multi_choice": 'Your "prediction" lists every correct option letter joined by "|", e.g. "A|C".',
     "judgment": 'Your "prediction" is exactly "是" (true) or "否" (false).',
+    "sequence_order": (
+        'Your "prediction" must list every required item once and in the proposed order, '
+        'separated by " -> ". Do not omit items or add commentary to the prediction.'
+    ),
     "open_qa": 'Your "prediction" is your answer in at most 60 words.',
     "authored": (
         'Your "prediction" is the decision, then each requested value as name=value, all '
@@ -204,8 +208,25 @@ def counterfactual_messages(
     original: Event,
     new_tag: str,
     n_agents: int | None = None,
+    strategy_id: str = "cite_constraint",
 ):
     """Ask the agent to rewrite one of its past messages with a different tag (for the sandbox)."""
+    strategy = {
+        "cite_constraint": (
+            "Anchor the revision in the exact stated constraint or labelled evidence that changes "
+            "the decision."
+        ),
+        "reconcile_claims": (
+            "Acknowledge the strongest valid part of the objection, identify the precise point "
+            "where your earlier reasoning failed, and revise only what that point requires."
+        ),
+        "test_counterexample": (
+            "Use one concrete, checkable counterexample or boundary case from the task facts to "
+            "show why the old prediction fails, then give the corrected prediction."
+        ),
+    }.get(strategy_id)
+    if strategy is None:
+        raise ValueError(f"unknown counterfactual strategy {strategy_id!r}")
     return [
         {"role": "system", "content": system_prompt(persona, agent_id, n_agents)},
         {
@@ -214,7 +235,8 @@ def counterfactual_messages(
             f"{render_board(board_before)}\n\nYou posted:\n{render_event(original)}\n\n"
             f"That exchange went nowhere. Write a different version of that message with tag "
             f"{new_tag}, replying to message {original.reply_to}. Give a new explanation that "
-            "could actually persuade the other agent, rather than repeating your earlier one.",
+            "could actually persuade the other agent, rather than repeating your earlier one. "
+            f"Strategy for this attempt: {strategy}",
         },
     ]
 
@@ -238,7 +260,8 @@ def candidate_messages(
             f"{render_board(board_before)}\n\nYou posted:\n{render_event(original)}\n\n"
             f"The objection raised was:\n{render_event(objection)}\n\n"
             f"Write a different version of your message with tag {new_tag}, replying to message "
-            f"{original.reply_to}. Answer the objection with a new explanation or a new "
-            "prediction, rather than repeating your earlier one.",
+            f"{original.reply_to}. State the concrete fact, constraint or labelled evidence that "
+            "answers the objection, then change your reasoning or prediction. Do not claim that "
+            "the group agrees and do not merely rephrase your earlier explanation.",
         },
     ]

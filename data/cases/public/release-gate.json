@@ -1,0 +1,22 @@
+{
+  "id": "release-gate",
+  "split": "challenge",
+  "version": 1,
+  "domain": "software-reliability",
+  "question": "Should the team use the emergency hotfix or the staged rollback?",
+  "context": "Policy R2 requires a customer-impacting incident to be mitigated within 20 minutes. A mitigation must preserve queued writes unless the incident commander explicitly approves data loss.",
+  "evidence": [
+    {"id": "E1", "text": "The new release causes 3.5% of writes to fail. The incident began seven minutes ago."},
+    {"id": "E2", "text": "A hotfix takes 25 minutes to build and validate."},
+    {"id": "E3", "text": "A rollback takes six minutes. Draining the write queue first takes four minutes and prevents data loss. The incident commander is available now."}
+  ],
+  "response": {
+    "decisions": ["rollback_drained", "rollback_immediate", "hotfix"],
+    "fields": [
+      {"name": "mitigated_in", "kind": "duration", "unit": "s", "decisive": true, "description": "minutes from incident start until mitigation"},
+      {"name": "data_loss_approved", "kind": "enum", "values": ["yes", "no"], "decisive": true, "description": "has the incident commander explicitly approved data loss"},
+      {"name": "queue_drained", "kind": "enum", "values": ["yes", "no"], "decisive": true, "description": "is the queue drained before rollback"}
+    ],
+    "cite_evidence": true
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "proposal_density_500",
+  "sample": {
+    "n_total": 500,
+    "seed": 20261124,
+    "exclude_files": ["Automotive Value Chain/Easy/Supply Chain"]
+  },
+  "seeds": [0],
+  "n_agents": 3,
+  "n_counterfactual": [0, 1, 2, 3],
+  "temperature": 1.0,
+  "max_tokens": 400,
+  "scheduler": {"impasse_window": 4},
+  "counterfactual": {"max_rollbacks": 1},
+  "persona_set": "dissenter",
+  "model": "qwen2.5:3b-instruct",
+  "policy_learning": true
+}

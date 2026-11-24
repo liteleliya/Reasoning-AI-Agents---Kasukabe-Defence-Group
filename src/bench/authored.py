@@ -19,6 +19,8 @@ from bench.cases import Field, GradingRecord, PublicCase
 
 _SEPARATORS = re.compile(r"[;|\n]")
 _NUMBER = re.compile(r"^\s*([-+]?\d[\d,]*\.?\d*)\s*([^\d\s].*?)?\s*$")
+_DECISION_LABEL = re.compile(r"^(?:decision|action|recommendation|answer|option)\s*[:=]\s*(.+)$", re.I)
+_NAME = re.compile(r"[^a-z0-9]+")
 _SECONDS = {
     **dict.fromkeys(("s", "sec", "secs", "second", "seconds"), 1.0),
     **dict.fromkeys(("m", "min", "mins", "minute", "minutes"), 60.0),
@@ -53,6 +55,11 @@ class Check:
     @property
     def passed(self) -> bool:
         return self.decision_ok and not self.violations
+
+
+def _name(text: str) -> str:
+    """A field label in a model reply, independent of spaces, hyphens or casing."""
+    return _NAME.sub("_", text.lower()).strip("_")
 
 
 def _round(value: Any) -> Any:
@@ -90,29 +97,90 @@ def _value(field: Field, text: str) -> Any:
 
 
 def parse_prediction(case: PublicCase, text: str) -> Parsed | None:
-    """The decision and canonical values, or None if the decision or a decisive value is bad."""
+    """The decision and canonical values, or None if a decisive part is unresolved.
+
+    Agents are prompted to use ``decision; field=value``.  The parser also accepts the harmless
+    labelled variant ``decision: value`` and field labels with spaces or hyphens, because those
+    are presentation differences rather than reasoning differences.  It deliberately does not
+    guess an action from free prose or silently correct misspellings.
+    """
     parts = [p.strip() for p in _SEPARATORS.split(text or "") if p.strip()]
     if not parts:
         return None
     vocabulary = {d.lower(): d for d in case.decisions}
-    decision = vocabulary.get(parts[0].strip(" .").lower())
+    opening = parts[0].strip(" .")
+    if match := _DECISION_LABEL.match(opening):
+        opening = match.group(1).strip(" .")
+    decision = vocabulary.get(opening.lower())
     if decision is None:
         return None
+    fields = {_name(f.name): f for f in case.fields}
     raw: dict[str, str] = {}
     for part in parts[1:]:
         name, sep, value = part.partition("=")
         if not sep:
             name, sep, value = part.partition(":")
-        if sep:
-            raw[name.strip().lower()] = value
+        if not sep:
+            # Models occasionally say ``lag check is before``.  It is still a structured field
+            # when the left side names a public field, and not an inferred value from prose.
+            name, sep, value = part.partition(" is ")
+        key = _name(name)
+        if sep and key in fields:
+            raw[key] = value
     values: dict[str, Any] = {}
     for f in case.fields:
-        value = _value(f, raw[f.name.lower()]) if f.name.lower() in raw else None
+        key = _name(f.name)
+        value = _value(f, raw[key]) if key in raw else None
         if value is None and f.decisive:
             return None
         if value is not None:
             values[f.name] = value
     return Parsed(decision, values)
+
+
+def canonical_prediction(case: PublicCase, text: str) -> str:
+    """Return the public canonical answer key or raise a repair-friendly validation error.
+
+    Canonicalising at the agent boundary prevents the same valid answer being stored as several
+    lexical variants.  The explanation remains untouched, so evidence and reasoning are still
+    available for blind human grading.
+    """
+    parsed = parse_prediction(case, text)
+    if parsed is None:
+        names = ", ".join(f.name for f in case.fields if f.decisive)
+        raise ValueError(
+            f'prediction must start with one public decision ({" | ".join(case.decisions)}) '
+            f"and give each required field ({names}) as name=value"
+        )
+    parts = [parsed.decision]
+    for field in case.fields:
+        if field.name in parsed.values:
+            parts.append(f"{field.name}={_render(field, parsed.values[field.name])}")
+    return "; ".join(parts)
+
+
+def _render(field: Field, value: Any) -> str:
+    if field.kind == "enum":
+        return next(
+            (choice for choice in field.values if _name(choice) == _name(str(value))), str(value)
+        )
+    if field.kind == "bool":
+        return "yes" if value else "no"
+    number = str(int(value)) if isinstance(value, float) and value.is_integer() else str(value)
+    if field.kind == "duration":
+        return f"{number} s"
+    return f"{number}{f' {field.unit}' if field.unit else ''}"
+
+
+def evidence_in_explanation(case: PublicCase, explanation: str) -> str | None:
+    """Validate that a replay candidate points to public evidence, where a case has any."""
+    known = {e.id.lower() for e in case.evidence}
+    if not known:
+        return None
+    cited = {m.group(0).lower() for m in re.finditer(r"\bE\d+\b", explanation, re.I)}
+    if known & cited:
+        return None
+    return "candidate explanation must cite at least one public evidence ID (for example E1)"
 
 
 def _holds(expected: Any, actual: Any) -> bool:

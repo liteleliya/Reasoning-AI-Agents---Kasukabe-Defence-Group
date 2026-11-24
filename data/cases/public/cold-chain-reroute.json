@@ -1,0 +1,22 @@
+{
+  "id": "cold-chain-reroute",
+  "split": "challenge",
+  "version": 1,
+  "domain": "logistics",
+  "question": "Should the shipment be rerouted through the cold-store hub?",
+  "context": "Protocol C4 permits a vaccine shipment to spend at most 90 minutes above 8 °C. A route is acceptable only if its documented worst-case temperature excursion stays within that limit.",
+  "evidence": [
+    {"id": "E1", "text": "The direct route is delayed by a road closure. The carrier estimates it will be above 8 °C for 130 minutes."},
+    {"id": "E2", "text": "The cold-store hub adds 35 minutes of travel but restores the shipment to 4 °C after 20 minutes above 8 °C."},
+    {"id": "E3", "text": "The destination clinic can accept delivery up to four hours later than planned."}
+  ],
+  "response": {
+    "decisions": ["reroute_hub", "continue_direct", "quarantine"],
+    "fields": [
+      {"name": "excursion", "kind": "duration", "unit": "s", "decisive": true, "description": "worst-case time above 8 °C on the chosen route"},
+      {"name": "within_limit", "kind": "enum", "values": ["yes", "no"], "decisive": true, "description": "does the chosen route satisfy the 90-minute rule"},
+      {"name": "arrival_delay", "kind": "duration", "unit": "s", "decisive": false, "description": "additional time before clinic delivery"}
+    ],
+    "cite_evidence": true
+  }
+}

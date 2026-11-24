@@ -1,0 +1,16 @@
+{
+  "id": "release-gate",
+  "rubric_version": 1,
+  "acceptable_decisions": ["rollback_drained"],
+  "conditions": [
+    {"id": "deadline", "description": "adds seven elapsed minutes, four drain minutes and six rollback minutes", "patterns": ["17", "20"]},
+    {"id": "preserve", "description": "drains the queue before rollback", "patterns": ["drain", "queue"]},
+    {"id": "hotfix", "description": "rejects the 25-minute hotfix as too late", "patterns": ["25", "20"]}
+  ],
+  "critical": [
+    {"id": "late_hotfix", "description": "the hotfix exceeds the 20-minute mitigation window", "when": {"decision": "hotfix"}},
+    {"id": "late_plan", "description": "the combined rollback plan must finish within the deadline", "when": {"mitigated_in": {"gt": 1200}}},
+    {"id": "data_loss", "description": "the queued writes must be preserved without explicit approval", "when": {"queue_drained": "no"}}
+  ],
+  "evidence_required": ["E1", "E2", "E3"]
+}

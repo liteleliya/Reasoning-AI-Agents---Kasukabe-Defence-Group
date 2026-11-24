@@ -15,6 +15,7 @@ from bench.summary import summarize_run
 from blackboard import BoardState, EventStore
 from protocol import Event, classify
 from server.catalog import describe_session
+from server.study import build_study_report
 
 UI_DIST = Path(__file__).resolve().parents[2] / "ui" / "dist"
 
@@ -60,12 +61,14 @@ def create_app(
     source: str = "",
     kind: str | None = None,
     cases: CaseBook | None = None,
+    run_dir: str | Path | None = None,
 ) -> FastAPI:
     """`metrics` maps session id to a row of the run's metrics.csv, `source` labels the run and
     `kind` says what it is evidence of (historical, controlled or model)."""
     app = FastAPI(title="Intelligible Blackboard")
     app.state.store = store
     book = cases if cases is not None else load_cases()
+    study = build_study_report(list((metrics or {}).values()), run_dir=run_dir)
 
     def known(session_id: str) -> None:
         if store.state(session_id).seq < 0:
@@ -96,6 +99,13 @@ def create_app(
         if not metrics:
             raise HTTPException(404, "no metrics file was given; start the server with --metrics")
         return summarize_run(list(metrics.values()), label=source, kind=kind)
+
+    @app.get("/api/study")
+    def paired_study() -> dict[str, Any]:
+        """The read-only paired-study dashboard data, unavailable for older archives."""
+        if study is None:
+            raise HTTPException(404, "this archive does not contain a paired study")
+        return study
 
     @app.get("/api/case")
     def case(case_id: str) -> dict[str, Any]:

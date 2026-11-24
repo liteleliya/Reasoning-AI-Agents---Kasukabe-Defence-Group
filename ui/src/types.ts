@@ -97,3 +97,81 @@ export interface RunSummary {
     outcome: string;
   }[];
 }
+
+export type StudyArm = "standard" | "forward" | "replay";
+
+export interface StudyReport {
+  activity: {
+    prefixes: number;
+    checkpoints: number;
+    trials: number;
+    tags: Record<"ratify" | "refute" | "revise" | "reject", number>;
+    rollbacks: number;
+    replay_outcomes: Record<string, number>;
+    replay_attempts: number;
+    replay_accepted: number;
+  };
+  provenance: {
+    model: string;
+    persona_set: string;
+    temperature: number | null;
+    n_agents: number | null;
+    seeds: number[];
+    analysis_source: string;
+  };
+  outcomes: {
+    arm: StudyArm;
+    trials: number;
+    eligible: number;
+    consensus: number;
+    correct_consensus: number;
+    wrong_consensus: number;
+    ungraded_consensus: number;
+    correct_recovery: number;
+    median_cost: number | null;
+    median_wall_s: number | null;
+  }[];
+  funnel: { stage: string; count: number }[];
+  comparisons: Record<
+    string,
+    {
+      arm: string;
+      other: string;
+      pairs: number;
+      cases: number;
+      wins: number;
+      losses: number;
+      ties: number;
+      small: boolean;
+      rate_difference: number | null;
+      ci: [number, number] | null;
+      differences: Record<string, { n: number; mean: number | null; ci: [number, number] | null }>;
+    }
+  >;
+  examples: Record<string, string[]>;
+  integrity: {
+    grading: { rubric: number; automatic: number; missing: number };
+    authored_answers: { total: number; unresolved: number };
+    allowance: { limit: number | null; violations: { trial_key: string; calls: number }[] };
+  };
+  units: {
+    case_id: string;
+    label: string;
+    domain: string;
+    seed: number;
+    checkpoint: "opened" | "none";
+    arms: Partial<
+      Record<
+        StudyArm,
+        {
+          session_id: string;
+          stop_reason: string;
+          correct: boolean | null;
+          recovery_outcome: string;
+          tokens: number | null;
+        }
+      >
+    >;
+  }[];
+  note: string;
+}

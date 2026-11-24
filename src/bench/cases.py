@@ -18,7 +18,9 @@ from typing import Any
 from bench.mscore import Instance
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[2] / "data" / "cases"
-SPLITS = ("dev", "heldout")
+# ``challenge`` is a separately frozen, richer case suite.  It is never mixed into the original
+# held-out 24-item study, preserving that study's manifest and denominator for comparison.
+SPLITS = ("dev", "heldout", "challenge")
 KINDS = ("duration", "number", "enum", "bool")
 FORMAT = "authored"
 
@@ -129,6 +131,7 @@ class CaseBook:
             reference="|".join(grading.acceptable_decisions),
             context=case.context,
             prompt=question_for(case),
+            benchmark="authored",
             case=case,
             grading=grading,
         )

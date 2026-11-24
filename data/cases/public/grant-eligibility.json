@@ -1,0 +1,22 @@
+{
+  "id": "grant-eligibility",
+  "split": "challenge",
+  "version": 1,
+  "domain": "public-policy",
+  "question": "Should the applicant receive the workforce training grant?",
+  "context": "Grant rule G3 funds programs only when at least 70% of participants are in the target group and cost is at most $1,200 per participant. A program that misses either threshold may be redesigned and resubmitted; it must not be approved with an exception.",
+  "evidence": [
+    {"id": "E1", "text": "The proposed course costs $84,000 for 60 participants."},
+    {"id": "E2", "text": "Thirty-nine participants are in the target group; the remaining 21 are not."},
+    {"id": "E3", "text": "A revised cohort can be submitted next month without losing the applicant's place in the program."}
+  ],
+  "response": {
+    "decisions": ["approve", "redesign", "deny"],
+    "fields": [
+      {"name": "target_share", "kind": "number", "unit": "%", "decisive": true, "description": "share of participants in the target group"},
+      {"name": "cost_per_person", "kind": "number", "unit": "USD", "decisive": true, "description": "program cost divided by participant count"},
+      {"name": "thresholds_met", "kind": "enum", "values": ["yes", "no"], "decisive": true, "description": "are both rule thresholds satisfied"}
+    ],
+    "cite_evidence": true
+  }
+}

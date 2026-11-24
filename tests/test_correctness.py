@@ -82,6 +82,9 @@ def test_tokens_and_rouge() -> None:
         ("judgment", "不确定", "否", False),
         ("open_qa", "合同审查需要法律评估", "合同审查需要法律风险评估", True),
         ("open_qa", "无关", "合同审查需要法律风险评估", False),
+        ("sequence_order", "1. Plan -> 2. Build -> 3. Test", "plan, build, test", True),
+        ("sequence_order", "plan -> test -> build", "plan -> build -> test", False),
+        ("sequence_order", "", "plan -> build -> test", False),
     ],
 )
 def test_is_correct(fmt: str, pred: str, ref: str, ok: bool) -> None:

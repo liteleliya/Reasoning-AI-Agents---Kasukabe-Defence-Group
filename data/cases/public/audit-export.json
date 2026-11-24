@@ -1,0 +1,22 @@
+{
+  "id": "audit-export",
+  "split": "challenge",
+  "version": 1,
+  "domain": "data-governance",
+  "question": "What export plan should the analytics team approve for the external audit?",
+  "context": "Policy D8 permits a cross-region transfer of identifiable records only after a data processing agreement is signed. Before that, the team may prepare a minimized, de-identified extract but may not transfer identifiable records.",
+  "evidence": [
+    {"id": "E1", "text": "The auditor has not yet signed the data processing agreement."},
+    {"id": "E2", "text": "The requested source table contains user IDs, email addresses and diagnosis codes."},
+    {"id": "E3", "text": "The audit deadline is in 18 hours. Masking the direct identifiers takes three hours and the transfer takes one hour."}
+  ],
+  "response": {
+    "decisions": ["prepare_minimized", "transfer_identifiable", "defer_all"],
+    "fields": [
+      {"name": "dpa_signed", "kind": "enum", "values": ["yes", "no"], "decisive": true, "description": "is the data processing agreement signed before transfer"},
+      {"name": "record_set", "kind": "enum", "values": ["minimized", "identifiable"], "decisive": true, "description": "which type of extract is prepared now"},
+      {"name": "ready_in", "kind": "duration", "unit": "s", "decisive": true, "description": "time until the approved extract is ready"}
+    ],
+    "cite_evidence": true
+  }
+}

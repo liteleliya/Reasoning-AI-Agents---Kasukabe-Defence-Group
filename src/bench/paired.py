@@ -20,7 +20,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from agents.ledger import CallLedger, call_scope
+from agents.ledger import CallLedger, call_budget, call_scope
 from agents.llm_client import BaseLLMClient, make_client
 from agents.pex_agent import PEXAgent
 from agents.prompts import persona_for
@@ -29,6 +29,7 @@ from bench.metrics import MetricsWriter, TrialMeta
 from bench.run import (
     JobConfig,
     Trial,
+    answer_contract,
     finish_row,
     fresh_session_id,
     job_client_args,
@@ -58,6 +59,7 @@ RosterFactory = Callable[[Trial, BaseLLMClient, JobConfig], Roster]
 
 def model_roster(trial: Trial, client: BaseLLMClient, job: JobConfig) -> Roster:
     n = trial.meta.n_agents
+    canonicalize, candidate_explanation = answer_contract(trial.instance)
 
     def build() -> list[PEXAgent]:
         return [
@@ -70,6 +72,8 @@ def model_roster(trial: Trial, client: BaseLLMClient, job: JobConfig) -> Roster:
                 max_tokens=job.max_tokens,
                 seed=trial.meta.seed * 1000 + i,
                 n_agents=n,
+                prediction_canonicalizer=canonicalize,
+                candidate_explanation_validator=candidate_explanation,
             )
             for i in range(n)
         ]
@@ -92,7 +96,7 @@ def _trial(job: JobConfig, instance, seed: int, label: str) -> Trial:
     return Trial(
         TrialMeta(
             config=f"{job.name}-{label}",
-            benchmark="authored" if instance.format == "authored" else "mscore",
+            benchmark=instance.benchmark,
             instance_id=instance.id,
             seed=seed,
             n_agents=job.n_agents,
@@ -125,7 +129,10 @@ def _policy(arm: str, job: JobConfig, store: EventStore, roster: Roster, distanc
 
 
 def _cost(rows) -> tuple[int, int]:
-    return len(rows), sum(r.tokens for r in rows)
+    # A ``skipped`` row documents a local allowance block.  It never reached the model and is
+    # deliberately excluded from the paid request count and token total.
+    requested = [r for r in rows if r.status != "skipped"]
+    return len(requested), sum(r.tokens for r in requested)
 
 
 async def _prefix(
@@ -179,7 +186,10 @@ async def run_paired(
     info_path = out / "run.json"
     info = json.loads(info_path.read_text()) if info_path.exists() else {}
     info.setdefault("runs", []).append(
-        {"started": datetime.now(UTC).isoformat(), **provenance(job, (1, 1), client)}
+        {
+            "started": datetime.now(UTC).isoformat(),
+            **provenance(job, (1, 1), client, items),
+        }
     )
     info_path.write_text(json.dumps(info, indent=2))
 
@@ -257,7 +267,10 @@ async def _run_arm(
     store.copy_session(prefix_sid, sid, upto=term.meta["decision_seq"])
     team = roster(trial, client, job)
     policy = _policy(arm, job, store, team, cfg.distance)
-    with call_scope(trial=sid):
+    # One allowance covers every request after the shared prefix: the control reply or replay
+    # candidate, sandbox branches, repairs and any bounded live continuation.  The old runner
+    # counted these calls but did not stop a continuation from exceeding the configured cap.
+    with call_scope(trial=sid), call_budget(job.allowance_calls):
         result = await Scheduler(store, team.agents, cfg, recovery=policy, sidecar=sidecar).resume(
             sid, question_text(trial.instance)
         )

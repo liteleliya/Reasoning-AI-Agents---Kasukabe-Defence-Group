@@ -1,0 +1,16 @@
+{
+  "id": "grant-eligibility",
+  "rubric_version": 1,
+  "acceptable_decisions": ["redesign"],
+  "conditions": [
+    {"id": "share", "description": "calculates 39 of 60 as 65%, below the 70% threshold", "patterns": ["39", "60", "65", "70"]},
+    {"id": "unit_cost", "description": "calculates $1,400 per person, above the $1,200 cap", "patterns": ["1[,.]?400", "1[,.]?200"]},
+    {"id": "resubmit", "description": "recommends redesign because a later resubmission is available", "patterns": ["redesign|resubmit|next month"]}
+  ],
+  "critical": [
+    {"id": "approve", "description": "the proposed program misses both eligibility thresholds", "when": {"decision": "approve"}},
+    {"id": "approve_low_share", "description": "approving below the 70% participation threshold is invalid", "when": {"decision": "approve", "target_share": {"lt": 70}}},
+    {"id": "approve_high_cost", "description": "approving above the $1,200 per-person cap is invalid", "when": {"decision": "approve", "cost_per_person": {"gt": 1200}}}
+  ],
+  "evidence_required": ["E1", "E2", "E3"]
+}

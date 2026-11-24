@@ -34,6 +34,8 @@ _NEGATIVE = (
 _POSITIVE = ("正确", "是", "对", "true", "yes", "√", "✓", "correct", "right")
 _CJK = re.compile(r"[㐀-䶿一-鿿豈-﫿]")
 _WORD = re.compile(r"[a-z0-9]+")
+_ORDER_SPLIT = re.compile(r"\s*(?:->|→|>|;|,|\||\n)\s*")
+_ORDER_PREFIX = re.compile(r"^(?:(?:step|stage|item)\s*)?\d+[.)\]:-]?\s*", re.I)
 
 
 def choice_letters(text: str) -> frozenset[str]:
@@ -76,6 +78,21 @@ def tokens(text: str) -> list[str]:
     return out
 
 
+def ordered_items(text: str) -> tuple[str, ...]:
+    """Normalize a proposed ordering while preserving the order of its elements."""
+    raw = (text or "").strip()
+    if not raw:
+        return ()
+    parts = _ORDER_SPLIT.split(raw.strip(" [](){}"))
+    normalized = []
+    for part in parts:
+        item = _ORDER_PREFIX.sub("", part.strip().strip("'\""))
+        item = " ".join(item.casefold().split()).strip(" .")
+        if item:
+            normalized.append(item)
+    return tuple(normalized)
+
+
 def rouge_l_f1(candidate: str, reference: str) -> float:
     """ROUGE-L F1 (beta = 1) over `tokens`; pure-Python LCS."""
     c, r = tokens(candidate), tokens(reference)
@@ -101,11 +118,14 @@ def _key_equal(fmt: str, a: str, b: str, rouge_threshold: float) -> bool:
     if fmt == "judgment":
         va, vb = judgment_value(a), judgment_value(b)
         return va is not None and va == vb
+    if fmt == "sequence_order":
+        aa, bb = ordered_items(a), ordered_items(b)
+        return bool(aa) and aa == bb
     return rouge_l_f1(a, b) >= rouge_threshold
 
 
 def is_correct(fmt: str, prediction: str, reference: str, *, rouge_threshold: float = 0.3) -> bool:
-    """Choice: letter sets equal and non-empty; judgment: same value; open_qa: ROUGE-L >= t."""
+    """Format-specific correctness, with ordering compared as an ordered list of steps."""
     return _key_equal(fmt, prediction, reference, rouge_threshold)
 
 

@@ -167,6 +167,23 @@ def test_agent_retries_once_and_sums_tokens() -> None:
     assert bad.failures == 1 and bad.unposted.completion == 2
 
 
+def test_agent_repairs_a_prediction_that_breaks_the_task_contract() -> None:
+    def canonical(prediction: str) -> str:
+        if prediction != "B; check=before":
+            raise ValueError("prediction must use the public answer schema")
+        return prediction
+
+    client = scripted(
+        '{"tag": "INIT", "prediction": "choose B", "explanation": "e"}',
+        '{"tag": "INIT", "prediction": "B; check=before", "explanation": "e"}',
+    )
+    agent = PEXAgent("a", persona_for(0), client, prediction_canonicalizer=canonical)
+    draft = asyncio.run(agent.act("Q", board_with(msg("b", Tag.INIT))))
+    assert draft is not None
+    assert draft.prediction == "B; check=before"
+    assert draft.meta["retried"] is True
+
+
 def test_agent_passes_when_nothing_to_answer() -> None:
     agent = PEXAgent("a", persona_for(0), scripted())
     board = board_with(msg("a", Tag.INIT), msg("b", Tag.INIT), msg("a", Tag.REFUTE, 1))

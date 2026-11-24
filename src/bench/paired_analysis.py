@@ -337,7 +337,7 @@ def analyse(
         "note": "J3 is the historical pilot: its zero rollbacks give no estimate of replay.",
     }
     (out / "analysis.json").write_text(json.dumps(report, indent=2, ensure_ascii=False))
-    with (out / "outcome_table.csv").open("w", newline="") as f:
+    with (out / "outcome_table.csv").open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=list(table[0]))
         writer.writeheader()
         writer.writerows(table)

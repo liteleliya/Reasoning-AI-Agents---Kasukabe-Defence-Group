@@ -54,5 +54,5 @@ def _int(text: str | None) -> int | None:
 
 def load_metrics_index(path: str | Path) -> dict[str, dict[str, str]]:
     """The rows of a run's `metrics.csv`, keyed by session id."""
-    with Path(path).open(newline="") as f:
+    with Path(path).open("r", encoding="utf-8-sig", newline="") as f:
         return {row["session_id"]: row for row in csv.DictReader(f)}

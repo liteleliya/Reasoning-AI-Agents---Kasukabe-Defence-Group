@@ -1,6 +1,7 @@
 """Roadmap section 08: three arms from one shared prefix, on the scripted toy case."""
 
 import asyncio
+import dataclasses
 import json
 from pathlib import Path
 
@@ -133,6 +134,25 @@ def test_every_arm_stays_inside_the_call_allowance_and_counts_the_prefix(run_dir
     assert {r["intervention_calls"] for r in controls} == {"1"}
     replay = next(r for r in rows_of(run_dir) if r["arm"] == "replay")
     assert int(replay["intervention_calls"]) >= 1  # the candidate; scripted peers make no calls
+
+
+def test_zero_allowance_blocks_all_post_checkpoint_model_requests(tmp_path) -> None:
+    job = dataclasses.replace(JOB, allowance_calls=0)
+    client = MockClient(responder=respond, model="mock")
+    rows = asyncio.run(
+        run_paired(
+            job,
+            tmp_path,
+            client=client,
+            roster=scripted_roster,
+            instances=[INSTANCE],
+            log=lambda _: None,
+        )
+    )
+    assert len(rows) == 6
+    assert {r["intervention_calls"] for r in rows} == {0}
+    assert any(r["recovery_outcome"] == "candidate_failed" for r in rows if r["arm"] == "replay")
+    assert any(r.status == "skipped" for r in client.ledger.rows)
 
 
 def test_run_files_hold_the_sidecar_ledger_and_provenance(run_dir) -> None:

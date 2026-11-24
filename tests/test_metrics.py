@@ -151,6 +151,15 @@ def test_calls_with_unknown_usage_are_marked_missing_and_not_summed() -> None:
     assert (row["ledger_tokens_in"], row["ledger_tokens_out"]) == (5, 7)
 
 
+def test_a_locally_blocked_request_is_not_reported_as_a_model_call_or_missing_usage() -> None:
+    rows = [
+        CallRecord("call-1", prompt_tokens=5, completion_tokens=3),
+        CallRecord("call-2", status="skipped", usage="missing", detail="call allowance exhausted"),
+    ]
+    row = trial_row(consensus_state().state("s"), META, ledger=rows)
+    assert (row["ledger_calls"], row["ledger_missing"]) == (1, 0)
+
+
 def test_grading_cost_stop_detail_and_decision_seq_are_kept_apart() -> None:
     plain = trial_row(consensus_state().state("s"), META, ledger=[])
     row = trial_row(

@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 
 from agents.ledger import call_scope
-from agents.llm_client import BaseLLMClient, LLMError, TokenUsage
+from agents.llm_client import BaseLLMClient, CallAllowanceError, LLMError, TokenUsage
 from agents.parsing import PXPParseError, parse_pxp, repair_messages
 from agents.prompts import Persona, init_messages, reply_messages
 from blackboard import BoardState
@@ -34,6 +35,8 @@ class PEXAgent:
         max_tokens: int = 400,
         seed: int | None = None,
         n_agents: int | None = None,
+        prediction_canonicalizer: Callable[[str], str] | None = None,
+        candidate_explanation_validator: Callable[[str], str | None] | None = None,
     ) -> None:
         self.name = name
         self.persona = persona
@@ -43,6 +46,8 @@ class PEXAgent:
         self.max_tokens = max_tokens
         self.seed = seed
         self.n_agents = n_agents
+        self.prediction_canonicalizer = prediction_canonicalizer
+        self.candidate_explanation_validator = candidate_explanation_validator
         self.failures = 0  # replies that stayed unparseable after the retry
         self.errors = 0  # turns lost to a model error
         self.unposted = TokenUsage()  # tokens spent on those replies (still count for H3)
@@ -81,6 +86,22 @@ class PEXAgent:
         )
         return await self._ask(board, msgs, None, target, ("RATIFY", "REVISE", "REFUTE", "REJECT"))
 
+    def canonical_prediction(self, prediction: str) -> str:
+        """Normalise a valid task answer, or raise ``PXPParseError`` to request one repair."""
+        if self.prediction_canonicalizer is None:
+            return prediction
+        try:
+            return self.prediction_canonicalizer(prediction)
+        except ValueError as err:
+            raise PXPParseError(str(err)) from err
+
+    def candidate_explanation_error(self, explanation: str) -> str | None:
+        return (
+            self.candidate_explanation_validator(explanation)
+            if self.candidate_explanation_validator is not None
+            else None
+        )
+
     async def _ask(
         self,
         board: BoardState,
@@ -108,6 +129,8 @@ class PEXAgent:
                         json_mode=True,
                         label=label,
                     )
+            except CallAllowanceError as err:
+                return TurnResult(None, TurnReason.CALL_ALLOWANCE, str(err), tuple(call_ids))
             except LLMError as err:
                 self.errors += 1
                 self.unposted = self.unposted + usage
@@ -117,6 +140,7 @@ class PEXAgent:
             call_ids.append(response.call_id)
             try:
                 parsed = parse_pxp(response.text, allowed_tags=allowed)
+                prediction = self.canonical_prediction(parsed.prediction)
             except PXPParseError as err:
                 if attempt == 0:
                     msgs = [*msgs, *repair_messages(response.text, err)]
@@ -130,7 +154,7 @@ class PEXAgent:
                 author=self.name,
                 tag=force_tag or Tag(parsed.tag),
                 reply_to=None if target is None else target.seq,
-                prediction=parsed.prediction,
+                prediction=prediction,
                 explanation=parsed.explanation,
                 tokens=usage.as_event(),
                 meta={

@@ -129,13 +129,13 @@ async def screen(
 def _done(path: Path) -> set[tuple[str, str]]:
     if not path.exists():
         return set()
-    with path.open(newline="") as f:
+    with path.open("r", encoding="utf-8-sig", newline="") as f:
         return {(r["instance_id"], r["seed"]) for r in csv.DictReader(f)}
 
 
 def _append(path: Path, row: dict) -> None:
     fresh = not path.exists()
-    with path.open("a", newline="") as f:
+    with path.open("a", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDS)
         if fresh:
             writer.writeheader()
@@ -167,8 +167,8 @@ def main(argv: Sequence[str] | None = None) -> None:
     job = JobConfig.load(a.config)
     out = Path(a.out)
     asyncio.run(screen(job, out, client=mock_client() if a.mock else None, limit=a.limit))
-    with (out / "screen.csv").open(newline="") as f:
-        print(json.dumps(summarize(list(csv.DictReader(f))), indent=2))
+    with (out / "screen.csv").open("r", encoding="utf-8-sig", newline="") as f:
+        print(json.dumps(summarize(list(csv.DictReader(f))), indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":

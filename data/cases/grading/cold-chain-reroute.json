@@ -1,0 +1,16 @@
+{
+  "id": "cold-chain-reroute",
+  "rubric_version": 1,
+  "acceptable_decisions": ["reroute_hub"],
+  "conditions": [
+    {"id": "direct_fails", "description": "contrasts the 130-minute direct excursion with the 90-minute limit", "patterns": ["130", "90"]},
+    {"id": "hub_safe", "description": "uses the 20-minute hub excursion", "patterns": ["20", "hub|cold"]},
+    {"id": "delivery", "description": "notes that the clinic can absorb the delay", "patterns": ["four|4", "hour"]}
+  ],
+  "critical": [
+    {"id": "direct", "description": "the direct route exceeds the temperature limit", "when": {"decision": "continue_direct"}},
+    {"id": "unsafe", "description": "a route beyond 90 minutes above 8 °C is not permitted", "when": {"within_limit": "no"}},
+    {"id": "bad_excursion", "description": "the rerouted plan must state an excursion no greater than 90 minutes", "when": {"excursion": {"gt": 5400}}}
+  ],
+  "evidence_required": ["E1", "E2", "E3"]
+}

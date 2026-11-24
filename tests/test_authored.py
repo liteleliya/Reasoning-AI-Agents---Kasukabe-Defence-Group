@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from bench.authored import check, judge, parse_prediction
+from bench.authored import canonical_prediction, check, judge, parse_prediction
 from bench.cases import load_cases
 
 ROOT = Path(__file__).resolve().parents[1] / "data" / "cases"
@@ -30,6 +30,21 @@ def test_two_minutes_and_120_seconds_are_the_same_answer() -> None:
 
 def test_the_decision_and_wording_of_the_decision_are_normalized() -> None:
     assert SAME_P1(B, " b ; downtime = 2 minutes ; data_loss = 30 sec ; lag_check = Before.")
+
+
+def test_labelled_decisions_and_human_field_labels_canonicalize_at_the_agent_boundary() -> None:
+    case = BOOK.public["contractor-access"]
+    text = "decision: exception; total days = 95 days; exception signed: yes"
+    parsed = parse_prediction(case, text)
+    assert parsed is not None and parsed.decision == "exception"
+    assert canonical_prediction(case, text) == (
+        "exception; total_days=95 days; exception_signed=yes"
+    )
+
+
+def test_the_parser_does_not_silently_correct_an_unknown_action() -> None:
+    case = BOOK.public["rollback-release"]
+    assert parse_prediction(case, "rollbak; time_to_fix=6 min; drain=before") is None
 
 
 def test_a_different_decision_is_a_different_answer() -> None:

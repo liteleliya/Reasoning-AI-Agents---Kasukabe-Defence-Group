@@ -20,12 +20,13 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 
 from agents.ledger import call_scope
-from agents.llm_client import LLMError, TokenUsage
+from agents.llm_client import CallAllowanceError, LLMError, TokenUsage
 from agents.parsing import PXPParseError, parse_pxp, repair_messages
 from agents.pex_agent import PEXAgent
 from agents.prompts import candidate_messages, counterfactual_messages
 from blackboard import BoardState, EventStore
 from counterfactual.branches import PairResult, Responder, record_failed_attempt, replay_pair
+from counterfactual.policy import PolicyMemory
 from counterfactual.sandbox import Alternative, Distance, ReplayResult, replay
 from protocol import Event, EventDraft, Kind, ProtocolError, Tag, Tokens, validate
 from scheduler import Agent, TurnResult, exact_distance, normalise
@@ -64,6 +65,9 @@ class CounterfactualAgent:
         distance: Distance = exact_distance,
         new_tag: Tag = Tag.REVISE,
         opportunistic: bool = True,
+        policy_memory: PolicyMemory | None = None,
+        policy_condition: str = "",
+        policy_trial_id: str = "",
     ) -> None:
         self.inner = inner
         self.name = inner.name
@@ -74,6 +78,9 @@ class CounterfactualAgent:
         self.distance = distance
         self.new_tag = new_tag
         self.opportunistic = opportunistic  # False: only the scheduler checkpoint triggers replays
+        self.policy_memory = policy_memory
+        self.policy_condition = policy_condition
+        self.policy_trial_id = policy_trial_id
         self.credit = CreditLog()
         self.attempts = 0  # replays tried, including ones whose alternative was unusable
         self._pending: Alternative | None = None
@@ -114,6 +121,11 @@ class CounterfactualAgent:
     async def _alternative(
         self, question: str, board: BoardState, target: Event
     ) -> Alternative | None:
+        strategy_id = (
+            self.policy_memory.choose(self.policy_condition)
+            if self.policy_memory is not None
+            else "cite_constraint"
+        )
         msgs = counterfactual_messages(
             self.inner.persona,
             self.name,
@@ -122,6 +134,7 @@ class CounterfactualAgent:
             target,
             self.new_tag.value,
             self.inner.n_agents,
+            strategy_id=strategy_id,
         )
         r = await self.inner.client.complete(
             msgs,
@@ -141,6 +154,7 @@ class CounterfactualAgent:
             explanation=parsed.explanation,
             prediction=parsed.prediction,
             tokens=Tokens(in_=r.usage.prompt, out=r.usage.completion),
+            strategy_id=strategy_id,
         )
 
     async def _replay(self, question: str, board: BoardState, target: Event) -> None:
@@ -161,6 +175,13 @@ class CounterfactualAgent:
             reason=f"what if {self.name} had replied with {alt.tag}?",
         )
         self.credit.replays.append(result)
+        if self.policy_memory is not None:
+            self.policy_memory.update(
+                self.policy_condition,
+                alt.strategy_id,
+                result.credit_delta,
+                f"{self.policy_trial_id or board.session_id}:{target.seq}",
+            )
         if result.credit_delta < 0:
             self._pending = alt
         else:
@@ -242,7 +263,9 @@ async def generate_candidate(
     def result(status: str, alt: Alternative | None, reason: str = "") -> Candidate:
         spent = Tokens(in_=usage.prompt, out=usage.completion)
         if alt is not None:
-            alt = Alternative(alt.tag, alt.explanation, alt.prediction, spent, tuple(call_ids))
+            alt = Alternative(
+                alt.tag, alt.explanation, alt.prediction, spent, tuple(call_ids), alt.strategy_id
+            )
         return Candidate(status, alt, reason, spent, tuple(call_ids))
 
     for attempt in range(2):
@@ -262,6 +285,8 @@ async def generate_candidate(
                     json_mode=True,
                     label=f"candidate/{board.session_id}/{agent.name}",
                 )
+        except CallAllowanceError:
+            return result("failed", None, "call_allowance_exhausted")
         except LLMError as err:
             log.warning("%s: model error while writing a candidate (%s)", agent.name, err)
             return result("failed", None, f"model_error: {err}")
@@ -281,7 +306,10 @@ def _vet(
     agent: PEXAgent, store: EventStore, board: BoardState, target: Event, text: str, tag: Tag
 ) -> Alternative:
     parsed = parse_pxp(text, allowed_tags=(tag.value,))
-    if (normalise(parsed.prediction), normalise(parsed.explanation)) == (
+    prediction = agent.canonical_prediction(parsed.prediction)
+    if error := agent.candidate_explanation_error(parsed.explanation):
+        raise PXPParseError(error)
+    if (normalise(prediction), normalise(parsed.explanation)) == (
         normalise(target.prediction),
         normalise(target.explanation),
     ):
@@ -293,7 +321,7 @@ def _vet(
         author=agent.name,
         tag=tag,
         reply_to=target.reply_to,
-        prediction=parsed.prediction,
+        prediction=prediction,
         explanation=parsed.explanation,
     )
     fork = store.fork(board.session_id, target.seq - 1)
@@ -303,7 +331,7 @@ def _vet(
         raise PXPParseError(f"invalid: {exc.reason}") from exc
     finally:
         fork.close()
-    return Alternative(tag=tag, explanation=parsed.explanation, prediction=parsed.prediction)
+    return Alternative(tag=tag, explanation=parsed.explanation, prediction=prediction)
 
 
 async def attempt_replay(

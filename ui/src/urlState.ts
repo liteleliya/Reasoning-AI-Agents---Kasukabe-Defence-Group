@@ -1,5 +1,5 @@
 /** What the address bar remembers: the selected session and, when paused, the sequence number. */
-export type View = "explore" | "results";
+export type View = "guide" | "explore" | "results";
 
 export interface ViewUrl {
   session: string | null;
@@ -13,7 +13,7 @@ export function parseSearch(search: string): ViewUrl {
   return {
     session: params.get("session") || null,
     seq: seq !== null && /^\d+$/.test(seq) ? Number(seq) : null,
-    view: params.get("view") === "results" ? "results" : "explore",
+    view: params.get("view") === "results" ? "results" : params.get("view") === "guide" ? "guide" : "explore",
   };
 }
 
@@ -21,6 +21,7 @@ export function parseSearch(search: string): ViewUrl {
 export function buildSearch(session: string | null, seq: number | null, view: View = "explore"): string {
   const params = new URLSearchParams();
   if (view === "results") params.set("view", "results");
+  if (view === "guide") params.set("view", "guide");
   if (session) params.set("session", session);
   if (session && seq !== null) params.set("seq", String(seq));
   const query = params.toString();

@@ -6,12 +6,24 @@ from pathlib import Path
 import pytest
 
 from bench import mscore
-from bench.mscore import JUDGMENT, MANIFEST, MULTI, OPEN_QA, SINGLE, load_ids, sample, select_files
+from bench.mscore import (
+    JUDGMENT,
+    MANIFEST,
+    MULTI,
+    OPEN_QA,
+    SEQUENCE,
+    SINGLE,
+    load_ids,
+    sample,
+    sample_total,
+    select_files,
+)
 
 LAW_SINGLE = "Data2/Law/Single-choice/simple"
 LAW_MULTI = "Data2/Law/Multi-choice/simple"
 CONSTRUCTION = "Data2/Construction/simple/data.json"
 AUTO = "Automotive Value Chain/Easy/Design"
+ORDERING = "Software_Engineer/Software_Engineering.json"
 
 
 @pytest.fixture
@@ -28,6 +40,7 @@ def cache(tmp_path: Path) -> Path:
     put(LAW_MULTI, [{"question": "m", "options": {"A": "a", "B": "b"}, "answer": "A|B"}])
     put(CONSTRUCTION, [{"question": "施工可以继续。", "answer": "否"}])
     put(AUTO, [{"instruction": f" 如何{i}? ", "input": "", "output": "答案"} for i in range(4)])
+    put(ORDERING, [{"question": "Order these stages", "answer": "plan -> build -> test"}])
     mscore.load_file.cache_clear()
     return tmp_path
 
@@ -42,9 +55,11 @@ def test_manifest_is_well_formed() -> None:
         "finance",
         "law",
         "construction",
+        "software_engineering",
     }
     assert {f.format for f in select_files(domains=["law"])} == {SINGLE, MULTI}
     assert all(f.format == OPEN_QA for f in select_files(domains=["pharmaceutical"]))
+    assert {f.format for f in select_files(domains=["software_engineering"])} == {SEQUENCE}
 
 
 def test_parses_every_format(cache: Path) -> None:
@@ -62,6 +77,8 @@ def test_parses_every_format(cache: Path) -> None:
         "答案",
         "simple",
     )
+    sequence = mscore.load_file(ORDERING, cache)[0]
+    assert (sequence.format, sequence.reference) == (SEQUENCE, "plan -> build -> test")
 
 
 def test_sampling_is_deterministic_and_grouped(cache: Path) -> None:
@@ -77,6 +94,24 @@ def test_sampling_is_deterministic_and_grouped(cache: Path) -> None:
 def test_ids_round_trip(cache: Path) -> None:
     picked = [mscore.load_file(AUTO, cache)[3], mscore.load_file(LAW_SINGLE, cache)[7]]
     assert load_ids([i.id for i in picked], cache) == picked
+
+
+def test_exact_total_sampler_is_balanced_deterministic_and_excludes_bad_sources(
+    cache: Path,
+) -> None:
+    options = {
+        "domains": ["law", "construction"],
+        "formats": [SINGLE, MULTI, JUDGMENT],
+        "difficulties": ["simple"],
+        "exclude_files": [LAW_MULTI],
+        "cache_dir": cache,
+    }
+    picked = sample_total(4, seed=91, **options)
+    assert len(picked) == 4 and len({item.id for item in picked}) == 4
+    assert all(not item.id.startswith(f"{LAW_MULTI}#") for item in picked)
+    assert [item.id for item in picked] == [item.id for item in sample_total(4, 91, **options)]
+    with pytest.raises(ValueError, match="contain only"):
+        sample_total(100, seed=91, **options)
 
 
 def test_cli_writes_jsonl(cache: Path, tmp_path: Path) -> None:
