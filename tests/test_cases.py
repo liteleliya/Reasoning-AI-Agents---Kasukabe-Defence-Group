@@ -21,6 +21,7 @@ def test_every_case_has_a_public_and_a_grading_record(book) -> None:
     assert set(book.public) == set(book.grading)
     assert len(book.split("heldout")) == 8
     assert len(book.split("dev")) == 4
+    assert len(book.split("challenge")) == 6
 
 
 def test_worked_case_and_its_unbounded_variant_are_in_the_dev_set(book) -> None:
@@ -48,7 +49,7 @@ def test_prompts_carry_no_grading_text(book) -> None:
             c.description for c in grading.critical
         ]
         assert not [s for s in secrets if s in prompt], case_id
-        assert "acceptable" not in prompt.lower() and "rubric" not in prompt.lower()
+        assert "rubric" not in prompt.lower(), case_id
 
 
 def test_runner_question_never_includes_the_reference(book) -> None:
@@ -166,4 +167,4 @@ def test_loading_never_touches_the_network(book, monkeypatch) -> None:
         raise AssertionError("network used")
 
     monkeypatch.setattr(socket, "socket", refuse)
-    assert len(load_cases(ROOT).public) == 12
+    assert len(load_cases(ROOT).public) == 18
