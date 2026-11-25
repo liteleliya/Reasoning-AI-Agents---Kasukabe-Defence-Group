@@ -18,6 +18,7 @@ from server.catalog import describe_session
 from server.study import build_study_report
 
 UI_DIST = Path(__file__).resolve().parents[2] / "ui" / "dist"
+PROJECT_RESULTS = Path(__file__).resolve().parents[2] / "results" / "project_results.json"
 
 
 def state_summary(state: BoardState) -> dict[str, Any]:
@@ -106,6 +107,15 @@ def create_app(
         if study is None:
             raise HTTPException(404, "this archive does not contain a paired study")
         return study
+
+    @app.get("/api/project-results")
+    def project_results() -> dict[str, Any]:
+        """Cross-benchmark project summary generated from archived, auditable runs."""
+        if not PROJECT_RESULTS.exists():
+            raise HTTPException(404, "no consolidated project benchmark results are available")
+        import json
+
+        return json.loads(PROJECT_RESULTS.read_text(encoding="utf-8"))
 
     @app.get("/api/case")
     def case(case_id: str) -> dict[str, Any]:

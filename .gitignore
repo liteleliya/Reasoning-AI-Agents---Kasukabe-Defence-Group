@@ -18,10 +18,11 @@ htmlcov/
 !.env.example
 .claude/
 
-# Downloaded benchmark cache (the case manifest and authored cases remain tracked)
+# Downloaded benchmark cache (authored cases and manifests remain tracked)
 data/mscore/
 
-# Local run databases and verbose model call logs
+# Generated databases and archives are ignored by default. Explicit study
+# outputs are re-included below so the frozen evidence can be pulled by the team.
 *.sqlite
 *.sqlite3
 *.db
@@ -44,14 +45,10 @@ Thumbs.db
 # Notebook checkpoints
 .ipynb_checkpoints/
 
-# Results: keep small, readable summaries and figures; keep raw trials locally only.
+# Results are private by default; only named, reviewable project artifacts are shared.
 /results/*
 !/results/README.md
-!/results/figures/
-/results/figures/*
-!/results/figures/*.png
-!/results/figures/*.pdf
-!/results/figures/summary.csv
+!/results/project_results.json
 !/results/paired-study/
 /results/paired-study/*
 !/results/paired-study/README.md
@@ -61,27 +58,27 @@ Thumbs.db
 !/results/paired-study/analysis/outcome_table.csv
 !/results/paired-study/analysis/*.png
 
-# Share the requested 500-case study artifacts through the repository.
-# Keep metrics, provenance/manifests, policy state, analysis and SQLite traces pullable.
-!/results/proposal-density-500/
-!/results/proposal-density-500/**
-!/results/proposal-density-static-500/
-!/results/proposal-density-static-500/**
-!/results/proposal-policy-comparison/
-!/results/proposal-policy-comparison/**
-!/results/kramabench-pilot/
-!/results/kramabench-pilot/**
-!/results/kramabench-study/
-!/results/kramabench-study/**
-!/results/medagentbench-pilot/
-!/results/medagentbench-pilot/**
-!/results/medagentbench-study/
-!/results/medagentbench-study/**
+# Completed adaptive density run (1,680 sessions; level 3 remains partial).
+!/results/proposal-density-adaptive-500/
+!/results/proposal-density-adaptive-500/**
+!/results/proposal-density-adaptive-500/**/*.sqlite
+!/results/proposal-density-adaptive-500/**/*.sqlite3
 
-# The global database/archive ignores above still apply unless specifically re-included here.
-!/results/proposal-density-500/**/*.sqlite
-!/results/proposal-density-500/**/*.sqlite3
-!/results/proposal-density-static-500/**/*.sqlite
-!/results/proposal-density-static-500/**/*.sqlite3
-!/results/kramabench-study/**/*.sqlite
-!/results/medagentbench-study/**/*.sqlite
+# Completed static stage 3 (1,000 sessions).
+!/results/proposal-density-static-250/
+!/results/proposal-density-static-250/**
+!/results/proposal-density-static-250/**/*.sqlite
+!/results/proposal-density-static-250/**/*.sqlite3
+
+# Shared-task extract and matched policy comparison supporting the report.
+!/results/stage2-matched-250/
+!/results/stage2-matched-250/**
+!/results/proposal-policy-comparison-250/
+!/results/proposal-policy-comparison-250/**
+
+# Official-grader MedAgentBench 30-task baseline and reproducibility metadata.
+!/results/medagentbench-30/
+!/results/medagentbench-30/**
+
+# Historical exploratory logs, snapshots and archived handoff copies stay local.
+/results/archive/

@@ -15,6 +15,7 @@ import { siblings } from "./sessions";
 import { StatePanel } from "./StatePanel";
 import { StudyView } from "./StudyView";
 import { ProjectGuide } from "./ProjectGuide";
+import { ProjectOutcomes } from "./ProjectOutcomes";
 import { buildSearch, parseSearch, type View } from "./urlState";
 
 export function App() {
@@ -146,16 +147,19 @@ export function App() {
       <main className={`main-${view}`}>
         {view === "guide" && <ProjectGuide />}
         {view === "results" && (
-          study.status === "ready" && study.report ? (
-            <StudyView report={study.report} onOpen={openFromResults} />
-          ) : (
-            <ResultsView
-              summary={results.summary}
-              status={results.status}
-              error={results.error}
-              onOpen={openFromResults}
-            />
-          )
+          <>
+            {study.status === "ready" && study.report ? (
+              <StudyView report={study.report} onOpen={openFromResults} />
+            ) : (
+              <ResultsView
+                summary={results.summary}
+                status={results.status}
+                error={results.error}
+                onOpen={openFromResults}
+              />
+            )}
+            <ProjectOutcomes />
+          </>
         )}
         {view === "explore" && sessionId && (
           <SessionHeader

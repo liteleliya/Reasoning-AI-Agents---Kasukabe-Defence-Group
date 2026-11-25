@@ -1,0 +1,13 @@
+enabled_agents,enabled_share,metric,paired_cases,adaptive_wins,static_wins,ties,adaptive_minus_static_pp
+0,0.0,correct_consensus,250,13,10,227,1.2
+0,0.0,checkpoint,250,15,39,196,-9.6
+0,0.0,rollback,250,0,0,250,0.0
+0,0.0,consensus,250,24,47,179,-9.2
+1,0.3333333333333333,correct_consensus,250,14,12,224,0.8
+1,0.3333333333333333,checkpoint,250,41,52,157,-4.4
+1,0.3333333333333333,rollback,250,45,43,162,0.8
+1,0.3333333333333333,consensus,250,27,42,181,-6.0
+2,0.6666666666666666,correct_consensus,250,15,14,221,0.4
+2,0.6666666666666666,checkpoint,250,39,64,147,-10.0
+2,0.6666666666666666,rollback,250,39,63,148,-9.6
+2,0.6666666666666666,consensus,250,33,48,169,-6.0

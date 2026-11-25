@@ -1,0 +1,222 @@
+{
+  "expected_per_level": 250,
+  "total_trials": 1000,
+  "instance_count": 250,
+  "conditions": [
+    {
+      "enabled_agents": 0,
+      "enabled_share": 0.0,
+      "trials": 250,
+      "checkpoints": 43,
+      "rollbacks": 0,
+      "consensus": 177,
+      "correct_consensus": 57,
+      "mean_tokens": 5819.876,
+      "mean_wall_time_s": 14.904856000000004
+    },
+    {
+      "enabled_agents": 1,
+      "enabled_share": 0.3333333333333333,
+      "trials": 250,
+      "checkpoints": 66,
+      "rollbacks": 52,
+      "consensus": 173,
+      "correct_consensus": 56,
+      "mean_tokens": 6306.568,
+      "mean_wall_time_s": 12.119796
+    },
+    {
+      "enabled_agents": 2,
+      "enabled_share": 0.6666666666666666,
+      "trials": 250,
+      "checkpoints": 88,
+      "rollbacks": 87,
+      "consensus": 179,
+      "correct_consensus": 57,
+      "mean_tokens": 7332.756,
+      "mean_wall_time_s": 14.216764000000003
+    },
+    {
+      "enabled_agents": 3,
+      "enabled_share": 1.0,
+      "trials": 250,
+      "checkpoints": 110,
+      "rollbacks": 110,
+      "consensus": 171,
+      "correct_consensus": 63,
+      "mean_tokens": 8836.476,
+      "mean_wall_time_s": 16.003312
+    }
+  ],
+  "paired_vs_zero": [
+    {
+      "control_agents": 0,
+      "treatment_agents": 1,
+      "metric": "checkpoint",
+      "n": 250,
+      "treatment_wins": 47,
+      "control_wins": 24,
+      "ties": 179,
+      "difference_pp": 9.2,
+      "interval_95_pp": [
+        2.8,
+        15.6
+      ]
+    },
+    {
+      "control_agents": 0,
+      "treatment_agents": 1,
+      "metric": "rollback",
+      "n": 250,
+      "treatment_wins": 52,
+      "control_wins": 0,
+      "ties": 198,
+      "difference_pp": 20.8,
+      "interval_95_pp": [
+        16.0,
+        26.0
+      ]
+    },
+    {
+      "control_agents": 0,
+      "treatment_agents": 1,
+      "metric": "consensus",
+      "n": 250,
+      "treatment_wins": 31,
+      "control_wins": 35,
+      "ties": 184,
+      "difference_pp": -1.6,
+      "interval_95_pp": [
+        -8.0,
+        4.8
+      ]
+    },
+    {
+      "control_agents": 0,
+      "treatment_agents": 1,
+      "metric": "correct_consensus",
+      "n": 250,
+      "treatment_wins": 12,
+      "control_wins": 13,
+      "ties": 225,
+      "difference_pp": -0.4,
+      "interval_95_pp": [
+        -4.4,
+        3.6
+      ]
+    },
+    {
+      "control_agents": 0,
+      "treatment_agents": 2,
+      "metric": "checkpoint",
+      "n": 250,
+      "treatment_wins": 65,
+      "control_wins": 20,
+      "ties": 165,
+      "difference_pp": 18.0,
+      "interval_95_pp": [
+        11.2,
+        24.8
+      ]
+    },
+    {
+      "control_agents": 0,
+      "treatment_agents": 2,
+      "metric": "rollback",
+      "n": 250,
+      "treatment_wins": 87,
+      "control_wins": 0,
+      "ties": 163,
+      "difference_pp": 34.8,
+      "interval_95_pp": [
+        28.8,
+        40.8
+      ]
+    },
+    {
+      "control_agents": 0,
+      "treatment_agents": 2,
+      "metric": "consensus",
+      "n": 250,
+      "treatment_wins": 36,
+      "control_wins": 34,
+      "ties": 180,
+      "difference_pp": 0.8,
+      "interval_95_pp": [
+        -5.6,
+        7.6
+      ]
+    },
+    {
+      "control_agents": 0,
+      "treatment_agents": 2,
+      "metric": "correct_consensus",
+      "n": 250,
+      "treatment_wins": 13,
+      "control_wins": 13,
+      "ties": 224,
+      "difference_pp": 0.0,
+      "interval_95_pp": [
+        -4.0,
+        4.0
+      ]
+    },
+    {
+      "control_agents": 0,
+      "treatment_agents": 3,
+      "metric": "checkpoint",
+      "n": 250,
+      "treatment_wins": 77,
+      "control_wins": 10,
+      "ties": 163,
+      "difference_pp": 26.8,
+      "interval_95_pp": [
+        20.4,
+        33.2
+      ]
+    },
+    {
+      "control_agents": 0,
+      "treatment_agents": 3,
+      "metric": "rollback",
+      "n": 250,
+      "treatment_wins": 110,
+      "control_wins": 0,
+      "ties": 140,
+      "difference_pp": 44.0,
+      "interval_95_pp": [
+        38.0,
+        50.0
+      ]
+    },
+    {
+      "control_agents": 0,
+      "treatment_agents": 3,
+      "metric": "consensus",
+      "n": 250,
+      "treatment_wins": 32,
+      "control_wins": 38,
+      "ties": 180,
+      "difference_pp": -2.4,
+      "interval_95_pp": [
+        -9.2,
+        4.4
+      ]
+    },
+    {
+      "control_agents": 0,
+      "treatment_agents": 3,
+      "metric": "correct_consensus",
+      "n": 250,
+      "treatment_wins": 18,
+      "control_wins": 12,
+      "ties": 220,
+      "difference_pp": 2.4,
+      "interval_95_pp": [
+        -1.6,
+        6.8
+      ]
+    }
+  ],
+  "interpretation": "Intervals are descriptive paired case-bootstrap intervals. The agreement-distance policy memory rewards consensus proximity, not answer correctness. Interpret the correct-consensus metric as the outcome of interest; do not treat checkpoint or rollback counts as task success."
+}

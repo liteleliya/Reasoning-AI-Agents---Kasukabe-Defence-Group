@@ -1,0 +1,3087 @@
+{
+  "schema": 1,
+  "conditions": {
+    "proposal_density_500-cf1": {
+      "cite_constraint": {
+        "n": 41,
+        "reward_sum": 7.33333327
+      },
+      "reconcile_claims": {
+        "n": 38,
+        "reward_sum": 6.33333328
+      },
+      "test_counterexample": {
+        "n": 32,
+        "reward_sum": 3.99999997
+      }
+    },
+    "proposal_density_500-cf2": {
+      "cite_constraint": {
+        "n": 80,
+        "reward_sum": 14.66666656
+      },
+      "reconcile_claims": {
+        "n": 67,
+        "reward_sum": 9.99999992
+      },
+      "test_counterexample": {
+        "n": 66,
+        "reward_sum": 9.66666658
+      }
+    },
+    "proposal_density_500-cf3": {
+      "cite_constraint": {
+        "n": 40,
+        "reward_sum": 6.99999994
+      },
+      "reconcile_claims": {
+        "n": 35,
+        "reward_sum": 4.66666662
+      },
+      "test_counterexample": {
+        "n": 35,
+        "reward_sum": 4.99999996
+      }
+    }
+  },
+  "observations": [
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Easy/Design#4636|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Easy/Design#5571|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Easy/Manufacture#3831|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Easy/Qulaity Inspection#116|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Easy/Qulaity Inspection#4255|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Easy/Qulaity Inspection#8197|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Easy/Recycling#17|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Easy/Recycling#2000|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Hard/Design#775|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Hard/Recycling#963|0:3",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Hard/Sales#123|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Hard/Sales#374|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Hard/Sales#564|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Hard/Supply Chain#918|0:6",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Medium/Design#467|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Medium/Manufacture#309|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Medium/Recycle#592|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Medium/Recycle#847|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Medium/Recycle#869|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Medium/Sales#623|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Medium/Sales#637|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Medium/Sales#704|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Medium/Supply Chain#234|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Medium/Supply Chain#282|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive Value Chain/Medium/Supply Chain#856|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive-Energy Chain/Automotive Design#189|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive-Energy Chain/Automotive Manufature#512|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive-Energy Chain/Automotive Sales#258|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive-Energy Chain/Electricity  Generation#1366|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive-Energy Chain/Electricity  Generation#573|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Automotive-Energy Chain/Electricity Storage#1168|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Construction/complex/data.json#1248|0:6",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Multi-choice/complex#1221|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Multi-choice/complex#1624|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Multi-choice/complex#1662|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Multi-choice/complex#810|0:6",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Multi-choice/complex#850|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Multi-choice/easy#1317|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Multi-choice/easy#1641|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Multi-choice/easy#334|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Multi-choice/easy#819|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Single-choice/complex#117|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Single-choice/complex#2096|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Single-choice/complex#2260|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Single-choice/complex#2756|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Single-choice/complex#313|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Single-choice/complex#605|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Single-choice/complex#759|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Single-choice/easy#1792|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Finance/Single-choice/easy#490|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Multi-choice/complex#1293|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Multi-choice/complex#1299|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Multi-choice/complex#1607|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Multi-choice/complex#4|0:8",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Multi-choice/complex#696|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Multi-choice/simple#1354|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Multi-choice/simple#1475|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Multi-choice/simple#1703|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Multi-choice/simple#1820|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Multi-choice/simple#527|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Single-choice/complex#2516|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Single-choice/complex#26|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Single-choice/complex#428|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Single-choice/simple#1458|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Single-choice/simple#1527|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Single-choice/simple#2792|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Single-choice/simple#2876|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Data2/Law/Single-choice/simple#701|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Easy/Platform Operations#1091|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Easy/Product Procurement#1625|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Easy/User Experience#1062|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Easy/Warehousing and Logistics#1720|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Easy/Warehousing and Logistics#1758|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#10|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#1159|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#1420|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#765|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#828|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#891|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#96|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Easy/Drug Development#4075|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Easy/Drug Development#4428|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Easy/Drug Development#748|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Easy/Sales and Distribution#2044|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Easy/Sales and Distribution#2911|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1459|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1482|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1488|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1844|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1921|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1942|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1999|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#678|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1003|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1224|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1316|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1452|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1491|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1587|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1628|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1943|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#228|0:6",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#285|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#508|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Software_Engineer/Software_Engineering.json#5224|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Software_Engineer/Software_Engineering.json#5254|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Software_Engineer/Software_Engineering.json#528|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Software_Engineer/Software_Engineering.json#5990|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Software_Engineer/Software_Engineering.json#6458|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Software_Engineer/Software_Engineering.json#6950|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf1|mscore|Software_Engineer/Software_Engineering.json#8327|0:5",
+      "condition": "proposal_density_500-cf1",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Design#4636|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Design#4636|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Design#5571|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Design#5571|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Manufacture#3831|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Manufacture#3831|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Qulaity Inspection#116|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Qulaity Inspection#116|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Qulaity Inspection#4255|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Qulaity Inspection#4255|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Qulaity Inspection#8197|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Qulaity Inspection#8197|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Recycling#17|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Recycling#17|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Recycling#2000|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Easy/Recycling#2000|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Design#775|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Design#775|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Recycling#963|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Recycling#963|0:3",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Sales#123|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Sales#123|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Sales#374|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Sales#374|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Sales#564|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Sales#564|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Supply Chain#472|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Supply Chain#472|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Supply Chain#918|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Hard/Supply Chain#918|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Design#467|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Design#467|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Manufacture#309|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Manufacture#935|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Manufacture#935|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Quality Inspection#229|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Recycle#592|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Recycle#592|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Recycle#617|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Recycle#617|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Recycle#847|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Recycle#847|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Recycle#869|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Recycle#869|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Sales#623|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Sales#623|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Supply Chain#234|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Supply Chain#234|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Supply Chain#856|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive Value Chain/Medium/Supply Chain#856|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Automotive Design#1308|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Automotive Design#1308|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Automotive Design#189|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Automotive Design#189|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Automotive Manufature#512|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Automotive Manufature#512|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Automotive Sales#258|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Electricity  Generation#1366|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Electricity  Generation#1366|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Electricity  Generation#573|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Electricity Storage#1168|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Automotive-Energy Chain/Electricity Storage#1168|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Construction/complex/data.json#1248|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/complex#1221|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/complex#1221|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/complex#1624|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/complex#1624|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/complex#1662|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/complex#1662|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/complex#810|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/complex#850|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/complex#850|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/easy#1317|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/easy#1317|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/easy#1641|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/easy#1641|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/easy#334|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/easy#334|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/easy#819|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/easy#819|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Multi-choice/easy#885|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/complex#117|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/complex#2096|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/complex#2096|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/complex#2260|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/complex#2260|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/complex#2756|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/complex#313|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/complex#605|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/complex#759|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/complex#759|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/easy#1792|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/easy#1792|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/easy#490|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Finance/Single-choice/easy#490|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/complex#1293|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/complex#1293|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/complex#1299|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/complex#1299|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/complex#1607|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/complex#1607|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/complex#4|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/complex#696|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/complex#696|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/simple#1354|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/simple#1354|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/simple#1475|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/simple#1475|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/simple#1703|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/simple#1703|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/simple#1820|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/simple#1820|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/simple#527|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Multi-choice/simple#527|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/complex#2516|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/complex#26|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/complex#26|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/complex#428|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/complex#428|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/simple#1458|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/simple#1458|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/simple#1527|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/simple#2792|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/simple#2792|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/simple#2876|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/simple#2876|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/simple#701|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Data2/Law/Single-choice/simple#701|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/Platform Operations#1091|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/Platform Operations#1091|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/Platform Operations#3623|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/Platform Operations#3623|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/Product Procurement#1625|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/Product Procurement#1625|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/User Experience#1062|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/User Experience#1062|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/Warehousing and Logistics#1720|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/Warehousing and Logistics#1720|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/Warehousing and Logistics#1758|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Easy/Warehousing and Logistics#1758|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#10|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#10|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#1159|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#1420|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#1420|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#1804|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#765|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#765|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#828|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#891|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#891|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#96|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Electronic Commerce Value Chain/Hard/Full-Chain-task#96|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Easy/Drug Development#4075|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Easy/Drug Development#4075|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Easy/Drug Development#4428|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Easy/Drug Development#748|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Easy/Drug Development#748|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Easy/Sales and Distribution#2044|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Easy/Sales and Distribution#2044|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Easy/Sales and Distribution#2911|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Easy/Sales and Distribution#2911|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1459|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1459|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1482|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1482|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1488|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1844|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1844|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1921|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1921|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1942|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1999|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#1999|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#550|0:4",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#550|0:12",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#678|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Hard/Full-Chain-task#678|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1003|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1003|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1224|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1224|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1316|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1452|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1491|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1491|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1587|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1587|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1628|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1628|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#1943|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#228|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#228|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#285|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#285|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#508|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#508|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#543|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Pharmaceytical Value Chain/Medium/Multi-stage-task#543|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#5224|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#5254|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#5254|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#528|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#528|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#5990|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#5990|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#6458|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#6458|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#6950|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#6950|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#8327|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#8327|0:6",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf2|mscore|Software_Engineer/Software_Engineering.json#8910|0:5",
+      "condition": "proposal_density_500-cf2",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Design#4636|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Design#4636|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Design#4636|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Manufacture#3831|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Manufacture#3831|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Manufacture#3831|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Qulaity Inspection#116|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Qulaity Inspection#116|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Qulaity Inspection#116|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Qulaity Inspection#4255|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Qulaity Inspection#4255|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Qulaity Inspection#4255|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Qulaity Inspection#8197|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Qulaity Inspection#8197|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Qulaity Inspection#8197|0:19",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Recycling#17|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Recycling#17|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Recycling#2000|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Recycling#2000|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Recycling#2000|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Recycling#6800|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Sales#400|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Easy/Sales#8425|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Design#335|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Design#335|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Design#335|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Design#775|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Design#775|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Design#775|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Quality Inspection#157|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Quality Inspection#157|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Quality Inspection#157|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Quality Inspection#990|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Quality Inspection#990|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Recycling#881|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Recycling#881|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Recycling#963|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Recycling#963|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Recycling#963|0:3",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Sales#123|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Sales#123|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Sales#123|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Sales#374|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Sales#374|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Sales#374|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Sales#564|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Sales#564|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Sales#564|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Supply Chain#707|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Supply Chain#918|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Hard/Supply Chain#918|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Design#467|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Design#467|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Manufacture#309|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Manufacture#309|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Quality Inspection#229|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Quality Inspection#229|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Recycle#592|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Recycle#617|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Recycle#617|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Recycle#617|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Recycle#626|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Recycle#847|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Recycle#847|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Recycle#869|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Recycle#869|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Recycle#869|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.33333333,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Sales#623|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.66666667,
+      "reward": 0.66666667
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Sales#623|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Supply Chain#234|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Supply Chain#234|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Supply Chain#234|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Supply Chain#282|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Supply Chain#856|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Supply Chain#856|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive Value Chain/Medium/Supply Chain#856|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Automotive Design#1308|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Automotive Design#1308|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Automotive Manufature#512|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Automotive Manufature#512|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Automotive Sales#258|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Automotive Sales#258|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Electricity  Generation#1366|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Electricity  Generation#1366|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Electricity  Generation#1366|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Electricity  Generation#573|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Electricity  Generation#573|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Electricity  Generation#573|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Electricity  Generation#899|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Automotive-Energy Chain/Electricity  Generation#899|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Construction/complex/data.json#1248|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Construction/simple/data.json#2893|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Construction/simple/data.json#2893|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Construction/simple/data.json#4702|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Construction/simple/data.json#4702|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#1221|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#1221|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#1620|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#1620|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#1624|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "cite_constraint",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#1624|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#1624|0:6",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#1662|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#1662|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#352|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#352|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#810|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#850|0:4",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#850|0:5",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "test_counterexample",
+      "credit_delta": -0.33333333,
+      "reward": 0.33333333
+    },
+    {
+      "id": "proposal_density_500-cf3|mscore|Data2/Finance/Multi-choice/complex#952|0:7",
+      "condition": "proposal_density_500-cf3",
+      "strategy": "reconcile_claims",
+      "credit_delta": 0.0,
+      "reward": 0.0
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "expected_cases_per_condition": 250,
+  "static_trials": 1000,
+  "adaptive_trials": 750,
+  "comparisons": [
+    {
+      "enabled_agents": 0,
+      "enabled_share": 0.0,
+      "metric": "correct_consensus",
+      "paired_cases": 250,
+      "adaptive_wins": 13,
+      "static_wins": 10,
+      "ties": 227,
+      "adaptive_minus_static_pp": 1.2
+    },
+    {
+      "enabled_agents": 0,
+      "enabled_share": 0.0,
+      "metric": "checkpoint",
+      "paired_cases": 250,
+      "adaptive_wins": 15,
+      "static_wins": 39,
+      "ties": 196,
+      "adaptive_minus_static_pp": -9.6
+    },
+    {
+      "enabled_agents": 0,
+      "enabled_share": 0.0,
+      "metric": "rollback",
+      "paired_cases": 250,
+      "adaptive_wins": 0,
+      "static_wins": 0,
+      "ties": 250,
+      "adaptive_minus_static_pp": 0.0
+    },
+    {
+      "enabled_agents": 0,
+      "enabled_share": 0.0,
+      "metric": "consensus",
+      "paired_cases": 250,
+      "adaptive_wins": 24,
+      "static_wins": 47,
+      "ties": 179,
+      "adaptive_minus_static_pp": -9.2
+    },
+    {
+      "enabled_agents": 1,
+      "enabled_share": 0.3333333333333333,
+      "metric": "correct_consensus",
+      "paired_cases": 250,
+      "adaptive_wins": 14,
+      "static_wins": 12,
+      "ties": 224,
+      "adaptive_minus_static_pp": 0.8
+    },
+    {
+      "enabled_agents": 1,
+      "enabled_share": 0.3333333333333333,
+      "metric": "checkpoint",
+      "paired_cases": 250,
+      "adaptive_wins": 41,
+      "static_wins": 52,
+      "ties": 157,
+      "adaptive_minus_static_pp": -4.4
+    },
+    {
+      "enabled_agents": 1,
+      "enabled_share": 0.3333333333333333,
+      "metric": "rollback",
+      "paired_cases": 250,
+      "adaptive_wins": 45,
+      "static_wins": 43,
+      "ties": 162,
+      "adaptive_minus_static_pp": 0.8
+    },
+    {
+      "enabled_agents": 1,
+      "enabled_share": 0.3333333333333333,
+      "metric": "consensus",
+      "paired_cases": 250,
+      "adaptive_wins": 27,
+      "static_wins": 42,
+      "ties": 181,
+      "adaptive_minus_static_pp": -6.0
+    },
+    {
+      "enabled_agents": 2,
+      "enabled_share": 0.6666666666666666,
+      "metric": "correct_consensus",
+      "paired_cases": 250,
+      "adaptive_wins": 15,
+      "static_wins": 14,
+      "ties": 221,
+      "adaptive_minus_static_pp": 0.4
+    },
+    {
+      "enabled_agents": 2,
+      "enabled_share": 0.6666666666666666,
+      "metric": "checkpoint",
+      "paired_cases": 250,
+      "adaptive_wins": 39,
+      "static_wins": 64,
+      "ties": 147,
+      "adaptive_minus_static_pp": -10.0
+    },
+    {
+      "enabled_agents": 2,
+      "enabled_share": 0.6666666666666666,
+      "metric": "rollback",
+      "paired_cases": 250,
+      "adaptive_wins": 39,
+      "static_wins": 63,
+      "ties": 148,
+      "adaptive_minus_static_pp": -9.6
+    },
+    {
+      "enabled_agents": 2,
+      "enabled_share": 0.6666666666666666,
+      "metric": "consensus",
+      "paired_cases": 250,
+      "adaptive_wins": 33,
+      "static_wins": 48,
+      "ties": 169,
+      "adaptive_minus_static_pp": -6.0
+    }
+  ],
+  "interpretation": "Descriptive matched outcomes on the frozen cases. At 0/3 the policy has no active agent, so that row is a pipeline consistency control. Adaptive updates depend on order; do not interpret paired case differences as independent randomized evidence."
+}

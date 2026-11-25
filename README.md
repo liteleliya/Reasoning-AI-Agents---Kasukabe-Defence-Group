@@ -7,9 +7,11 @@ Intelligible Blackboard is a local, inspectable multi-agent system. Three langua
 This is a course-project adaptation inspired by Baskar et al.'s prediction-and-explanation interaction model; it is not a full reproduction of that paper. The final paired run is an inconclusive baseline: standard continuation and replay each produced one correct recovery among 52 eligible checkpoints, while replay used substantially more tokens. We report this as a result, not as evidence that replay improves reasoning.
 
 **Repository:** [liteleliya/Reasoning-AI-Agents---Kasukabe-Defence-Group](https://github.com/liteleliya/Reasoning-AI-Agents---Kasukabe-Defence-Group)<br>
-**Research and protocol:** [docs/project_research.md](docs/project_research.md) · **Handover:** [HANDOVER.md](HANDOVER.md) · **Final submission files:** [final_submission/](final_submission/) · **Results overview:** [results/README.md](results/README.md)
+**Research and protocol:** [docs/project_research.md](docs/project_research.md) · **Final submission files:** [final_submission/](final_submission/) · **Results overview:** [results/README.md](results/README.md)
 
 For a direct comparison with the professor's original project proposal—including completed components, scope adaptations, and substantial future work—see [docs/project_research.md](docs/project_research.md).
+
+The latest cross-benchmark result summary is [results/project_results.json](results/project_results.json). It combines the partial adaptive density stage, completed static stage, matched comparison on shared tasks, and official-grader MedAgentBench baseline. The web dashboard reads the same file so the project view and summary stay aligned.
 
 ## Start here
 
@@ -189,9 +191,15 @@ uv run python -m bench.ablation_analysis results/proposal-density-500/shard-1-of
 
 This run is not evidence of 500 checkpoints or successful rollbacks. The final report should keep checkpoint, rollback, consensus, and judged-correct outcomes distinct. For policy-learning claims, run the included `configs/proposal_density_static_500.json` control and the comparison command in the ablation guide.
 
+### Completed density stages and MedAgentBench baseline
+
+The recorded adaptive density run stopped at **1,680/2,000 sessions**: levels 0/3, 1/3, and 2/3 completed 500 trials each; level 3/3 is partial at 180/500. The static-policy stage completed **1,000 sessions**, 250 per density. Cross-stage policy comparisons use only the 250 shared task IDs at levels 0/3 through 2/3. The matched correct-consensus differences were +1.2, +0.8, and +0.4 percentage points for adaptive versus static, with 227, 224, and 221 ties respectively. These are descriptive comparisons and do not demonstrate an accuracy benefit. Stage 2 level 3/3 is excluded.
+
+The MedAgentBench single-agent baseline covered **30 tasks**, three from each of ten task types, with the official `refsol.py` grader against a pinned FHIR environment. The harness executes the benchmark's GET/POST/FINISH interaction loop, records tool dialogue, applies the official grader, and stores task-level status plus run provenance. It scored **0/30 correct**: 28 sessions stopped on invalid action format and two completed incorrectly. This is a benchmark-specific tool-use baseline, not a result for the multi-agent recovery method and not evidence of clinical capability. Its next engineering target is strict action-format compliance, followed by a small validation rerun before any larger evaluation.
+
 ### External benchmark adapters
 
-KramaBench and MedAgentBench task-file loaders are prototypes for local files, not official benchmark integrations. They are deliberately not included in the MSCoRe study command above. See [docs/experiments_and_benchmarks.md](docs/experiments_and_benchmarks.md) for the remaining data-environment and scoring requirements.
+KramaBench data ingestion remains a prototype and is not an official scored run. MedAgentBench has a separate, completed single-agent FHIR/action-loop baseline described above. Neither result is mixed into the MSCoRe density comparison. See [docs/experiments_and_benchmarks.md](docs/experiments_and_benchmarks.md) for the benchmark-specific protocols and remaining KramaBench integration requirements.
 
 To run the separate four-seed authored challenge suite:
 
@@ -242,9 +250,9 @@ Open the local Vite URL printed in the terminal (normally `http://127.0.0.1:5173
 
 ## Results folder and data handling
 
-`results/README.md` summarizes the pilot sequence and links to the final paired baseline. The repository keeps small aggregate outputs and figures reviewable. Full local run folders remain useful for reproducing the interactive viewer, but raw SQLite boards, model call logs, grader mapping files, and the large cached MSCoRe download are intentionally ignored by `.gitignore`. Do not publish `results/paired-study/grading/private.json`: it maps blinded responses to conditions and contains automatic hints. If a result needs to be shared for independent analysis, share the complete run securely with the team and keep the private grading map away from blinded graders.
+`results/README.md` maps the frozen paired baseline, the partial adaptive density run, the completed static run, their matched comparison, and the MedAgentBench 30-task baseline. The result folders required to reproduce these analyses—including metrics, run manifests, SQLite traces, model-call logs, and official-grader outputs—are explicitly included by `.gitignore` so teammates can retrieve them with Git. The large downloaded MSCoRe cache remains local. Do not publish `results/paired-study/grading/private.json`: it maps blinded responses to conditions and contains automatic hints. Keep any private grader mapping away from blinded graders.
 
-The final report and a 2:30 presentation script are in [`final_submission/`](final_submission/). The original course template is preserved in `final_submission/Project_Sub_Template/`; `final_report.tex` is a separate copy that follows its layout.
+The final report and 2:30 presentation script are in [`final_submission/`](final_submission/). The original course template is preserved in `final_submission/Project_Sub_Template/`; `final_report.tex` is a separate copy that follows its layout.
 
 ## References
 

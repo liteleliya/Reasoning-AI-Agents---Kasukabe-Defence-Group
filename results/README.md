@@ -1,37 +1,48 @@
-# Experiment results
+# Results and reproducibility map
 
-This folder separates early pipeline checks from the saved paired recovery study. Figures and aggregate summaries are retained for review; full local run archives are kept on the machine that generated them and are excluded from routine publication by the root `.gitignore`.
+This directory contains the frozen evidence used in the dashboard and final report. `project_results.json` is the compact cross-project summary consumed by the local web app. Raw task outputs, run manifests and analysis artifacts are retained beside it so the summary can be audited. The files under `archive/` are historical screening logs and snapshots; they are not part of the final statistical comparisons.
 
-## Study sequence
+## Main results
 
-| Stage | Question | Recorded outcome | How to interpret it |
+| Experiment | Evidence | Main observation | Status |
 |---|---|---|---|
-| **J1 - protocol parsing** | Can the model return a valid structured PXP message? | 49/50 valid on the first attempt; 50/50 after one repair retry. | A parser/prompt smoke check, not a reasoning benchmark. |
-| **J2 - baseline dialogue** | Can agents complete the earlier 100-item dialogue run? | 100/100 sessions ended in consensus, with no recorded impasse or cap stop. | Consensus rate is not answer correctness or intelligibility. This earlier exploratory run used the Qwen2.5 7B family. |
-| **J3 - preliminary counterfactual pilot** | Do replay events appear in a broader run? | 117/120 trials ended in consensus; three ended in impasse; no counterfactual rollbacks were recorded. | This run gives no estimate of replay's effect because no replay occurred. |
-| **Paired 3B baseline** | Does replay improve correct recovery after a shared checkpoint? | 52 of 144 prefixes opened a checkpoint. Correct recovery was 1/52 standard, 0/52 forward rethink, and 1/52 replay. | Inconclusive; replay did not outperform standard and required more tokens. The model/setup and automatic grading limitations are detailed below. |
+| Paired recovery baseline | `paired-study/` | 52/144 prefixes opened a checkpoint. Correct recovery was 1/52 for standard continuation, 0/52 for forward rethink and 1/52 for replay; replay used more tokens. | Complete, inconclusive |
+| Stage 2 adaptive density | `proposal-density-adaptive-500/` | 1,680/2,000 sessions. Densities 0/3, 1/3 and 2/3 have 500 each; 3/3 has 180/500 and is partial. | Partial |
+| Stage 3 static density | `proposal-density-static-250/` | 1,000 sessions, 250 at each density from 0/3 to 3/3. | Complete |
+| Matched policy comparison | `stage2-matched-250/` and `proposal-policy-comparison-250/` | Shared task IDs are compared at densities 0/3, 1/3 and 2/3 only. Adaptive-minus-static correct-consensus differences are +1.2, +0.8 and +0.4 percentage points; the comparison is descriptive, not proof of a policy benefit. | Complete for eligible levels |
+| MedAgentBench baseline | `medagentbench-30/` | 30 tasks, three from each of ten task types; official `refsol.py` grader scored 0/30 correct, with 28 invalid-action stops and two completed-but-incorrect results. | Complete baseline |
 
-J1/J2/J3 were exploratory milestones and should not be pooled with the final paired baseline. The final study used a Qwen2.5 3B Instruct build (3.09B parameters, Q4_K_M); the 7B tests used different experiment settings and do not establish a causal model-size comparison.
+The adaptive reward reduces disagreement distance rather than optimizing answer correctness, and updates depend on run order. The adaptive and static runs are not a randomized causal experiment. Stage 2's partial 3/3 condition is excluded from matched comparisons. MedAgentBench is a separate single-agent FHIR tool-use benchmark, not an evaluation of multi-agent recovery. The zero score identifies action-format compliance as a first repair target; it is not evidence about clinical capability.
 
-## Final paired baseline
+## Contents to retain
 
-The experiment has 144 case-by-seed units and 432 arm outcomes. Each unit has one shared prefix and three continuations. A checkpoint is counted once at the prefix level. The observed replay funnel was 52 eligible and attempted, 51 completed comparisons, 10 helpful comparisons, 10 adopted replies, and one correct recovery. Outcomes were 41 not-helpful and one incomplete. Replay used a mean of 19,578.9 full-trial tokens per eligible item, compared with 13,449.8 for standard continuation.
+- `project_results.json`: frozen aggregate counts, comparisons, provenance summary and limitations used by the dashboard.
+- `proposal-density-adaptive-500/shard-1-of-1/metrics.csv`, `run.json`, `policy_memory.json`, `board.sqlite`, and `calls.jsonl`: adaptive task outcomes, model/config provenance, learned tactic state and inspectable traces. The run is resumable from its saved state, but this partial run is treated as a completed observation, not resumed for the submitted comparison.
+- `proposal-density-adaptive-500/analysis/`: condition totals, paired outcomes and plot. Stage 2 analysis uses only the three completed levels.
+- `proposal-density-static-250/shard-1-of-1/`: complete static-policy run with task metrics, manifest and traces.
+- `proposal-density-static-250/analysis/`: static condition summary and plot.
+- `stage2-matched-250/shard-1-of-1/metrics.csv`: the exact 750 adaptive rows matching Stage 3's 250 task IDs at each of levels 0--2.
+- `proposal-policy-comparison-250/`: paired wins, losses, ties and effect summaries for checkpoint, rollback, consensus and correct-consensus.
+- `medagentbench-30/results.jsonl`: per-task status, interaction history and official grader outcome; `run.json` records task-file and grader hashes, upstream revision, model and FHIR image digest.
+- `paired-study/`: prior frozen paired replay baseline and its trace/answer audits.
+- `archive/`: prior checkpoint snapshots, model-screen traces, legacy summaries and historical bundle copies. These artifacts explain development history but are not included in the current claims.
 
-Replay versus standard produced one win, one loss, and 50 ties on correct recovery; the observed difference was 0.0 percentage points (case-bootstrap interval approximately -5.4 to +5.8 pp). Replay versus forward produced one win and 51 ties (observed +1.9 pp, interval approximately 0 to +6.5 pp). Both estimates are based on 52 eligible pairs and do not establish an advantage.
+## Recreate the reported analyses
 
-These results use automatic answer checks only: **no human rubric grades were joined to this run**. Several authored checkpoint predictions did not resolve to the answer schema, one automatically correct replay recovery began from malformed predictions, and three replay arms exceeded the intended six-call post-checkpoint allowance. The saved run README has the trace audit and exact qualifications. A checkpoint rate from the dissenter setup is conditional on that deliberately disagreement-rich configuration; it is not the natural frequency of organic stalls.
-
-## Reviewable files
-
-- `figures/summary.csv` and `figures/*.png` / `figures/*.pdf` contain the historical J3 aggregate results and charts.
-- `paired-study/analysis/analysis.json` and `outcome_table.csv` contain the paired analysis and per-arm aggregate table.
-- `paired-study/analysis/*.png` contain the paired outcome, funnel, and comparison charts.
-- `paired-study/README.md` documents run provenance, checks, data quality issues, limitations, and how the analysis was generated.
-
-The raw experiment directory is useful for reopening sessions in the viewer. Its `shard-1-of-1/` folder contains `board.sqlite`, `metrics.csv`, `calls.jsonl`, `opportunities.jsonl`, and `run.json`; `analysis/` contains the derived aggregate outputs. These raw files are local and ignored in a clean publication. Do not publish `grading/private.json`, which maps blind IDs to conditions and includes automatic hints. Do not give it to blinded graders.
-
-To analyze the saved run again from the repository root:
+Run from the repository root in the project's Python environment:
 
 ```powershell
-uv run python -m bench.paired_analysis results/paired-study/shard-1-of-1 --out results/paired-study/analysis
+uv run python -m bench.ablation_analysis results/proposal-density-adaptive-500/shard-1-of-1 --out results/proposal-density-adaptive-500/analysis --expected-per-level 500 --levels 0 1 2
+uv run python -m bench.ablation_analysis results/proposal-density-static-250/shard-1-of-1 --out results/proposal-density-static-250/analysis --expected-per-level 250
+uv run python -m bench.policy_ablation_analysis results/proposal-density-static-250/shard-1-of-1 results/stage2-matched-250/shard-1-of-1 --out results/proposal-policy-comparison-250 --expected-per-level 250 --levels 0 1 2
 ```
+
+The MedAgentBench task grading was done by the saved official `refsol.py` run harness. Do not recompute it with a generic text matcher. The per-task output and its run metadata are in `medagentbench-30/`.
+
+The local viewer can open the saved paired study with:
+
+```powershell
+uv run python -m server --run-dir results/paired-study
+```
+
+The Results page reads `project_results.json`; Explore runs is backed by the saved blackboard data for the selected run. Keep grader answer maps private if present; never publish a file named `grading/private.json`.

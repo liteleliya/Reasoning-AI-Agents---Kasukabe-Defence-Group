@@ -1,0 +1,9 @@
+control_agents,treatment_agents,metric,n,treatment_wins,control_wins,ties,difference_pp,interval_95_pp
+0,1,checkpoint,500,71,3,426,13.6,"[10.6, 16.8]"
+0,1,rollback,500,111,0,389,22.2,"[18.6, 25.8]"
+0,1,consensus,500,29,16,455,2.6,"[0.0, 5.2]"
+0,1,correct_consensus,500,3,5,492,-0.4,"[-1.6, 0.6]"
+0,2,checkpoint,500,74,0,426,14.8,"[11.8, 18.0]"
+0,2,rollback,500,119,0,381,23.8,"[20.2, 27.6]"
+0,2,consensus,500,44,18,438,5.2,"[2.2, 8.2]"
+0,2,correct_consensus,500,3,5,492,-0.4,"[-1.6, 0.8]"

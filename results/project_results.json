@@ -1,0 +1,318 @@
+{
+  "generated": "2026-11-25",
+  "medagentbench": {
+    "tasks": 30,
+    "correct": 0,
+    "invalid_action": 28,
+    "completed_incorrect": 2,
+    "task_types": [
+      {
+        "task_type": "task1",
+        "trials": 3,
+        "correct": 0,
+        "invalid_action": 2,
+        "completed_incorrect": 1
+      },
+      {
+        "task_type": "task10",
+        "trials": 3,
+        "correct": 0,
+        "invalid_action": 3,
+        "completed_incorrect": 0
+      },
+      {
+        "task_type": "task2",
+        "trials": 3,
+        "correct": 0,
+        "invalid_action": 3,
+        "completed_incorrect": 0
+      },
+      {
+        "task_type": "task3",
+        "trials": 3,
+        "correct": 0,
+        "invalid_action": 2,
+        "completed_incorrect": 1
+      },
+      {
+        "task_type": "task4",
+        "trials": 3,
+        "correct": 0,
+        "invalid_action": 3,
+        "completed_incorrect": 0
+      },
+      {
+        "task_type": "task5",
+        "trials": 3,
+        "correct": 0,
+        "invalid_action": 3,
+        "completed_incorrect": 0
+      },
+      {
+        "task_type": "task6",
+        "trials": 3,
+        "correct": 0,
+        "invalid_action": 3,
+        "completed_incorrect": 0
+      },
+      {
+        "task_type": "task7",
+        "trials": 3,
+        "correct": 0,
+        "invalid_action": 3,
+        "completed_incorrect": 0
+      },
+      {
+        "task_type": "task8",
+        "trials": 3,
+        "correct": 0,
+        "invalid_action": 3,
+        "completed_incorrect": 0
+      },
+      {
+        "task_type": "task9",
+        "trials": 3,
+        "correct": 0,
+        "invalid_action": 3,
+        "completed_incorrect": 0
+      }
+    ],
+    "model": "qwen2.5:3b-instruct",
+    "grader": "official refsol.py",
+    "temperature": 0.0,
+    "max_round": 8,
+    "upstream_commit": "99260117137b09f04837a8c18d18a1107efa55ae",
+    "image_digest": "jyxsu6/medagentbench@sha256:3fb83d7ed71c5476f9eb6212bd440a909ef7505922bbc757dc488a8fc0701966",
+    "interpretation": "Baseline demonstrates environment/action-loop execution, but 0/30 correct and 28 invalid action format; the first improvement priority is output/action-format compliance, then rerun a held-out or full task set."
+  },
+  "stage2_adaptive": {
+    "status": "partial",
+    "total_sessions": 1680,
+    "expected_sessions": 2000,
+    "completed_per_level": {
+      "0": {
+        "enabled_agents": 0,
+        "enabled_share": 0.0,
+        "trials": 500,
+        "checkpoints": 46,
+        "rollbacks": 0,
+        "consensus": 300,
+        "correct_consensus": 103,
+        "mean_tokens": 5388.432,
+        "mean_wall_time_s": 23.177762000000016
+      },
+      "1": {
+        "enabled_agents": 1,
+        "enabled_share": 0.3333333333333333,
+        "trials": 500,
+        "checkpoints": 114,
+        "rollbacks": 111,
+        "consensus": 313,
+        "correct_consensus": 101,
+        "mean_tokens": 6091.32,
+        "mean_wall_time_s": 27.006475999999996
+      },
+      "2": {
+        "enabled_agents": 2,
+        "enabled_share": 0.6666666666666666,
+        "trials": 500,
+        "checkpoints": 120,
+        "rollbacks": 119,
+        "consensus": 326,
+        "correct_consensus": 101,
+        "mean_tokens": 6699.966,
+        "mean_wall_time_s": 32.205811999999995
+      }
+    },
+    "partial_level_3_sessions": 180,
+    "excluded_level_3_from_complete_analysis": true
+  },
+  "stage3_static": {
+    "status": "complete",
+    "total_sessions": 1000,
+    "expected_sessions": 1000,
+    "conditions": [
+      {
+        "enabled_agents": 0,
+        "enabled_share": 0.0,
+        "trials": 250,
+        "checkpoints": 43,
+        "rollbacks": 0,
+        "consensus": 177,
+        "correct_consensus": 57,
+        "mean_tokens": 5819.876,
+        "mean_wall_time_s": 14.904856000000004
+      },
+      {
+        "enabled_agents": 1,
+        "enabled_share": 0.3333333333333333,
+        "trials": 250,
+        "checkpoints": 66,
+        "rollbacks": 52,
+        "consensus": 173,
+        "correct_consensus": 56,
+        "mean_tokens": 6306.568,
+        "mean_wall_time_s": 12.119796
+      },
+      {
+        "enabled_agents": 2,
+        "enabled_share": 0.6666666666666666,
+        "trials": 250,
+        "checkpoints": 88,
+        "rollbacks": 87,
+        "consensus": 179,
+        "correct_consensus": 57,
+        "mean_tokens": 7332.756,
+        "mean_wall_time_s": 14.216764000000003
+      },
+      {
+        "enabled_agents": 3,
+        "enabled_share": 1.0,
+        "trials": 250,
+        "checkpoints": 110,
+        "rollbacks": 110,
+        "consensus": 171,
+        "correct_consensus": 63,
+        "mean_tokens": 8836.476,
+        "mean_wall_time_s": 16.003312
+      }
+    ]
+  },
+  "stage2_stage3_matched": {
+    "shared_unique_instances_per_level": 250,
+    "compared_levels": [
+      0,
+      1,
+      2
+    ],
+    "results": [
+      {
+        "enabled_agents": 0,
+        "enabled_share": 0.0,
+        "metric": "correct_consensus",
+        "paired_cases": 250,
+        "adaptive_wins": 13,
+        "static_wins": 10,
+        "ties": 227,
+        "adaptive_minus_static_pp": 1.2
+      },
+      {
+        "enabled_agents": 0,
+        "enabled_share": 0.0,
+        "metric": "checkpoint",
+        "paired_cases": 250,
+        "adaptive_wins": 15,
+        "static_wins": 39,
+        "ties": 196,
+        "adaptive_minus_static_pp": -9.6
+      },
+      {
+        "enabled_agents": 0,
+        "enabled_share": 0.0,
+        "metric": "rollback",
+        "paired_cases": 250,
+        "adaptive_wins": 0,
+        "static_wins": 0,
+        "ties": 250,
+        "adaptive_minus_static_pp": 0.0
+      },
+      {
+        "enabled_agents": 0,
+        "enabled_share": 0.0,
+        "metric": "consensus",
+        "paired_cases": 250,
+        "adaptive_wins": 24,
+        "static_wins": 47,
+        "ties": 179,
+        "adaptive_minus_static_pp": -9.2
+      },
+      {
+        "enabled_agents": 1,
+        "enabled_share": 0.3333333333333333,
+        "metric": "correct_consensus",
+        "paired_cases": 250,
+        "adaptive_wins": 14,
+        "static_wins": 12,
+        "ties": 224,
+        "adaptive_minus_static_pp": 0.8
+      },
+      {
+        "enabled_agents": 1,
+        "enabled_share": 0.3333333333333333,
+        "metric": "checkpoint",
+        "paired_cases": 250,
+        "adaptive_wins": 41,
+        "static_wins": 52,
+        "ties": 157,
+        "adaptive_minus_static_pp": -4.4
+      },
+      {
+        "enabled_agents": 1,
+        "enabled_share": 0.3333333333333333,
+        "metric": "rollback",
+        "paired_cases": 250,
+        "adaptive_wins": 45,
+        "static_wins": 43,
+        "ties": 162,
+        "adaptive_minus_static_pp": 0.8
+      },
+      {
+        "enabled_agents": 1,
+        "enabled_share": 0.3333333333333333,
+        "metric": "consensus",
+        "paired_cases": 250,
+        "adaptive_wins": 27,
+        "static_wins": 42,
+        "ties": 181,
+        "adaptive_minus_static_pp": -6.0
+      },
+      {
+        "enabled_agents": 2,
+        "enabled_share": 0.6666666666666666,
+        "metric": "correct_consensus",
+        "paired_cases": 250,
+        "adaptive_wins": 15,
+        "static_wins": 14,
+        "ties": 221,
+        "adaptive_minus_static_pp": 0.4
+      },
+      {
+        "enabled_agents": 2,
+        "enabled_share": 0.6666666666666666,
+        "metric": "checkpoint",
+        "paired_cases": 250,
+        "adaptive_wins": 39,
+        "static_wins": 64,
+        "ties": 147,
+        "adaptive_minus_static_pp": -10.0
+      },
+      {
+        "enabled_agents": 2,
+        "enabled_share": 0.6666666666666666,
+        "metric": "rollback",
+        "paired_cases": 250,
+        "adaptive_wins": 39,
+        "static_wins": 63,
+        "ties": 148,
+        "adaptive_minus_static_pp": -9.6
+      },
+      {
+        "enabled_agents": 2,
+        "enabled_share": 0.6666666666666666,
+        "metric": "consensus",
+        "paired_cases": 250,
+        "adaptive_wins": 33,
+        "static_wins": 48,
+        "ties": 169,
+        "adaptive_minus_static_pp": -6.0
+      }
+    ],
+    "interpretation": "Descriptive matched outcomes on the frozen cases. At 0/3 the policy has no active agent, so that row is a pipeline consistency control. Adaptive updates depend on order; do not interpret paired case differences as independent randomized evidence."
+  },
+  "limitations": [
+    "Stage 2 density 3/3 is partial (180 of 500), so it is not included in complete density summaries or matched comparison.",
+    "Stage 2 used 500 tasks per complete density; stage 3 used 250. Cross-stage comparisons use the common 250 task IDs only.",
+    "Automatic correctness is not human grading. MedAgentBench baseline has 0/30 correct and 28 invalid actions.",
+    "The adaptive reward optimizes disagreement-distance reduction, not correctness; outcomes are descriptive and adaptive updates are order-dependent."
+  ]
+}

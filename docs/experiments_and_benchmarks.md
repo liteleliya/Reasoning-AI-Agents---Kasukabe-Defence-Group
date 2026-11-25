@@ -83,7 +83,7 @@ If compute is limited, the first 2,000-session adaptive run answers the density 
 
 ## Current external-benchmark boundary
 
-The repo includes task-file ingestion prototypes for KramaBench and MedAgentBench, but they do not amount to official benchmark evaluation. KramaBench requires its workload/data environment and subtask evaluator; the prototype has only reference-answer proxy metadata. MedAgentBench requires the pinned FHIR environment, action/tool loop, and authorized evaluator; loading its JSON tasks does not implement those pieces. Do not mix either prototype into the 500-task MSCoRe ablation or report its rows as official benchmark scores. See `external_benchmarks.md` for the setup and remaining integration requirements.
+KramaBench remains a local task-loader prototype with no official data-lake execution or subtask evaluator; its results must not be reported as benchmark scores. MedAgentBench now has a separate single-agent GET/POST/FINISH harness using the pinned FHIR image and official `refsol.py` grader. The saved 30-task baseline is in `results/medagentbench-30/` and scored 0/30 correct (28 invalid-action stops, two completed but incorrect). POST requests are recorded but not applied to the FHIR server, so this implementation does not test state-changing clinical workflows. Neither benchmark is pooled into the MSCoRe density study. The full MedAgentBench run procedure and limitations are below.
 
 ---
 
@@ -91,7 +91,7 @@ The repo includes task-file ingestion prototypes for KramaBench and MedAgentBenc
 
 # External benchmark adapter status
 
-The code can load local KramaBench workload JSON and MedAgentBench task JSON into the project's common `Instance` representation (`src/bench/external.py`). These adapters are for schema validation, task selection, and future integration. They are not wired into the normal experiment runner as official-scoring benchmarks because the project does not yet implement either benchmark's complete execution/evaluation contract.
+The code can load local KramaBench workload JSON and MedAgentBench task JSON into the project's common `Instance` representation (`src/bench/external.py`). KramaBench remains an ingestion adapter. Separately, `src/bench/medagentbench.py` implements the MedAgentBench single-agent tool loop and official scoring path; it is not a multi-agent adapter in the normal MSCoRe runner.
 
 ## KramaBench
 
@@ -101,9 +101,9 @@ Before a KramaBench study can be claimed, pin a release/commit and its license, 
 
 ## MedAgentBench
 
-The loader accepts the local official task JSON array and preserves task IDs, instructions, public context, task type, reference solution, and evaluation MRN in the loaded record. The private reference fields are never placed in `question_text`. The evaluation label is `interactive-environment-required`.
+The loader accepts the local task JSON array and keeps reference fields out of the agent prompt. The separate `bench.medagentbench` harness runs a single agent through GET / POST / FINISH and scores with the official downloaded `refsol.py`. The frozen 30-task baseline and its exact image/upstream/grader hashes are stored in `results/medagentbench-30/`. The run scored 0/30 correct: 28 invalid actions and two completed-but-incorrect tasks.
 
-This repo does not yet implement the required FHIR-backed clinical state, action/tool protocol, task reset/isolation, or official evaluator. Sending only the natural-language instruction to the current agents is not a valid MedAgentBench trial, and scoring against `sol` as plain text would be invalid. To complete that integration, pin and launch the upstream Docker/FHIR setup, implement the benchmark's GET/POST/FINISH tool interaction and per-task reset, run the authorized reference evaluator, and preserve environment/image/task versions. See [MedAgentBench](https://github.com/stanfordmlgroup/MedAgentBench) for its current setup contract.
+Important scope limit: POST bodies are recorded for the task interaction but are not sent to the FHIR server, so the harness currently targets a single-agent, mostly read-oriented baseline. It does not evaluate state-changing clinical workflows or combine MedAgentBench with the multi-agent PXP recovery protocol. Do not describe the baseline as evidence of clinical capability. Fix action grammar and validate against official examples before expanding the run. See [MedAgentBench](https://github.com/stanfordmlgroup/MedAgentBench) for upstream task and environment details.
 
 ### Single-agent baseline harness (`bench.medagentbench`)
 
@@ -145,7 +145,6 @@ resumed run must use the same build, and mixing builds invalidates the compariso
 
 ## Run it
 
-    git checkout feat/disagreement-screen
     uv sync
     ollama pull qwen2.5:3b-instruct
     export LLM_BACKEND=openai
