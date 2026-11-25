@@ -76,3 +76,19 @@ def test_policy_comparison_can_cover_only_some_density_levels() -> None:
         if c["enabled_agents"] == 1 and c["metric"] == "correct_consensus"
     )
     assert (wins["adaptive_wins"], wins["static_wins"], wins["ties"]) == (1, 0, 2)
+
+
+def test_density_analysis_can_stop_at_the_levels_that_finished() -> None:
+    rows = [
+        row(level, item, correct=item % 2 == 0, checkpoint=False, rollbacks=0)
+        for level in range(3)
+        for item in range(4)
+    ]
+    rows += [row(3, 0, correct=False, checkpoint=False, rollbacks=0)]  # level 3 unfinished
+    with pytest.raises(ValueError, match="expected 4 per level"):
+        analyze(rows, expected_per_level=4)
+    result = analyze(rows, expected_per_level=4, compare_levels=(0, 1, 2))
+    assert [c["enabled_agents"] for c in result["conditions"]] == [0, 1, 2]
+    assert {c["treatment_agents"] for c in result["paired_vs_zero"]} == {1, 2}
+    with pytest.raises(ValueError, match="control"):
+        analyze(rows, expected_per_level=4, compare_levels=(1, 2))

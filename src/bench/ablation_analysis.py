@@ -61,10 +61,22 @@ def _bootstrap_mean(values: list[int], *, reps: int = 10_000, seed: int = 7319):
     return [means[int(0.025 * reps)], means[min(reps - 1, int(0.975 * reps))]]
 
 
-def analyze(rows: list[dict[str, str]], *, expected_per_level: int = 500) -> dict[str, Any]:
+def analyze(
+    rows: list[dict[str, str]],
+    *,
+    expected_per_level: int = 500,
+    compare_levels: tuple[int, ...] = LEVELS,
+) -> dict[str, Any]:
+    """Verify and summarise the density study.
+
+    `compare_levels` must start with level 0, the control. A study stopped early can be analysed
+    on the levels that finished (for example 0, 1 and 2); rows at other levels are ignored.
+    """
+    if not compare_levels or compare_levels[0] != 0:
+        raise ValueError("compare_levels must start with the 0/3 control level")
     keys = [row["trial_key"] for row in rows]
     duplicates = [key for key, count in Counter(keys).items() if count > 1]
-    levels: dict[int, dict[str, dict]] = {level: {} for level in LEVELS}
+    levels: dict[int, dict[str, dict]] = {level: {} for level in compare_levels}
     for row in rows:
         level = int(row["n_counterfactual"])
         if level not in levels:
@@ -99,7 +111,7 @@ def analyze(rows: list[dict[str, str]], *, expected_per_level: int = 500) -> dic
             }
         )
     comparisons = []
-    for level in LEVELS[1:]:
+    for level in compare_levels[1:]:
         for metric in ("checkpoint", "rollback", "consensus", "correct_consensus"):
             comparisons.append(
                 {
@@ -171,12 +183,25 @@ def main(argv=None) -> None:
     parser.add_argument("run_dir", type=Path, help="directory containing metrics.csv")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--expected-per-level", type=int, default=500)
+    parser.add_argument(
+        "--levels",
+        type=int,
+        nargs="+",
+        choices=LEVELS,
+        default=list(LEVELS),
+        help="levels to analyse when the run stopped early; must start with 0",
+    )
     args = parser.parse_args(argv)
     with (args.run_dir / "metrics.csv").open(encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
-    result = analyze(rows, expected_per_level=args.expected_per_level)
+    result = analyze(
+        rows, expected_per_level=args.expected_per_level, compare_levels=tuple(args.levels)
+    )
     write_outputs(result, args.out)
-    print(f"verified {result['total_trials']} trials across four density conditions")
+    print(
+        f"verified {len(result['conditions'])} density conditions "
+        f"with {result['instance_count']} cases each"
+    )
 
 
 if __name__ == "__main__":
