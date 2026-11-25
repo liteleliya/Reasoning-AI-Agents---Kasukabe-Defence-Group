@@ -45,10 +45,19 @@ def _compare(static: dict[str, dict], adaptive: dict[str, dict], metric: str) ->
 
 
 def analyze(
-    static_rows: list[dict[str, str]], adaptive_rows: list[dict[str, str]], expected: int = 500
+    static_rows: list[dict[str, str]],
+    adaptive_rows: list[dict[str, str]],
+    expected: int = 500,
+    compare_levels: tuple[int, ...] = LEVELS,
 ):
+    """Match the two runs by task ID at each level in `compare_levels` (default: all four).
+
+    A run that covers only some levels, such as a static run of levels 1 and 2, is compared on
+    just those; rows at other levels are ignored.
+    """
+
     def by_level(rows):
-        levels = {level: {} for level in LEVELS}
+        levels = {level: {} for level in compare_levels}
         keys = [row["trial_key"] for row in rows]
         duplicates = [key for key, count in Counter(keys).items() if count > 1]
         if duplicates:
@@ -57,7 +66,7 @@ def analyze(
             level = int(row["n_counterfactual"])
             if level in levels:
                 levels[level][row["instance_id"]] = row
-        counts = {level: len(levels[level]) for level in LEVELS}
+        counts = {level: len(levels[level]) for level in compare_levels}
         if any(count != expected for count in counts.values()):
             raise ValueError(f"expected {expected} unique cases at every level, got {counts}")
         return levels
@@ -65,7 +74,7 @@ def analyze(
     static = by_level(static_rows)
     adaptive = by_level(adaptive_rows)
     comparisons = []
-    for level in LEVELS:
+    for level in compare_levels:
         static_ids, adaptive_ids = set(static[level]), set(adaptive[level])
         if static_ids != adaptive_ids:
             raise ValueError(
@@ -98,8 +107,21 @@ def main(argv=None) -> None:
     parser.add_argument("adaptive_run", type=Path)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--expected-per-level", type=int, default=500)
+    parser.add_argument(
+        "--levels",
+        type=int,
+        nargs="+",
+        choices=LEVELS,
+        default=list(LEVELS),
+        help="density levels to compare, for a run that covers only some of them",
+    )
     args = parser.parse_args(argv)
-    result = analyze(_read(args.static_run), _read(args.adaptive_run), args.expected_per_level)
+    result = analyze(
+        _read(args.static_run),
+        _read(args.adaptive_run),
+        args.expected_per_level,
+        tuple(args.levels),
+    )
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "policy_comparison.json").write_text(
         json.dumps(result, indent=2) + "\n", encoding="utf-8"

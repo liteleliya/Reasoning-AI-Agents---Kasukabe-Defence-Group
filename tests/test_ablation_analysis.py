@@ -51,3 +51,28 @@ def test_ablation_analysis_rejects_duplicates() -> None:
     rows.append(rows[0])
     with pytest.raises(ValueError, match="duplicate"):
         analyze(rows, expected_per_level=2)
+
+
+def test_policy_comparison_can_cover_only_some_density_levels() -> None:
+    from bench.policy_ablation_analysis import analyze as compare
+
+    static = [
+        row(level, item, correct=False, checkpoint=False, rollbacks=0)
+        for level in (1, 2)
+        for item in range(3)
+    ]
+    adaptive = [
+        row(level, item, correct=item == 0, checkpoint=False, rollbacks=0)
+        for level in range(4)
+        for item in range(3)
+    ]
+    with pytest.raises(ValueError, match="expected 3 unique cases"):
+        compare(static, adaptive, 3)  # the full comparison still demands all four levels
+    result = compare(static, adaptive, 3, compare_levels=(1, 2))
+    assert {c["enabled_agents"] for c in result["comparisons"]} == {1, 2}
+    wins = next(
+        c
+        for c in result["comparisons"]
+        if c["enabled_agents"] == 1 and c["metric"] == "correct_consensus"
+    )
+    assert (wins["adaptive_wins"], wins["static_wins"], wins["ties"]) == (1, 0, 2)
