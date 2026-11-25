@@ -105,6 +105,19 @@ The loader accepts the local official task JSON array and preserves task IDs, in
 
 This repo does not yet implement the required FHIR-backed clinical state, action/tool protocol, task reset/isolation, or official evaluator. Sending only the natural-language instruction to the current agents is not a valid MedAgentBench trial, and scoring against `sol` as plain text would be invalid. To complete that integration, pin and launch the upstream Docker/FHIR setup, implement the benchmark's GET/POST/FINISH tool interaction and per-task reset, run the authorized reference evaluator, and preserve environment/image/task versions. See [MedAgentBench](https://github.com/stanfordmlgroup/MedAgentBench) for its current setup contract.
 
+### Single-agent baseline harness (`bench.medagentbench`)
+
+`src/bench/medagentbench.py` implements the upstream GET / POST / FINISH loop for **one** agent and scores it with the downloaded `refsol.py`. It is the baseline a debate adapter would be compared with; the multi-agent debate is not part of it. As upstream, a POST is parsed and recorded but never sent to the server, so FHIR state does not change and no reset is needed (`reset: not_required` in `run.json`). Each run saves `results.jsonl` (one line per task, with the full dialogue), `run.json` (upstream commit, task-file, function-catalogue and `refsol.py` hashes, image digest, model, limits) and is resumable.
+
+Setup, all outside Git: clone `stanfordmlgroup/MedAgentBench`; download `refsol.py` from the link in its README (gated, never commit it); start Docker Desktop and the image (`docker run --rm -d --name medagentbench-fhir -p 8080:8080 jyxsu6/medagentbench:latest`, about two minutes to start, amd64 emulated on Apple Silicon). Then:
+
+```bash
+uv run python -m bench.medagentbench --upstream <checkout> --refsol <refsol.py> \
+  --out results/medagent-smoke --ids task1_1 task2_1 task4_1 --image-digest <digest>
+```
+
+`--per-type N` picks the first N of each of the ten task types. A 3-task smoke run with `qwen2.5:3b-instruct` completed end to end (0/3 correct, two replies broke the one-action format); it validates the plumbing, not a score. Tests use a fake FHIR transport and a fake grader. A full 300-task run has not been done.
+
 ## Local loader tests
 
 The adapter tests use synthetic task fixtures, require no network, and verify IDs, evaluation-mode labels, and that private answer fields are not placed in the prompt. Passing these tests only verifies file parsing and field handling; it does not establish benchmark validity or task performance.
