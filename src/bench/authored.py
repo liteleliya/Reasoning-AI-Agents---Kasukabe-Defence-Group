@@ -19,7 +19,9 @@ from bench.cases import Field, GradingRecord, PublicCase
 
 _SEPARATORS = re.compile(r"[;|\n]")
 _NUMBER = re.compile(r"^\s*([-+]?\d[\d,]*\.?\d*)\s*([^\d\s].*?)?\s*$")
-_DECISION_LABEL = re.compile(r"^(?:decision|action|recommendation|answer|option)\s*[:=]\s*(.+)$", re.I)
+_DECISION_LABEL = re.compile(
+    r"^(?:decision|action|recommendation|answer|option)\s*[:=]\s*(.+)$", re.I
+)
 _NAME = re.compile(r"[^a-z0-9]+")
 _SECONDS = {
     **dict.fromkeys(("s", "sec", "secs", "second", "seconds"), 1.0),
@@ -149,7 +151,7 @@ def canonical_prediction(case: PublicCase, text: str) -> str:
     if parsed is None:
         names = ", ".join(f.name for f in case.fields if f.decisive)
         raise ValueError(
-            f'prediction must start with one public decision ({" | ".join(case.decisions)}) '
+            f"prediction must start with one public decision ({' | '.join(case.decisions)}) "
             f"and give each required field ({names}) as name=value"
         )
     parts = [parsed.decision]

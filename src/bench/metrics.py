@@ -1,4 +1,7 @@
-"""Per-trial metrics rows and a crash-safe CSV writer (D3). Columns: docs/architecture_and_evaluation.md."""
+"""Per-trial metrics rows and a crash-safe CSV writer (D3).
+
+Columns: docs/architecture_and_evaluation.md.
+"""
 
 from __future__ import annotations
 

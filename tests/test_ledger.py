@@ -55,7 +55,11 @@ def test_call_budget_blocks_a_request_before_it_reaches_the_model() -> None:
 
     asyncio.run(spend())
     assert client.ledger.rows[0].status == "ok"
-    assert (client.ledger.rows[1].status, client.ledger.rows[1].usage, client.ledger.rows[1].tokens) == (
+    assert (
+        client.ledger.rows[1].status,
+        client.ledger.rows[1].usage,
+        client.ledger.rows[1].tokens,
+    ) == (
         "skipped",
         "missing",
         0,

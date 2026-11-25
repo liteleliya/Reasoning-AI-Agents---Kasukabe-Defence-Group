@@ -31,7 +31,14 @@ def row(arm: str, *, stop="impasse", correct="False", outcome="", credit="", tok
 ROWS = [
     row("standard"),
     row("forward"),
-    row("replay", stop="consensus", correct="True", outcome="reply_accepted", credit="-0.33", tokens="200"),
+    row(
+        "replay",
+        stop="consensus",
+        correct="True",
+        outcome="reply_accepted",
+        credit="-0.33",
+        tokens="200",
+    ),
 ]
 
 

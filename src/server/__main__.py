@@ -21,7 +21,7 @@ def main() -> None:
     parser.add_argument("--db", help="SQLite event log (default: results/board.sqlite)")
     parser.add_argument(
         "--run-dir",
-        help="paired run folder; supplies board.sqlite, metrics.csv and saved analysis automatically",
+        help="paired run folder; supplies board.sqlite, metrics.csv and the saved analysis",
     )
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
@@ -45,8 +45,14 @@ def main() -> None:
     # currently has one shard; select it automatically so `--run-dir` opens the matching archive.
     if run_dir and not (run_dir / "metrics.csv").exists() and len(shard_dirs) == 1:
         artifact_dir = shard_dirs[0]
-    db = Path(args.db) if args.db else (artifact_dir / "board.sqlite" if run_dir else Path("results/board.sqlite"))
-    metrics_path = Path(args.metrics) if args.metrics else (artifact_dir / "metrics.csv" if run_dir else None)
+    db = (
+        Path(args.db)
+        if args.db
+        else (artifact_dir / "board.sqlite" if run_dir else Path("results/board.sqlite"))
+    )
+    metrics_path = (
+        Path(args.metrics) if args.metrics else (artifact_dir / "metrics.csv" if run_dir else None)
+    )
     metrics = load_metrics_index(metrics_path) if metrics_path else None
     store = EventStore(db)
     app = create_app(

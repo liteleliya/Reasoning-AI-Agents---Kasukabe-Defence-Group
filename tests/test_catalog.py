@@ -69,8 +69,7 @@ def test_the_metrics_index_is_keyed_by_session_id(tmp_path: Path) -> None:
 def test_the_metrics_index_reads_utf8_content(tmp_path: Path) -> None:
     path = tmp_path / "metrics.csv"
     path.write_text(
-        "session_id,instance_id,answer\n"
-        "s1,q1,设计紧急情况下的安全辅助系统\n",
+        "session_id,instance_id,answer\ns1,q1,设计紧急情况下的安全辅助系统\n",
         encoding="utf-8",
     )
 

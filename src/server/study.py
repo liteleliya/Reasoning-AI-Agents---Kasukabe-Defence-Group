@@ -135,7 +135,9 @@ def _matrix(rows: Sequence[Row]) -> list[dict[str, Any]]:
     return out
 
 
-def build_study_report(rows: Sequence[Row], *, run_dir: str | Path | None = None) -> dict[str, Any] | None:
+def build_study_report(
+    rows: Sequence[Row], *, run_dir: str | Path | None = None
+) -> dict[str, Any] | None:
     """Create the entire paired-study API response from saved local files.
 
     Returns ``None`` for a non-paired archive, allowing the same server to continue serving J3
@@ -183,11 +185,17 @@ def build_study_report(rows: Sequence[Row], *, run_dir: str | Path | None = None
             for key in ("ratify", "refute", "revise", "reject")
         },
         "rollbacks": sum(_number(row.get("rollbacks")) or 0 for row in paired_rows),
-        "replay_outcomes": dict(Counter(
-            row.get("recovery_outcome", "") for row in replay_rows if row.get("recovery_outcome")
-        )),
+        "replay_outcomes": dict(
+            Counter(
+                row.get("recovery_outcome", "")
+                for row in replay_rows
+                if row.get("recovery_outcome")
+            )
+        ),
         "replay_attempts": sum(bool(row.get("recovery_outcome")) for row in replay_rows),
-        "replay_accepted": sum(row.get("recovery_outcome") == "reply_accepted" for row in replay_rows),
+        "replay_accepted": sum(
+            row.get("recovery_outcome") == "reply_accepted" for row in replay_rows
+        ),
     }
     return {
         "provenance": provenance,
