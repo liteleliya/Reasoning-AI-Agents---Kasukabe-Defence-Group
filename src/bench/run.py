@@ -536,6 +536,24 @@ async def run_job(
 # --- offline smoke test ----------------------------------------------------------------------
 
 
+def _authored_answer(messages) -> str | None:
+    """A valid structured answer for an authored case, read from its rendered response shape."""
+    text = next(
+        (m.content for m in messages if "\nRespond with:\n- decision: one of " in m.content), ""
+    )
+    if not text:
+        return None
+    shape = text.split("\nRespond with:\n", 1)[1]
+    decision = re.search(r"- decision: one of ([^\n|]+)", shape)
+    parts = [decision.group(1).strip()] if decision else []
+    for name, kind in re.findall(r"^- (\w+) \(([^)]*)\):", shape, re.M):
+        first = kind.split("|")[0].strip()
+        parts.append(
+            f"{name}={'30 s' if kind == 'duration' else '1' if kind == 'number' else first}"
+        )
+    return "; ".join(parts)
+
+
 def mock_client() -> MockClient:
     """A scripted model for `--mock`: opens with a letter from a hash, then follows what it is
     shown half of the time. Lets the whole pipeline run with no GPU."""
@@ -548,11 +566,11 @@ def mock_client() -> MockClient:
             return json.dumps(
                 {
                     "tag": "INIT",
-                    "prediction": "ABCD"[h[0] % 4],
+                    "prediction": _authored_answer(messages) or "ABCD"[h[0] % 4],
                     "explanation": "first reading of the options",
                 }
             )
-        if "Write a different version of that message" in user:  # counterfactual prompt
+        if "Write a different version of" in user:  # counterfactual and candidate prompts
             to = user.split("replying to message ", 1)[1].split(".", 1)[0]
             line = next((x for x in user.splitlines() if x.startswith(f"[{to}] ")), "")
             theirs = line.split(": ", 1)[1].split(" |")[0] if ": " in line else "A"
