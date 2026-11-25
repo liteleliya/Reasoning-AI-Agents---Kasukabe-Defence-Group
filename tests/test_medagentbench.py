@@ -21,6 +21,38 @@ from bench.medagentbench import (
     summarize,
 )
 
+# import pytest
+
+# from bench.medagentbench import Action, validate_action_format
+
+
+# @pytest.mark.parametrize(
+#     "action",
+#     [
+#         Action("GET", "GET http://localhost:8080/fhir/Patient?name=Maria"),
+#         Action("POST", 'POST http://localhost:8080/fhir/Observation\n{"status": "final"}'),
+#         Action("FINISH", 'FINISH(["answer 1", "answer 2"])'),
+#     ],
+# )
+# def test_valid_action_formats_pass(action: Action) -> None:
+#     assert validate_action_format(action) is None
+
+
+# @pytest.mark.parametrize(
+#     ("action", "message"),
+#     [
+#         (Action("GET", "GET Patient?name=Maria"), "HTTP(S) URL"),
+#         (Action("POST", "POST http://localhost:8080/fhir/Observation"), "JSON payload"),
+#         (Action("POST", "POST http://localhost:8080/fhir/Observation\nnot-json"), "valid JSON"),
+#         (Action("POST", 'POST http://localhost:8080/fhir/Observation\n["not", "an object"]'), "JSON object"),
+#         (Action("FINISH", "FINISH(answer)"), "valid JSON"),
+#         (Action("FINISH", 'FINISH({"answer": 1})'), "JSON list"),
+#         (Action("INVALID", "The answer is 42"), "GET, POST, or FINISH"),
+#     ],
+# )
+# def test_invalid_action_formats_return_reason(action: Action, message: str) -> None:
+#     assert message in (validate_action_format(action) or "")
+
 CASE = {"id": "task1_1", "instruction": "What is the MRN?", "context": "", "sol": ["S1"]}
 FAKE_REFSOL = """
 import json

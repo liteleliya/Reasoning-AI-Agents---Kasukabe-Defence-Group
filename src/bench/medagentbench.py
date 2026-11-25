@@ -13,6 +13,7 @@ checkout (for the task file and function catalogue) and `--refsol` at the downlo
 
 from __future__ import annotations
 
+from urllib.parse import urlsplit
 import argparse
 import asyncio
 import hashlib
@@ -107,6 +108,57 @@ def parse_action(reply: str) -> Action:
     if text.startswith("FINISH("):
         return Action("FINISH", text)
     return Action("INVALID", text)
+
+# def validate_action_format(action: Action) -> str | None:
+#     """Return a format error, or None when the action matches the expected syntax."""
+#     text = action.text.strip()
+
+#     if action.kind == "GET":
+#         url = text.removeprefix("GET").strip()
+#         parsed = urlsplit(url)
+#         if parsed.scheme not in {"http", "https"} or not parsed.netloc or not parsed.path:
+#             return "GET must contain a complete HTTP(S) URL"
+#         return None
+
+#     if action.kind == "POST":
+#         lines = text.splitlines()
+#         if len(lines) < 2:
+#             return "POST must contain a URL followed by a JSON payload"
+
+#         parsed = urlsplit(lines[0].removeprefix("POST").strip())
+#         if parsed.scheme not in {"http", "https"} or not parsed.netloc or not parsed.path:
+#             return "POST must contain a complete HTTP(S) URL"
+
+#         payload = "\n".join(lines[1:]).strip()
+#         if not payload:
+#             return "POST payload is empty"
+
+#         try:
+#             value = json.loads(payload)
+#         except json.JSONDecodeError:
+#             return "POST payload must be valid JSON"
+
+#         if not isinstance(value, dict):
+#             return "POST payload must be a JSON object"
+
+#         return None
+
+#     if action.kind == "FINISH":
+#         if not (text.startswith("FINISH(") and text.endswith(")")):
+#             return "FINISH must use FINISH([...]) syntax"
+
+#         payload = text[len("FINISH("):-1]
+#         try:
+#             value = json.loads(payload)
+#         except json.JSONDecodeError:
+#             return "FINISH payload must be valid JSON"
+
+#         if not isinstance(value, list):
+#             return "FINISH payload must be a JSON list"
+
+#         return None
+
+#     return "Action must begin with GET, POST, or FINISH"
 
 
 def _get_request(client: httpx.Client, url: str) -> dict[str, Any]:
@@ -230,6 +282,9 @@ async def run_task(
         run.completion_tokens += reply.usage.completion
         history.append(Turn("agent", reply.text.strip()))
         action = parse_action(reply.text)
+        # format_error = validate_action_format(action)
+        # if format_error:
+        #     return finish(INVALID_ACTION, format_error)
         if action.kind == "GET":
             got = fhir.get(action.text[3:].strip() + "&_format=json")
             if "data" in got:
